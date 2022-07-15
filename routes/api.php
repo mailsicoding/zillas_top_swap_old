@@ -6,6 +6,7 @@ use App\Http\Controllers\API\OfferController;
 use App\Http\Controllers\API\AccountSettingController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\FundsController;
+use App\Http\Controllers\Api\OrderByController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +66,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('get-match-status', [OfferController::class, 'get_match_status']);
         Route::post('trade-cancel', [OfferController::class, 'trade_cancel']);
         Route::post('get-match-offer-user', [OfferController::class, 'get_match_offers']);
+        Route::post('order-history', [OrderByController::class, 'order_history']);
         Route::post('create-trade-settings', [AccountSettingController::class, 'create_trade_settings']);
         Route::get('get-funds', [FundsController::class, 'get_funds']);
     });
@@ -74,7 +76,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('add-funds', [FundsController::class, 'add_funds']);
     });
 
-    Route::get('/user/permissions', [PermissionController::class,'getPermissions']);
+    Route::get('/user/permissions', [PermissionController::class, 'getPermissions']);
 
     Route::post('send-phone-verification-code', [AuthController::class, 'send_phone_verification_code']);
     Route::post('verify-phone-verification-code', [AuthController::class, 'verify_phone_verification_code']);
@@ -95,5 +97,3 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
-
-
