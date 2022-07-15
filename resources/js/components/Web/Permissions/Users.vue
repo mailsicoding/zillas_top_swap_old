@@ -12,7 +12,7 @@
 
             <div class="row">
 
-                <div class="col-md-12 main-b"> 
+                <div class="col-md-12 main-b">
                     <div class="row">
 
                         <div class="col-xl-12 col-md-12 ">

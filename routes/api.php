@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\ContactUsController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\OfferController;
 use App\Http\Controllers\API\AccountSettingController;
@@ -48,7 +49,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('edit-user', [AuthController::class, 'edit_user']);
         Route::post('update-user', [AuthController::class, 'update']);
         Route::post('delete-user', [AuthController::class, 'delete_user']);
-        Route::post('delete-user', [AuthController::class, 'delete_user']);
+        // Route::post('delete-user', [AuthController::class, 'delete_user']);
         Route::get('get_roles', [AuthController::class, 'get_roles']);
         Route::post('edit_roles', [AuthController::class, 'edit_roles']);
         Route::get('get_permissions', [AuthController::class, 'get_permissions']);
@@ -92,8 +93,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Funds
 
+    // ContactUs
+
+    Route::post('add_contact_us', [ContactUsController::class, 'add_contact_us']);
+    Route::post('delete-contact', [ContactUsController::class, 'delete_contact']);
+
+
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
+
+Route::get('all_contacts', [ContactUsController::class, 'index']);
 
 
