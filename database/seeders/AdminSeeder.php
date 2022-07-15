@@ -25,7 +25,8 @@ class AdminSeeder extends Seeder
             'is_email_verified' => 1,
         ]);
 
-        $role = Role::whereId(3)->pluck('name');
-        $user->assignRole($role);
+        $role = Role::find(3);
+        $user->assignRole($role->name);
+        $role->givePermissionTo(['Dashboard','Users','Roles','Account Setting']);
     }
 }
