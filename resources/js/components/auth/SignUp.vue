@@ -57,6 +57,7 @@
 
 <script>
     import axios from 'axios';
+import store from '../../stores'
     import useVuelidate from "@vuelidate/core";
     import {
         reactive,
@@ -124,14 +125,17 @@
                     }
                     axios.post("signup", data).then(response => {
                         if (response.data.success) {
+
+                        store.dispatch("auth/setCurrentUser", response.data.user);
+
                             router.push({
-                                name: 'login'
-                            });
+                                name: 'dashboard'
+                            })
 
                             Toast.fire({
                                 text: response.data.message,
                                 timer: 3000,
-                                icon: 'success',
+                                icon:'success',
                                 position: 'top-end',
                             });
                         } else {

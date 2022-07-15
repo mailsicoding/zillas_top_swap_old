@@ -185,7 +185,7 @@ import { useRouter } from 'vue-router'
                 }
                 else
                 {
-                    // getOffers()
+                    getOffers()
                 }
             })
 

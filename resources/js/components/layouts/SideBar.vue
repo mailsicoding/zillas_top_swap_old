@@ -88,7 +88,7 @@ export default {
 
       const getPermissions = async(permissionName) => {
           axios.get('user/permissions')
-        .then((response)=> {
+        .then((response)=> { 
             permissions.value = response.data;
         })
       }
