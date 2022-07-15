@@ -16,7 +16,7 @@ class FundsController extends Controller
         return $funds;
     }
 
-    public function users()
+    public function players()
     {
         return User::role('Player')->get(['id','username']);
     }

@@ -14,9 +14,9 @@
                 $(this).addClass("active");
             }
         });
-        $(document).ready( function () {
-          $('#table').DataTable();
-      } );
+    //     $(document).ready( function () {
+    //       $('#table').DataTable();
+    //   } );
     // Toggle the side navigation
     // $("#sidebarToggle").on("click", function(e) {
     //     e.preventDefault();
@@ -53,5 +53,5 @@
       $('.dropdown-item').on('click',function(){
         $('.dropdown-menu.dropdown__menu-right').toggle();
       })
-      
+
 })(jQuery);

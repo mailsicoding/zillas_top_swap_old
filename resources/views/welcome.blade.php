@@ -17,7 +17,7 @@
 
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <!-- Fonts -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{asset('css/app.css')}}">
   <link rel="stylesheet" href="{{asset('css/styles.css')}}">
@@ -41,7 +41,7 @@
 .loader {
   display: inline-block;
   position: relative;
-  top: 5%;                      
+  top: 5%;
   border: 4px solid #Fff;
   animation: loader 2s infinite ease;
 }
@@ -80,10 +80,7 @@
      $(".loader-wrapper").fadeOut("slow");
 });
 </script>
-<script src="{{asset('js/jquery.dataTables.min.js')}}"></script>
-<script src="{{asset('js/dataTables.bootstrap4.min.js')}}"></script>
 <script src="{{asset('js/bootstrap-multiselect.js')}}"></script>
-<script src="{{asset('assets/demo/datatables-demo.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>

@@ -4,6 +4,8 @@ import App from './App.vue';
 import router from './router'
 import store from './stores'
 import Select2 from 'vue3-select2-component';
+import Vue3EasyDataTable from 'vue3-easy-data-table';
+import 'vue3-easy-data-table/dist/style.css';
 
 // before a request is made start the loader
 axios.interceptors.request.use(config => {
@@ -57,5 +59,6 @@ axios.interceptors.response.use(undefined, function (error) {
 const app = createApp(App);
 app.use(router);
 app.use(store);
-app.component('Select2', Select2)
+app.component('Select2', Select2);
+app.component('EasyDataTable', Vue3EasyDataTable);
 app.mount('#app');

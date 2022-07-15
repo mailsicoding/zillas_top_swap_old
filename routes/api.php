@@ -69,7 +69,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 
     Route::group(['middleware' => 'can:Funds'], function () {
-        Route::get('users', [FundsController::class, 'users']);
+        Route::get('players', [FundsController::class, 'players']);
         Route::post('add-funds', [FundsController::class, 'add_funds']);
     });
 
