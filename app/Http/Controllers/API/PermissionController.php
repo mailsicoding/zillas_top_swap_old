@@ -13,7 +13,7 @@ class PermissionController extends Controller
         $user = Auth::user();
         $role = $user->roles()->first();
         // $role =  Role::where($request->roleId);
-        $permissions = $role->permissions()->pluck('name')->toArray();
+        return $permissions = $role->getPermissionNames();//->pluck('name')->toArray();
         return response()->json([
             'permissions' => $permissions
         ]);
