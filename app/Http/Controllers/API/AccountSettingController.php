@@ -47,33 +47,12 @@ class AccountSettingController extends Controller
 
         if($is_phone_verified == 0)
         {
-            $receiverNumber = $user->phone;
-            $code = rand(100000,999999);
-            $message = "Your Zilla's Top Swap Verification Code is ".$code;
-
-            $account_sid = env("TWILIO_SID");
-            $auth_token = env("TWILIO_TOKEN");
-            $twilio_number = env("TWILIO_FROM");
-
-            $client = new Client($account_sid, $auth_token);
-                $client->messages->create($receiverNumber, [
-                    'from' => $twilio_number,
-                    'body' => $message]);
-
-            $user->update([
-                'phone_code' => $code
-            ]);
+            $this->sendMessage($user);
         }
 
         if($is_email_verified == 0)
         {
-            $code = rand(100000,999999);
-
-            $user->update([
-                'email_code' => $code
-            ]);
-
-            Mail::to($user->email)->send(new VerificationMail($user, $code));
+            $this->sendEmail($user);
 
         }
 
@@ -85,6 +64,40 @@ class AccountSettingController extends Controller
             'user' => $user
         ]);
     }
+
+    public function sendMessage(User $user)
+    {
+        $receiverNumber = $user->phone;
+        // $code = rand(100000,999999);
+        $code = '123456';
+        // $message = "Your Zilla's Top Swap Verification Code is ".$code;
+
+        // $account_sid = env("TWILIO_SID");
+        // $auth_token = env("TWILIO_TOKEN");
+        // $twilio_number = env("TWILIO_FROM");
+
+        // $client = new Client($account_sid, $auth_token);
+        //     $client->messages->create($receiverNumber, [
+        //         'from' => $twilio_number,
+        //         'body' => $message]);
+
+        $user->update([
+            'phone_code' => $code
+        ]);
+    }
+
+    public function sendEmail(User $user)
+    {
+        // $code = rand(100000,999999);
+        $code = '123456';
+
+        $user->update([
+            'email_code' => $code
+        ]);
+
+        // Mail::to($user->email)->send(new VerificationMail($user, $code));
+    }
+
     public function create_trade_settings(Request $request){
         $input = $request->all();
         $user= Auth::user();

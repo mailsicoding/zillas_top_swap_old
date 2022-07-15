@@ -11,6 +11,7 @@ window.$ = window.jQuery = require('jquery');
 require('bootstrap');
 window.Swal = require('sweetalert2');
 
+
 window.Toast = Swal.mixin({
     toast: true,
     position: 'top-end',

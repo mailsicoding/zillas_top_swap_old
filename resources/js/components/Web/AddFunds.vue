@@ -59,21 +59,21 @@
                     <option value="">Select User</option>
                     <option v-for="user in users" v-bind:value="user.id" :key="user.id">{{user.username}}</option>
               </select>
-              
+
               <div class="icon"><img :src="'images/user.png'" alt=""></div>
-              
+
             </div>
-            <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.user_id.$error"> 
+            <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.user_id.$error">
                 {{ v$.user_id.$errors[0].$message }}
               </span>
             <div class="email-feild">
               <!-- <label for="price"> Amount</label> -->
               <input type="number" name="price" id="price" v-model="state.price" placeholder="Amount" required>
-              
+
               <div class="icon"><img :src="'images/user.png'" alt=""></div>
-              
+
             </div>
-            <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.price.$error"> 
+            <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.price.$error">
                 {{ v$.price.$errors[0].$message }}
               </span>
             <div class="col-xl-12 col-md-12 ">
@@ -130,7 +130,7 @@ export default {
                 },
         }
 
-        
+
         const v$ = useVuelidate(rules, state)
 
         onBeforeMount(() => {
@@ -149,7 +149,7 @@ export default {
         })
 
 
-        
+
 
         const addFunds = async () => {
                 v$.value.$validate();
@@ -173,11 +173,11 @@ export default {
             }
 
         const getUsers = async () => {
-                axios.get('users',state)
+                axios.get('players',state)
                     .then((response) => {
                         users.value = response.data
                     })
-               
+
             }
 
         return {
