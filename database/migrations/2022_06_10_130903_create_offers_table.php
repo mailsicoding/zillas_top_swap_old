@@ -18,6 +18,7 @@ class CreateOffersTable extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('price');
+            $table->unsignedBigInteger('match_user_id')->nullable();
             $table->string('status')->default('open');
             $table->integer('payment_method')->nullable();
             $table->timestamps();

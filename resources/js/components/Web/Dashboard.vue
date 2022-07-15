@@ -167,11 +167,11 @@ import { useRouter } from 'vue-router'
             let fundsInterval;
 
             onBeforeMount(() => {
-                // getFunds()
-                // fundsInterval =  setInterval(() => {
-                //     getFunds()
-                //     getMatchStatus()
-                // },5000)
+                getFunds()
+                fundsInterval =  setInterval(() => {
+                    getFunds()
+                    getMatchStatus()
+                },5000)
             })
 
             onMounted(() => {
@@ -185,7 +185,7 @@ import { useRouter } from 'vue-router'
                 }
                 else
                 {
-                    // getOffers()
+                    getOffers()
                 }
             })
 

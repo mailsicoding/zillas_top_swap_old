@@ -1,24 +1,27 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getMessaging } from "firebase/messaging";
+import { getAnalytics } from "firebase/analytics";
+import { getDatabase } from "firebase/database";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyD9WeWLE4db7royRyBMB_dO0FejZZhrFYE",
-  authDomain: "christophergame.firebaseapp.com",
-  projectId: "christophergame",
-  storageBucket: "christophergame.appspot.com",
-  messagingSenderId: "1026538262278",
-  appId: "1:1026538262278:web:7c987548a975bc23f41887",
-  measurementId: "G-LGCKH41MYM"
+  apiKey: "AIzaSyCQVuL32-AvGGs3wQtYwkLDg4n6DeES62c",
+  authDomain: "zillarepo.firebaseapp.com",
+  databaseURL: "https://zillarepo-default-rtdb.firebaseio.com",
+  projectId: "zillarepo",
+  storageBucket: "zillarepo.appspot.com",
+  messagingSenderId: "981605448608",
+  appId: "1:981605448608:web:b93ee0ef67105dbd5fc2c5",
+  measurementId: "G-3H3N53G6S9"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-// Initialize Firebase Cloud Messaging and get a reference to the service
-const messaging = getMessaging(app);
+const analytics = getAnalytics(app);
+const database = getDatabase();
 
-export default messaging;
+export default app;
