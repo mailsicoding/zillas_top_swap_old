@@ -42,7 +42,7 @@ Route::post('update-password', [AuthController::class, 'update_password']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
-    Route::group(['middleware' => 'role:Admin'], function () {
+    Route::group(['middleware' => 'can:Users,Roles'], function () {
         Route::get('all_users', [AuthController::class, 'index']);
         Route::post('add_user', [AuthController::class, 'store_user']);
         Route::post('edit-user', [AuthController::class, 'edit_user']);
@@ -55,7 +55,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('assign_permission_role', [AuthController::class, 'assign_permission_role']);
     });
 
-    Route::group(['middleware' => 'role:Player'], function () {
+    Route::group(['middleware' => 'can:Offers,Getting Match'], function () {
         Route::get('get-offers', [OfferController::class, 'getoffers']);
         Route::post('create-offer', [OfferController::class, 'create']);
         Route::post('remove-offer', [OfferController::class, 'remove']);
@@ -65,11 +65,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('get-match-status', [OfferController::class, 'get_match_status']);
         Route::post('trade-cancel', [OfferController::class, 'trade_cancel']);
         Route::post('get-match-offer-user', [OfferController::class, 'get_match_offers']);
-        Route::post('create-trade-settings', [AccountSettingController::class, 'create_trade_settings']);
         Route::get('get-funds', [FundsController::class, 'get_funds']);
     });
 
-    Route::group(['middleware' => 'role:Operator'], function () {
+    Route::group(['middleware' => 'can:Funds'], function () {
         Route::get('users', [FundsController::class, 'users']);
         Route::post('add-funds', [FundsController::class, 'add_funds']);
     });
@@ -86,6 +85,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('messages', [MessageController::class, 'messages']);
     Route::post('messages', [MessageController::class, 'messageStore']);
 
+    Route::post('create-trade-settings', [AccountSettingController::class, 'create_trade_settings']);
     Route::post('update-setting', [AccountSettingController::class, 'update_setting']);
 
     // Match Offers Routes start

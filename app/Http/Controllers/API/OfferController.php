@@ -47,7 +47,7 @@ class OfferController extends Controller
         if ($v->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $v->errors()->first()
+                'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors()
 
             ]);
         }
@@ -148,7 +148,7 @@ class OfferController extends Controller
         if ($v->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $v->errors()->first()
+                'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors()
 
             ]);
         }
