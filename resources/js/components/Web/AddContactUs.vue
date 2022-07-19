@@ -90,6 +90,7 @@ import {
 import store from '../../stores';
 
 export default {
+    name: 'add_contact_us',
     setup() {
         const state = reactive({
             name: '',
@@ -99,7 +100,7 @@ export default {
         const router = useRouter()
         const route = useRoute()
         const user = reactive(store.getters["auth/currentUser"])
-        const path = ref("contact")
+        const path = ref("/api/contact")
         console.log(path);
 
         const $externalResults = ref({})
@@ -126,7 +127,7 @@ export default {
                 let result = await axios.post(path.value, state)
                 if (result.data.success == true) {
                     router.push({
-                        name: 'contact'
+                        name: 'add_contact_us'
                     })
                     Toast.fire({
                         text: result.data.message,
