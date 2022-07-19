@@ -110,7 +110,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
-Route::apiResource('contact', ContactUsController::class);
+// Route::apiResource('contact', ContactUsController::class);
 // Route::get('all_contacts', [ContactUsController::class, 'index']);
 
 

@@ -138,7 +138,7 @@ export default {
             delete_user
         }
 
-    },
+    }
 }
 
 </script>

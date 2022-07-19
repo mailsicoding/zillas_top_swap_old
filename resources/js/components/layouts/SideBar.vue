@@ -56,7 +56,13 @@
                     Add Funds
                 </router-link>
 
-                <router-link class="nav-link" to="/contacts">
+                <router-link v-if="can('Users')" class="nav-link" to="/contacts">
+                    <div class="sb-nav-link-icon ">
+                        <i class="fa fa-tachometer-alt" aria-hidden="true"></i>
+                    </div>
+                    Contact Us
+                </router-link>
+                <router-link v-if="can('Getting Match')" class="nav-link" to="/add_contact_us">
                     <div class="sb-nav-link-icon ">
                         <i class="fa fa-tachometer-alt" aria-hidden="true"></i>
                     </div>
