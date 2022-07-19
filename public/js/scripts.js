@@ -53,5 +53,5 @@
       $('.dropdown-item').on('click',function(){
         $('.dropdown-menu.dropdown__menu-right').toggle();
       })
-      
+
 })(jQuery);

@@ -4,9 +4,9 @@
             <div class="d-flex flex-wrap justify-content-between">
                 <h1 class="mt-4 title-dashboard">Contact List</h1>
                 <div class="box1 mt-4">
-                    <router-link class="btn btn-primary" to="/add_contact_us">
+                    <!-- <router-link class="btn btn-primary" to="/add_contact_us">
                         Add
-                    </router-link>
+                    </router-link> -->
                 </div>
             </div>
 
@@ -37,9 +37,9 @@
                                                 <td>{{ contact.email }}</td>
                                                 <td>{{ contact.message }}</td>
                                                 <td>
-                                                    <router-link :to="'/edit_contact/' + contact.id">
+                                                    <!-- <router-link :to="'/edit_contact/' + contact.id">
                                                         <ion-icon class="pencil" name="pencil-outline"></ion-icon>
-                                                    </router-link>
+                                                    </router-link> -->
                                                     <!-- <a href="" class="view">
                                                         <ion-icon name="eye-outline"></ion-icon>
                                                     </a> -->
@@ -74,8 +74,9 @@ import {
     reactive,
     onUnmounted,
 } from 'vue'
-import store from '../../stores'
-import { useRoute, useRouter } from 'vue-router'
+import {
+    useRoute, useRouter
+} from 'vue-router'
 
 export default {
     name: 'contacts',
@@ -83,27 +84,23 @@ export default {
         const contacts = ref([])
         const router = useRouter()
         const route = useRoute()
-        onUnmounted(() => {
-            getContacts()
-        })
+
 
         onMounted(() => {
             getContacts()
         })
-
+        // onUnmounted(() => {
+        //     // getContacts()
+        // })
         const getContacts = async () => {
-            axios.get('contacts',)
+            axios.get('/api/contact')
                 .then((response) => {
-                    // contacts.value = response.data.contacts;
-                    console.log(response.data)
+                    contacts.value = response.data.contact;
                 })
         }
 
         const delete_contact = async (id) => {
-            const data = {
-                id: id
-            }
-            axios.post('delete-contact', data)
+            axios.delete('/api/contact/'+ id)
                 .then((response) => {
                     getContacts()
                     Toast.fire({

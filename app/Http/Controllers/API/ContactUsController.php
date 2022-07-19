@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\ContactUs;
 use Illuminate\Http\Request;
-use App\Http\Resources\ContactUsResource;
+use App\Http\Requests\ContactUsRequest;
+use App\Mail\ContactUsMail;
+use Illuminate\Support\Facades\Mail;
 
 class ContactUsController extends Controller
 {
@@ -29,9 +31,24 @@ class ContactUsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ContactUsResource $request)
+    public function store(ContactUsRequest $request)
     {
-        //
+        $inputs = $request->validated();
+
+        if ($inputs == true) {
+            $contact = ContactUs::create($inputs);
+            Mail::to($inputs['email'])->send(new ContactUsMail($inputs['message']));
+            return response()->json([
+                'success' => true,
+                'contact' => $contact,
+                'message' => 'contact has been sent via email'
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => "there's an error in validation",
+            ]);
+        }
     }
 
     /**
@@ -52,7 +69,7 @@ class ContactUsController extends Controller
      * @param  \App\Models\ContactUs  $contactUs
      * @return \Illuminate\Http\Response
      */
-    public function update(ContactUsResource $request, ContactUs $contactUs)
+    public function update(ContactUsRequest $request, ContactUs $contactUs)
     {
         //
     }
@@ -63,8 +80,19 @@ class ContactUsController extends Controller
      * @param  \App\Models\ContactUs  $contactUs
      * @return \Illuminate\Http\Response
      */
-    public function delete_contact(ContactUs $contactUs)
+    public function destroy(ContactUs $contactUs, $id)
     {
-        //
+        $contact = ContactUs::find($id)->delete();
+        if($contact == true){
+            return response()->json([
+                'success' => true,
+                'message' => 'Mail has been deleted',
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'error while deleting',
+            ]);
+        }
     }
 }

@@ -32,13 +32,16 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(user,index) in users"  :key="index">
-                                                <td>{{index+1}}</td>
-                                                <td>{{user.username}}</td>
-                                                <td>{{user.email}}</td>
-                                                <td>{{user.phone}}</td>
-                                                <td><div v-if="user.roles.length !== 0">{{user.roles[0].name}}</div></td>
-                                                <td><router-link :to="'/edit_user/'+ user.id">
+                                            <tr v-for="(user, index) in users" :key="index">
+                                                <td>{{ index + 1 }}</td>
+                                                <td>{{ user.username }}</td>
+                                                <td>{{ user.email }}</td>
+                                                <td>{{ user.phone }}</td>
+                                                <td>
+                                                    <div v-if="user.roles.length !== 0">{{ user.roles[0].name }}</div>
+                                                </td>
+                                                <td>
+                                                    <router-link :to="'/edit_user/' + user.id">
                                                         <ion-icon class="pencil" name="pencil-outline"></ion-icon>
                                                     </router-link>
                                                     <!-- <a href="" class="view">
@@ -46,7 +49,8 @@
                                                     </a> -->
                                                     <a href="#" @click="delete_user(user.id)">
                                                         <ion-icon class="delete" name="trash-outline"></ion-icon>
-                                                    </a></td>
+                                                    </a>
+                                                </td>
 
                                             </tr>
                                         </tbody>
@@ -67,69 +71,66 @@
     </main>
 </template>
 <script>
-    import axios from 'axios';
-    import {
-        onMounted,
-        ref,
-        reactive,
-        onUnmounted
-    } from 'vue'
-    import store from '../../../stores'
- import {
-        useRouter, useRoute
-    } from 'vue-router';
-    export default {
-        name: 'Users',
-        setup() {
-            const users = ref([])
-            const user = reactive(store.getters["auth/currentUser"])
+import axios from 'axios';
+import {
+    onMounted,
+    ref,
+    reactive,
+    onUnmounted
+} from 'vue'
+import store from '../../../stores'
+import {
+    useRouter, useRoute
+} from 'vue-router';
+export default {
+    name: 'Users',
+    setup() {
+        const users = ref([])
+        const user = reactive(store.getters["auth/currentUser"])
 
-            const router = useRouter()
-            const route = useRoute()
-            onUnmounted(()=>{
+        const router = useRouter()
+        const route = useRoute()
+        onUnmounted(() => {
+            getUsers()
+        })
+        onMounted(() => {
+            if (user.is_phone_verified === 0) {
+                router.push('/verify/phone')
+            }
+            else if (user.is_email_verified === 0) {
+                router.push('/verify/email')
+            }
+            else {
                 getUsers()
-            })
-            onMounted(() => {
-                if(user.is_phone_verified === 0)
-                {
-                    router.push('/verify/phone')
-                }
-                else if(user.is_email_verified === 0)
-                {
-                    router.push('/verify/email')
-                }
-                else
-                {
-                    getUsers()
-                }
-            })
-            const getUsers = async () => {
-                axios.get('all_users', )
-                    .then((response) => {
-                        users.value = response.data.users;
-                    })
             }
-
-            const delete_user = async (id) => {
-                  const data = {
-                    user_id: id
-                }
-                axios.post('delete-user', data)
-                    .then((response) => {
-                        getUsers()
-                        Toast.fire({
-                            text: response.data.message,
-                            timer: 3000,
-                            icon: 'success',
-                            position: 'top-end',
-                        });
-                    })
-            }
-            return {
-                users,
-                delete_user
-            }
-
+        })
+        const getUsers = async () => {
+            axios.get('all_users',)
+                .then((response) => {
+                    users.value = response.data.users;
+                })
         }
+
+        const delete_user = async (id) => {
+            const data = {
+                user_id: id
+            }
+            axios.post('delete-user', data)
+                .then((response) => {
+                    getUsers()
+                    Toast.fire({
+                        text: response.data.message,
+                        timer: 3000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+                })
+        }
+        return {
+            users,
+            delete_user
+        }
+
     }
+}
 </script>

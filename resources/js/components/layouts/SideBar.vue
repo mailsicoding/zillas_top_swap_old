@@ -5,7 +5,7 @@
             <div class="nav">
                 <div class="text-center mr-top-2">
                     <img class="dashboard-icon-border" :src="'assets/images/dashboard-profile.png'" alt="" />
-                    <p class="heading-wrapper--one">Scarlett Johansson</p>
+                    <p class="heading-wrapper--one text-capitalize">{{user.username}}</p>
                     <p class="label__wrapper--one">Steven tailr</p>
                 </div>
 
@@ -70,12 +70,14 @@
 
 </template>
 <script>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive } from 'vue'
+import store from '../../stores'
 export default {
     name: 'SideBar',
     setup() {
         const result = ref(false)
         const permissions = ref([])
+        const user = reactive(store.getters["auth/currentUser"])
 
         onMounted(() => {
             getPermissions();
@@ -94,12 +96,13 @@ export default {
         const getPermissions = async (permissionName) => {
             axios.get('user/permissions')
                 .then((response) => {
-                    permissions.value = response.data.permissions;
+                    permissions.value = response.data;
                 })
         }
 
         return {
             can,
+            user
         }
     }
 }
