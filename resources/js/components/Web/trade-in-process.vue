@@ -56,7 +56,7 @@
                                         <div class="card my-2 msgcard">
                                             <div class="card-body chat-card">
 
-                                                <div id="messages_container" class="chat-log"  ref="hasScrolledToBottom">
+                                                <div id="messages_container" class="chat-log" ref="hasScrolledToBottom">
                                                     <!-- <div class="chat-log_item chat-log_item-own z-depth-0">
                                                             <div class="row justify-content-end mx-1 d-flex">
                                                                 <div class="col-auto px-0">
@@ -77,11 +77,12 @@
                                                             </div>
                                                         </div> -->
                                                     <template v-for="message in messages" :key="message.id">
-                                                        <div v-if="message.user.username === user.username" class="chat-log_item chat-log_item-own z-depth-0">
+                                                        <div v-if="message.username === user.username"
+                                                            class="chat-log_item chat-log_item-own z-depth-0">
                                                             <div class="row justify-content-end mx-1 d-flex">
                                                                 <div class="col-auto px-0">
                                                                     <span class="chat-log_author">
-                                                                        @{{message.user.username}}
+                                                                        @{{message.username}}
                                                                     </span>
                                                                 </div>
                                                                 <div class="col-auto px-0">
@@ -100,7 +101,7 @@
                                                             <div class="row justify-content-end mx-1 d-flex">
                                                                 <div class="col-auto px-0">
                                                                     <span class="chat-log_author">
-                                                                        @{{message.user.username}}
+                                                                        @{{message.username}}
                                                                     </span>
                                                                 </div>
                                                                 <div class="col-auto px-0">
@@ -125,7 +126,8 @@
                                                     <div class="chat-form-footer">
                                                         <input type="text" v-model="message">
                                                         <div class="chat-lower-btn">
-                                                            <a href="#" @click.prevent="addMessage"><img src="assets/images/send.png" alt=""></a>
+                                                            <a href="#" @click.prevent="addMessage"><img
+                                                                    src="assets/images/send.png" alt="" id="send"></a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -158,11 +160,14 @@
                 <a class="close" href="#">&times;</a>
                 <div class="content-pop">
                     <input type="checkbox" class="pop-chec">
-                    <div class="tex">i can confirm that i have sent <b>USD {{state.price}}</b> via <b>Zelle</b> to ealanaj</div>
+                    <div class="tex">i can confirm that i have sent <b>USD {{state.price}}</b> via <b>Zelle</b> to
+                        ealanaj</div>
                 </div>
                 <div class="pop-tos">
                     <div class="tos1"><a href="#">Cancel</a></div>
-                    <div class="tos2"><router-link to="/trade-complete">Confirm</router-link></div>
+                    <div class="tos2">
+                        <router-link to="/trade-complete" @click="delete_chat">Confirm</router-link>
+                    </div>
                 </div>
             </div>
         </div>
@@ -171,81 +176,126 @@
 </template>
 
 <script>
-import { ref,onMounted,onUnmounted,onUpdated, reactive } from 'vue'
-import store from '../../stores'
-import { useRouter } from 'vue-router'
+    import {
+        ref,
+        onMounted,
+        onUnmounted,
+        onUpdated,
+        reactive
+    } from 'vue'
+    import store from '../../stores'
+    import {
+        useRouter
+    } from 'vue-router'
+    import app from '../../firebase'
+    import {
+        getDatabase,
+        ref as storageRef,
+        set,
+        push,
+        onValue
+    } from "firebase/database";
+
     export default {
         name: 'trade-in-process',
-        setup(){
+        setup() {
             const messages = ref([])
             const message = ref('')
             const popup = ref(false)
             const router = useRouter()
             const state = reactive({
-                    username : '',
-                    price : '',
-                })
-	    	let hasScrolledToBottom = ref('')
+                id: ' ',
+                offer_id: ' ',
+                match_user_id: ' ',
+                username: '',
+                price: '',
+            })
+            let hasScrolledToBottom = ref('')
+            // console.log('hasScrolledToBottom', hasScrolledToBottom)
             const user = reactive(store.getters["auth/currentUser"])
             let messaageInterval
             onMounted(() => {
-                messaageInterval = setInterval(() => {
-                    window.location.reload()   
-                }, 10000)
-                if(user.is_phone_verified === 0)
-                {
+                // messaageInterval = setInterval(() => {
+                //     window.location.reload()
+                // }, 10000)
+                if (user.is_phone_verified === 0) {
                     router.push('/verify/phone')
-                }
-                else if(user.is_email_verified === 0)
-                {
+                } else if (user.is_email_verified === 0) {
                     router.push('/verify/email')
-                }
-                else
-                {
+                } else {
                     const offer = JSON.parse(localStorage.getItem('matched-offer'));
-                    if(offer){
-                        axios.post('get-match-offer-user',{offerId:offer.offer.id}).then(response => {
-                            localStorage.setItem('matched-offer-user',JSON.stringify(response.data))
+                    if (offer) {
+                        axios.post('get-match-offer-user', {
+                            offerId: offer.offer.id
+                        }).then(response => {
+                            localStorage.setItem('matched-offer-user', JSON.stringify(response.data))
+                            console.log(response.data);
+                            state.id = response.data.id
+                            state.match_user_id = offer.offer.match_user_id
+                            state.offer_id = offer.offer.id
                             state.username = response.data.username
                             state.price = offer.offer.price
+                            const db = getDatabase();
+                            const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/'+state.id+'_'+state.match_user_id)
+                            onValue(Fb_ref, (snapshot) => {
+                                const data = snapshot.val();
+                                console.log(data)
+                                messages.value = data
+                            });
                         })
+                        
                     }
                 }
             })
-           
             onUpdated(() => {
-	    		scrollBottom()
-	    	})
-            const getMessages = async() => {
-                axios.get('messages').then((response)=>{
-                    messages.value = response.data;
-                    // console.log(response.data)
-                })
-            }
-            const addMessage = async() => {
-                const data = {
-                    message : message.value
-                }
-                axios.post('messages',data).then((response)=>{
-                    messages.value.push(response.data);
-                    message.value = '';
-                })
-            }
-
-            const showPopup = () =>{
-	        	popup.value = true;      	
-	        }
-
-            const scrollBottom = () =>{
-	        	if(messages.value.length > 1){
-		        	let el = hasScrolledToBottom.value;
-	      			el.scrollTop = el.scrollHeight;
-	        	}        	
-	        }
-
-            onUnmounted(()=>{
-                clearInterval(messaageInterval)
+                scrollBottom()
             })
+            const currentuser = reactive(store.getters["auth/currentUser"])
+
+            const addMessage = async () => {
+                const data = {
+                    message: message.value
+                }
+                const db = getDatabase();
+                   const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/'+state.id+'_'+state.match_user_id)
+                
+                if(message.value !=''){
+                    const fb_push = push(Fb_ref)
+                
+                    set(fb_push, {
+                        type: 'chat',
+                        id: currentuser.id,
+                        username: currentuser.username,
+                        image: currentuser.image,
+                        message: data.message
+                    });
+                    message.value=''                    
+                }
+                
+                onValue(Fb_ref, (snapshot) => {
+                    const data = snapshot.val();
+                    messages.value = data
+                });
+
+            }
+            // const delete_chat = ()=>{
+            //      const db = getDatabase();
+            //        const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/'+state.id+'_'+state.match_user_id)
+            //        remove(Fb_ref)
+            // }
+            const showPopup = () => {
+                popup.value = true;
+            }
+
+            const scrollBottom = () => {
+                if (messages.value) {
+                    let el = hasScrolledToBottom.value;
+                    console.log('ele', el);
+                    el.scrollTop = el.scrollHeight;
+                }
+            }
+
+            onUnmounted(() => {})
             return {
                 messages,
                 message,

@@ -19,7 +19,7 @@
 
                             <div class="graph__wrapper-width pd">
 
-                                <div class="table-container">
+                                <div class="table-container p-4">
                                     <table class="table-rwd" id="table">
                                         <thead>
                                             <tr>
@@ -71,12 +71,15 @@
     </main>
 </template>
 <script>
+import "datatables.net-dt/js/dataTables.dataTables";
+import "datatables.net-dt/css/jquery.dataTables.min.css";
 import axios from 'axios';
 import {
     onMounted,
     ref,
     reactive,
-    onUnmounted
+    onUnmounted,
+    onBeforeMount
 } from 'vue'
 import store from '../../../stores'
 import {
@@ -90,8 +93,11 @@ export default {
 
         const router = useRouter()
         const route = useRoute()
-        onUnmounted(() => {
+        onBeforeMount(() => {
             getUsers()
+            $(document).ready(function () {
+                $('#table').DataTable();
+            });
         })
         onMounted(() => {
             if (user.is_phone_verified === 0) {
@@ -100,9 +106,10 @@ export default {
             else if (user.is_email_verified === 0) {
                 router.push('/verify/email')
             }
-            else {
-                getUsers()
-            }
+        })
+        onUnmounted(() => {
+            getUsers()
+
         })
         const getUsers = async () => {
             axios.get('all_users',)
@@ -131,6 +138,7 @@ export default {
             delete_user
         }
 
-    }
+    },
 }
+
 </script>

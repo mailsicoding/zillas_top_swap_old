@@ -221,7 +221,7 @@ class AuthController extends Controller
 
             $token = $user->createToken($user->email)->plainTextToken;
 
-            $user = User::find($user->id)->only(['username','email','phone','is_email_verified','is_phone_verified',]);
+            $user = User::find($user->id)->only(['username','email','phone','is_email_verified','is_phone_verified','id','image',]);
             $user['token'] = $token;
 
             return response()->json([

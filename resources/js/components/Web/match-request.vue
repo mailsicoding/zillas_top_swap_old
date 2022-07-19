@@ -185,7 +185,7 @@ export default {
         const state = reactive({
             price: '',
             methods: [],
-            offerId: 0
+            offerId: 0,
         })
         const currentuser = reactive(store.getters["auth/currentUser"])
 
