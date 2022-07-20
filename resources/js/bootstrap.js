@@ -25,14 +25,15 @@ window.Toast = Swal.mixin({
 })
 
 window.Startloader = (val) => {
-    if(val == true)
-    document.getElementById('loader-overlay').style.display = 'flex';
+    if (val == true)
+        document.getElementById('loader-overlay').style.display = 'flex';
     else
-    $(".loader-wrapper").fadeOut("slow");
-  }
+        $(".loader-wrapper").fadeOut("slow");
+}
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 axios.defaults.baseURL = window.location.origin;
+// axios.defaults.baseURL = window.location.origin;
 
 let token = document.head.querySelector('meta[name="csrf-token"]');
 

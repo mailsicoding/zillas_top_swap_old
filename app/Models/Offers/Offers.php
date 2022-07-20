@@ -3,6 +3,7 @@
 namespace App\Models\Offers;
 
 use App\Models\method;
+use App\Models\orderBy;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,12 @@ class Offers extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function offer_methods(){
-        return $this->belongsToMany(method::class, 'offers_methods','offer_id','method_id');
+    public function offer_methods()
+    {
+        return $this->belongsToMany(method::class, 'offers_methods', 'offer_id', 'method_id');
+    }
+    public function order_offers()
+    {
+        return $this->belongsTo(orderBy::class, 'offer_id', 'id');
     }
 }

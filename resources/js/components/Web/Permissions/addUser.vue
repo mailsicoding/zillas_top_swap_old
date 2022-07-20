@@ -79,99 +79,96 @@
     </main>
 </template>
 <script>
-    import axios from 'axios';
-    import useVuelidate from "@vuelidate/core";
-    import {
-        reactive,
-        ref,
-        onMounted
-    } from "vue";
-    import {
-        required,
-        email,
-        minLength,
-        maxLength,
-        helpers,
-        alphaNum,
-        integer
-    } from "@vuelidate/validators";
-    import {
-        useRouter, useRoute
-    } from 'vue-router';
+import axios from 'axios';
+import useVuelidate from "@vuelidate/core";
+import {
+    reactive,
+    ref,
+    onMounted
+} from "vue";
+import {
+    required,
+    email,
+    minLength,
+    maxLength,
+    helpers,
+    alphaNum,
+    integer
+} from "@vuelidate/validators";
+import {
+    useRouter, useRoute
+} from 'vue-router';
 import store from '../../../stores'
 
-    export default {
-        name: 'addUser',
-        setup() {
-            const state = reactive({
-                username: '',
-                email: '',
-                code: '+92',
-                phone: '',
-                password: '',
-                role: '1',
-                userId: 0
-            })
-            console.log(state.userId)
-            const router = useRouter()
-            const route = useRoute()
-            const user = reactive(store.getters["auth/currentUser"])
-            const path = ref('add_user')
+export default {
+    name: 'addUser',
+    setup() {
+        const state = reactive({
+            username: '',
+            email: '',
+            code: '+92',
+            phone: '',
+            password: '',
+            role: '1',
+            userId: 0
+        })
+        console.log(state.userId)
+        const router = useRouter()
+        const route = useRoute()
+        const user = reactive(store.getters["auth/currentUser"])
+        const path = ref('add_user')
 
-            onMounted(()=>{
-                        if(user.is_phone_verified === 0)
-                        {
-                            router.push('/verify/phone')
-                        }
-                        else if(user.is_email_verified === 0)
-                        {
-                            router.push('/verify/email')
-                        }
-                        else
-                        {
-                            edit_user()
-                        }
-                    })
-
-            const $externalResults = ref({})
-            const rules = {
-                username: {
-                    required: helpers.withMessage('Name must be required', required),
-                    alphaNum: helpers.withMessage("Username must not contain spaces and dashes.", alphaNum),
-                },
-                email: {
-                    required: helpers.withMessage('Email must be required', required),
-                    email: helpers.withMessage("Enter valid email address.", email),
-                },
-                phone: {
-                    required: helpers.withMessage("Phone field is required.", required),
-                    integer: helpers.withMessage("Phone Number must conatin numbers.", integer),
-                    minLength: minLength(10),
-                    maxLength: maxLength(10),
-                },
-
-                password: {
-                    required: helpers.withMessage('Password must be required', required),
-                    minLength: minLength(8)
-                },
-                role: {
-                    required: helpers.withMessage('Role must be required', required),
-                },
+        onMounted(() => {
+            if (user.is_phone_verified === 0) {
+                router.push('/verify/phone')
             }
-            const v$ = useVuelidate(rules, state, {
-                $externalResults
-            })
+            else if (user.is_email_verified === 0) {
+                router.push('/verify/email')
+            }
+            else {
+                edit_user()
+            }
+        })
+
+        const $externalResults = ref({})
+        const rules = {
+            username: {
+                required: helpers.withMessage('Name must be required', required),
+                alphaNum: helpers.withMessage("Username must not contain spaces and dashes.", alphaNum),
+            },
+            email: {
+                required: helpers.withMessage('Email must be required', required),
+                email: helpers.withMessage("Enter valid email address.", email),
+            },
+            phone: {
+                required: helpers.withMessage("Phone field is required.", required),
+                integer: helpers.withMessage("Phone Number must conatin numbers.", integer),
+                minLength: minLength(10),
+                maxLength: maxLength(10),
+            },
+
+            password: {
+                required: helpers.withMessage('Password must be required', required),
+                minLength: minLength(8)
+            },
+            role: {
+                required: helpers.withMessage('Role must be required', required),
+            },
+        }
+        const v$ = useVuelidate(rules, state, {
+            $externalResults
+        })
 
 
-             const signup = async() => {
-                v$.value.$clearExternalResults()
+        const signup = async () => {
+            v$.value.$clearExternalResults()
             v$.value.$validate()
             if (!v$.value.$error) {
-              let result = await axios.post(path.value, state)
+                let result = await axios.post(path.value, state)
                 if (result.data.success == true) {
-                  router.push({
-                    name: 'users'
-                  })
+                    router.push({
+                        name: 'users'
+                    })
                     Toast.fire({
                         text: result.data.message,
                         timer: 2000,
@@ -179,7 +176,7 @@ import store from '../../../stores'
                         position: 'top-end',
                     });
                 }
-                else{
+                else {
                     $externalResults.value = result.data.message
                 }
 
@@ -188,32 +185,32 @@ import store from '../../../stores'
             }
 
         }
-                    const edit_user = async () => {
-                        if (route.params.userId) {
-                            const data = {
-                                userId: route.params.userId
-                            }
-                            axios.post('edit-user', data)
-                                .then((response) => {
-                                    path.value = 'update-user'
-                                    state.username = response.data.user.username
-                                    state.email = response.data.user.email
-                                    state.password =response.data.user.password
-                                    state.phone = response.data.user.phone
-                                    state.role = response.data.user.role[0].id
-                                    state.userId = data.userId
-                                })
-                        }
-                    }
-
-
-            return {
-                state,
-                signup,
-                v$,
+        const edit_user = async () => {
+            if (route.params.userId) {
+                const data = {
+                    userId: route.params.userId
+                }
+                axios.post('edit-user', data)
+                    .then((response) => {
+                        path.value = 'update-user'
+                        state.username = response.data.user.username
+                        state.email = response.data.user.email
+                        state.password = response.data.user.password
+                        state.phone = response.data.user.phone
+                        state.role = response.data.user.role[0].id
+                        state.userId = data.userId
+                    })
             }
-
         }
+
+
+        return {
+            state,
+            signup,
+            v$,
+        }
+
     }
+}
 
 </script>
