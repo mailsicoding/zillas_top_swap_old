@@ -17,7 +17,8 @@ class Offers extends Model
         'price',
         'offer_type',
         'status',
-        'payment_method'
+        'payment_method',
+        'match_user_id',
     ];
 
     public function users()

@@ -208,115 +208,137 @@ export default {
         const user = reactive(store.getters["auth/currentUser"])
         let messaageInterval
         onMounted(() => {
-            // messaageInterval = setInterval(() => {
-            //     window.location.reload()
-            // }, 10000)
-            if (user.is_phone_verified === 0) {
-                router.push('/verify/phone')
-            } else if (user.is_email_verified === 0) {
-                router.push('/verify/email')
-            } else {
-                const offer = JSON.parse(localStorage.getItem('matched-offer'));
-                console.log(offer)
-                if (offer) {
-                    axios.post('get-match-offer-user', {
-                        offerId: offer.offer.id
-                    }).then(response => {
-                        localStorage.setItem('matched-offer-user', JSON.stringify(response.data))
-                        console.log(response.data);
-                        state.id = response.data.id
-                        state.match_user_id = offer.offer.match_user_id
-                        state.offer_id = offer.offer.id
-                        state.username = response.data.username
-                        state.price = offer.offer.price
-                        const db = getDatabase();
-                        const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/' + state.id + '_' + state.match_user_id)
-                        onValue(Fb_ref, (snapshot) => {
-                            const data = snapshot.val();
-                            console.log(data)
-                            messages.value = data
+                // messaageInterval = setInterval(() => {
+                //     window.location.reload()
+                // }, 10000)
+                if (user.is_phone_verified === 0) {
+                    router.push('/verify/phone')
+                } else if (user.is_email_verified === 0) {
+                    router.push('/verify/email')
+                } else {
+                    const offer = JSON.parse(localStorage.getItem('matched-offer'));
+                    console.log(offer)
+                    if (offer) {
+                        axios.post('get-match-offer-user', {
+                            offerId: offer.offer.id
+                        }).then(response => {
+                            localStorage.setItem('matched-offer-user', JSON.stringify(response.data))
+                            console.log(response.data);
+                            state.id = response.data.id
+                            state.match_user_id = offer.offer.match_user_id
+                            state.offer_id = offer.offer.id
+                            state.username = response.data.username
+                            state.price = offer.offer.price
+                            const db = getDatabase();
+                            const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/' + state.id + '_' + state.match_user_id)
+                            onValue(Fb_ref, (snapshot) => {
+                                const data = snapshot.val();
+                                console.log(data)
+                                messages.value = data
+                            });
+                        })
+
+                    }
+                    const db = getDatabase();
+                    const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/' + state.id + '_' + state.match_user_id)
+
+                    if (message.value != '') {
+                        const fb_push = push(Fb_ref)
+
+                        set(fb_push, {
+                            type: 'chat',
+                            id: currentuser.id,
+                            username: currentuser.username,
+                            // image: currentuser.image,
+                            message: data.message
                         });
+                        message.value = ''
+                    }
+
+                    onValue(Fb_ref, (snapshot) => {
+                        const data = snapshot.val();
+                        messages.value = data
                     })
+                }
+        })
+                onUpdated(() => {
+                    scrollBottom()
+                })
+                const currentuser = reactive(store.getters["auth/currentUser"])
+
+                const addMessage = async () => {
+                    const data = {
+                        message: message.value
+                    }
+                    const db = getDatabase();
+                    const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/' + state.id + '_' + state.match_user_id)
+
+                    if (message.value != '') {
+                        const fb_push = push(Fb_ref)
+
+                        set(fb_push, {
+                            type: 'chat',
+                            id: currentuser.id,
+                            username: currentuser.username,
+                            // image: currentuser.image,
+                            message: data.message
+                        });
+                        message.value = ''
+                    }
+
+                    onValue(Fb_ref, (snapshot) => {
+                        const data = snapshot.val();
+                        messages.value = data
+                    });
 
                 }
-            }
-        })
-        onUpdated(() => {
-            scrollBottom()
-        })
-        const currentuser = reactive(store.getters["auth/currentUser"])
-
-        const addMessage = async () => {
-            const data = {
-                message: message.value
-            }
-            const db = getDatabase();
-            const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/' + state.id + '_' + state.match_user_id)
-
-            if (message.value != '') {
-                const fb_push = push(Fb_ref)
-
-                set(fb_push, {
-                    type: 'chat',
-                    id: currentuser.id,
-                    username: currentuser.username,
-                    // image: currentuser.image,
-                    message: data.message
-                });
-                message.value = ''
-            }
-
-            onValue(Fb_ref, (snapshot) => {
-                const data = snapshot.val();
-                messages.value = data
-            });
-
-        }
-        // const delete_chat = ()=>{
-        //      const db = getDatabase();
-        //        const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/'+state.id+'_'+state.match_user_id)
-        //        remove(Fb_ref)
-        // }
-        const showPopup = () => {
-            popup.value = true;
-        }
-
-        const scrollBottom = () => {
-            if (messages.value) {
-                let el = hasScrolledToBottom.value;
-                console.log('ele', el);
-                el.scrollTop = el.scrollHeight;
-            }
-        }
-        const historyMatch = async () => {
-            const offer = JSON.parse(localStorage.getItem('matched-offer'));
-            const data = {
-                user_id: offer.offer.user_id,
-                offer_id: offer.offer.id,
-                price: offer.offer.price
-            }
-            axios.post('order-history', data, { offerId: offer.offer.id }).then((response) => {
-                console.log(response.data)
-                // this.offerId=response.data.id
-                // if (response.data.status == true) {
-                //     // state.price = '';
-                //     // state.user_id = '';
+                // const delete_chat = ()=>{
+                //      const db = getDatabase();
+                //        const Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/'+state.id+'_'+state.match_user_id)
+                //        remove(Fb_ref)
                 // }
-            })
-        }
+                const showPopup = () => {
+                    popup.value = true;
+                }
 
-        onUnmounted(() => {})
-        return {
-            messages,
-            message,
-            addMessage,
-            user,
-            state,
-            hasScrolledToBottom,
-            showPopup,
-            popup,
-            historyMatch,
+                const scrollBottom = () => {
+                    if (messages.value) {
+                        let el = hasScrolledToBottom.value;
+                        console.log('ele', el);
+                        el.scrollTop = el.scrollHeight;
+                    }
+                }
+                const historyMatch = async () => {
+                    const offer = JSON.parse(localStorage.getItem('matched-offer'));
+                    const data = {
+                        user_id: offer.offer.user_id,
+                        offer_id: offer.offer.id,
+                        price: offer.offer.price
+                    }
+                    axios.post('order-history', data, {
+                        offerId: offer.offer.id
+                    }).then((response) => {
+                        console.log(response.data)
+                        // this.offerId=response.data.id
+                        // if (response.data.status == true) {
+                        //     // state.price = '';
+                        //     // state.user_id = '';
+                        // }
+                    })
+                }
+
+                onUnmounted(() => {})
+                return {
+                    messages,
+                    message,
+                    addMessage,
+                    user,
+                    state,
+                    hasScrolledToBottom,
+                    showPopup,
+                    popup,
+                    historyMatch,
+                }
+            }
         }
-    }
-}
 </script>
