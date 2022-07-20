@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\ContactUsController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\OfferController;
 use App\Http\Controllers\API\AccountSettingController;
@@ -48,11 +49,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('edit-user', [AuthController::class, 'edit_user']);
         Route::post('update-user', [AuthController::class, 'update']);
         Route::post('delete-user', [AuthController::class, 'delete_user']);
-        Route::post('delete-user', [AuthController::class, 'delete_user']);
+        // Route::post('delete-user', [AuthController::class, 'delete_user']);
         Route::get('get_roles', [AuthController::class, 'get_roles']);
         Route::post('edit_roles', [AuthController::class, 'edit_roles']);
         Route::get('get_permissions', [AuthController::class, 'get_permissions']);
         Route::post('assign_permission_role', [AuthController::class, 'assign_permission_role']);
+        // contact us mail module
+        Route::apiResource('contact', ContactUsController::class)->only(['index','destroy']);
+
     });
 
     Route::group(['middleware' => 'can:Offers,Getting Match'], function () {
@@ -66,6 +70,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('trade-cancel', [OfferController::class, 'trade_cancel']);
         Route::post('get-match-offer-user', [OfferController::class, 'get_match_offers']);
         Route::get('get-funds', [FundsController::class, 'get_funds']);
+        // Contact us mail module
+        Route::apiResource('contact', ContactUsController::class)->only('store');
+        // Route::post('add_contact_us', [ContactUsController::class, 'add_contact_us']);
     });
 
     Route::group(['middleware' => 'can:Funds'], function () {
@@ -73,7 +80,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('add-funds', [FundsController::class, 'add_funds']);
     });
 
-    Route::get('/user/permissions', [PermissionController::class,'getPermissions']);
+    Route::get('/user/permissions', [PermissionController::class, 'getPermissions']);
 
     Route::post('send-phone-verification-code', [AuthController::class, 'send_phone_verification_code']);
     Route::post('verify-phone-verification-code', [AuthController::class, 'verify_phone_verification_code']);
@@ -92,8 +99,18 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     // Funds
 
+    // ContactUs
+
+
+    // Route::post('edit_contact_us', [ContactUsController::class, 'add_contact_us']);
+
+
+
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
+
+// Route::apiResource('contact', ContactUsController::class);
+// Route::get('all_contacts', [ContactUsController::class, 'index']);
 
 

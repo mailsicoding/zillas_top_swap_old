@@ -2,11 +2,11 @@
     <main>
         <div class="container">
             <div class="d-flex flex-wrap justify-content-between">
-                <h1 class="mt-4 title-dashboard">Users</h1>
+                <h1 class="mt-4 title-dashboard">Contact List</h1>
                 <div class="box1 mt-4">
-                    <router-link class="btn btn-primary" to="/add_user">
+                    <!-- <router-link class="btn btn-primary" to="/add_contact_us">
                         Add
-                    </router-link>
+                    </router-link> -->
                 </div>
             </div>
 
@@ -19,35 +19,31 @@
 
                             <div class="graph__wrapper-width pd">
 
-                                <div class="table-container p-4">
+                                <div class="table-container">
                                     <table class="table-rwd" id="table">
                                         <thead>
                                             <tr>
                                                 <th>#</th>
                                                 <th>Name</th>
                                                 <th>Email</th>
-                                                <th>Phone</th>
-                                                <th>Role</th>
+                                                <th>Message</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(user, index) in users" :key="index">
+                                            <tr v-for="(contact, index) in contacts" :key="index">
                                                 <td>{{ index + 1 }}</td>
-                                                <td>{{ user.username }}</td>
-                                                <td>{{ user.email }}</td>
-                                                <td>{{ user.phone }}</td>
+                                                <td>{{ contact.name }}</td>
+                                                <td>{{ contact.email }}</td>
+                                                <td>{{ contact.message }}</td>
                                                 <td>
-                                                    <div v-if="user.roles.length !== 0">{{ user.roles[0].name }}</div>
-                                                </td>
-                                                <td>
-                                                    <router-link :to="'/edit_user/' + user.id">
+                                                    <!-- <router-link :to="'/edit_contact/' + contact.id">
                                                         <ion-icon class="pencil" name="pencil-outline"></ion-icon>
-                                                    </router-link>
+                                                    </router-link> -->
                                                     <!-- <a href="" class="view">
                                                         <ion-icon name="eye-outline"></ion-icon>
                                                     </a> -->
-                                                    <a href="#" @click="delete_user(user.id)">
+                                                    <a href="#" @click="delete_contact(contact.id)">
                                                         <ion-icon class="delete" name="trash-outline"></ion-icon>
                                                     </a>
                                                 </td>
@@ -71,60 +67,42 @@
     </main>
 </template>
 <script>
-import "datatables.net-dt/js/dataTables.dataTables";
-import "datatables.net-dt/css/jquery.dataTables.min.css";
-import axios from 'axios';
+import axios from 'axios'
 import {
     onMounted,
     ref,
     reactive,
     onUnmounted,
-    onBeforeMount
 } from 'vue'
-import store from '../../../stores'
 import {
-    useRouter, useRoute
-} from 'vue-router';
-export default {
-    name: 'Users',
-    setup() {
-        const users = ref([])
-        const user = reactive(store.getters["auth/currentUser"])
+    useRoute, useRouter
+} from 'vue-router'
 
+export default {
+    name: 'contacts',
+    setup() {
+        const contacts = ref([])
         const router = useRouter()
         const route = useRoute()
-        onBeforeMount(() => {
-            getUsers()
-            $(document).ready(function () {
-                $('#table').DataTable();
-            });
-        })
-        onMounted(() => {
-            if (user.is_phone_verified === 0) {
-                router.push('/verify/phone')
-            }
-            else if (user.is_email_verified === 0) {
-                router.push('/verify/email')
-            }
-        })
-        onUnmounted(() => {
-            getUsers()
 
+
+        onMounted(() => {
+            getContacts()
         })
-        const getUsers = async () => {
-            axios.get('all_users',)
+        // onUnmounted(() => {
+        //     // getContacts()
+        // })
+        const getContacts = async () => {
+            axios.get('/api/contact')
                 .then((response) => {
-                    users.value = response.data.users;
+                    contacts.value = response.data.contact;
                 })
         }
 
-        const delete_user = async (id) => {
-            const data = {
-                user_id: id
-            }
-            axios.post('delete-user', data)
+        const delete_contact = async (id) => {
+            axios.delete('/api/contact/'+ id)
                 .then((response) => {
-                    getUsers()
+                    getContacts()
                     Toast.fire({
                         text: response.data.message,
                         timer: 3000,
@@ -134,11 +112,9 @@ export default {
                 })
         }
         return {
-            users,
-            delete_user
+            contacts,
+            delete_contact
         }
-
     }
 }
-
 </script>

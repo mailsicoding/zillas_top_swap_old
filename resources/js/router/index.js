@@ -22,6 +22,8 @@ import Role from '../components/Web/Permissions/Role.vue'
 import Users from '../components/Web/Permissions/Users.vue'
 import addUser from '../components/Web/Permissions/AddUser.vue'
 import EditRole from '../components/Web/Permissions/EditRole.vue'
+import ContactUs from '../components/Web/ContactUs.vue'
+import AddContactUs from '../components/Web/AddContactUs.vue'
 import Store from "./../stores";
 // import router from 'vue-router'
 
@@ -149,6 +151,16 @@ const routes = [
                 path: '/add-funds',
                 name: 'AddFunds',
                 component: AddFunds
+            },
+            {
+                path: '/contacts',
+                name: 'contacts',
+                component: ContactUs
+            },
+            {
+                path: '/add_contact_us',
+                name: 'add_contact_us',
+                component: AddContactUs
             }
         ],
         meta: { requiresAuth: true }
@@ -165,7 +177,7 @@ const router = createRouter({
 
 
 
-// middleware 
+// middleware
 
 router.beforeEach((to, from, next) => {
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
@@ -186,7 +198,7 @@ router.beforeEach((to, from, next) => {
         (to.path === "/sign_up" && isLoggedIn)
     ) {
         next("/dashboard");
-    } 
+    }
      else {
         next();
     }
@@ -202,11 +214,11 @@ router.beforeResolve((to, from, next) => {
     }
     next()
   })
-  
+
   router.afterEach((to, from) => {
     // Complete the animation of the route progress bar.
       Startloader(false)
   })
-  
+
 
 export default router;
