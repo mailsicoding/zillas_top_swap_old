@@ -3,7 +3,6 @@
         <div class="container">
             <h1 class="mt-4 title-dashboard">Dashboard</h1>
 
-
             <div class="row">
                 <div class="col-md-12 main-b">
                     <div class="row active-card">
@@ -49,7 +48,7 @@
                                 <p>You don't have active offer</p>
                             </div>
                             <div v-else class="acivity-details">
-                            <template v-for="offer in offers" :key="offer.id">
+                                <template v-for="offer in offers" :key="offer.id">
 
                                     <div class="activity-info">
                                         <div class="activity-shop">
@@ -60,7 +59,8 @@
                                                 <div class="activity-date" v-if="method == 'apple_pay'">Apple Pay</div>
                                                 <div class="activity-date" v-if="method == 'chime'">Chime</div>
                                                 <div class="activity-date" v-if="method == 'paypal'">Paypal</div>
-                                                <div class="activity-date" v-if="method == 'square_cash'">Square Cash</div>
+                                                <div class="activity-date" v-if="method == 'square_cash'">Square Cash
+                                                </div>
                                                 <div class="activity-date" v-if="method == 'venmo'">Venmo</div>
                                                 <div class="activity-date" v-if="method == 'zelle'">Zelle</div>
                                             </template>
@@ -73,8 +73,8 @@
                                                     @click.prevent="removeOffer(offer.id)">remove</a></div>
                                         </div>
                                     </div>
-                            </template>
-                                </div>
+                                </template>
+                            </div>
 
                             <router-link to="/create-offers">
                                 <div class="active-btn"><a href="">Create New Offer</a></div>
@@ -93,23 +93,29 @@
                             <div class="graph__wrapper-width">
                                 <div class="hide-cancel">
                                     <div class="hide-detail">
-                                        <input type="checkbox" name="" id="">
+                                        <input type="checkbox" :name="checked" id="" @click="getHistory">
                                         <p>Hide canceled Trades</p>
                                     </div>
                                 </div>
-                                <div class="acivity-details">
-                                    <div class="activity-info">
+                                <div class="acivity-details" v-for="history in orderBy" :key="history.id">
+
+                                    <div class="activity-info" v-if="history.offer_order.status == 'cancel'">
                                         <div class="activity-shop">
                                             <div class="activity-icon"><i class="fa fa-shopping-cart"
                                                     aria-hidden="true"></i></div>
-                                            <div class="activity-name">eoaoela</div>
+                                            <div class="activity-name">{{history.user_order.username}}</div>
                                         </div>
                                         <div class="activity-shop">
-                                            <div class="activity-date">11.05.2022</div>
-                                            <div class="activity-time">12:00pm</div>
+                                            <div class="activity-date">{{
+                                            $moment(history.offer_order.created_at).format("YYYY.MM.DD")
+                                            }}</div>
+                                            <div class="activity-time">{{
+                                            $moment(history.offer_order.created_at).format("hh:mm a")
+                                            }}
+                                            </div>
                                         </div>
                                         <div class="activity-shop">
-                                            <div class="acivity-price">$500.00</div>
+                                            <div class="acivity-price">${{history.offer_order.price}}</div>
                                             <div class="activity-next-icon"><a href="#"><i class="fa fa-chevron-right"
                                                         aria-hidden="true"></i></a></div>
                                         </div>
@@ -135,138 +141,141 @@
                 </div>
                 <div class="pop-tos">
                     <div class="tos1"><a @click.prevent="cancelTrade()">Cancel</a></div>
-                    <div class="tos2"><router-link to="/trade-in-process">Respond Now</router-link></div>
+                    <div class="tos2">
+                        <router-link to="/trade-in-process">Respond Now</router-link>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
-
 </template>
 
 <script>
-    import {
-        onMounted,
-        ref,
-        reactive,
-        computed,
-        onUnmounted,
-        onBeforeMount,
-    } from 'vue'
+import {
+    onMounted,
+    ref,
+    reactive,
+    computed,
+    onUnmounted,
+    onBeforeMount,
+} from 'vue'
 import store from '../../stores'
-import { useRouter } from 'vue-router'
-    export default {
-        name: 'Dashboard',
-        setup() {
+import {
+    useRouter
+} from 'vue-router'
+export default {
+    name: 'Dashboard',
+    setup() {
+        const checked= ref([])
+        const offers = ref([])
+        const orderBy = ref([])
+        const router = useRouter()
+        const user = reactive(store.getters["auth/currentUser"])
+        const funds = ref(0.0);
+        const respond = ref(false);
+        const matchOffer = ref({});
+        let fundsInterval;
 
-            const offers = ref([])
-            const router = useRouter()
-            const user = reactive(store.getters["auth/currentUser"])
-            const funds = ref(0.0);
-            const respond = ref(false);
-            const matchOffer = ref({});
-            let fundsInterval;
-
-            onBeforeMount(() => {
+        onBeforeMount(() => {
+            getFunds()
+            fundsInterval = setInterval(() => {
                 getFunds()
-                fundsInterval =  setInterval(() => {
-                    getFunds()
-                    getMatchStatus()
-                },5000)
-            })
+                getMatchStatus()
+            }, 5000)
+        })
 
-            onMounted(() => {
-                if(user.is_phone_verified === 0)
-                {
-                    router.push('/verify/phone')
-                }
-                else if(user.is_email_verified === 0)
-                {
-                    router.push('/verify/email')
-                }
-                else
-                {
+        onMounted(() => {
+            if (user.is_phone_verified === 0) {
+                router.push('/verify/phone')
+            } else if (user.is_email_verified === 0) {
+                router.push('/verify/email')
+            } else {
+                getOffers(), getHistory()
+            }
+        })
+
+        onUnmounted(() => {
+            clearInterval(fundsInterval);
+        })
+
+        const getOffers = async () => {
+            axios.get('get-offers', )
+                .then((response) => {
+                    offers.value = response.data.offers;
+                })
+        }
+
+        const getHistory = async () => {
+            axios.get('get-history', )
+                .then((response) => {
+                    console.log(response.data.history)
+                    orderBy.value = response.data.history;
+                })
+        }
+
+        const getFunds = async () => {
+
+            axios.get('get-funds')
+                .then((response) => {
+                    funds.value = response.data;
+                })
+        }
+
+        const getMatchStatus = async () => {
+
+            axios.get('get-match-status')
+                .then((response) => {
+                    if (response.data.status == true) {
+                        respond.value = true;
+                        matchOffer.value = response.data.offer;
+                        localStorage.setItem('matched-offer', JSON.stringify(matchOffer.value));
+                    }
+                })
+        }
+
+        const cancelTrade = async () => {
+
+            axios.post('trade-cancel', matchOffer.value)
+                .then((response) => {
+                    if (response.data.status == true) {
+                        respond.value = false;
+                        matchOffer = {};
+                        localStorage.removeItem('matched-offer');
+                    }
+                })
+        }
+
+        const removeOffer = async (offerId) => {
+            const data = {
+                offerId: offerId
+            }
+            axios.post('remove-offer', data)
+                .then((response) => {
+
                     getOffers()
-                }
-            })
 
-            onUnmounted(()=>{
-                clearInterval(fundsInterval);
-            })
+                    Toast.fire({
+                        text: response.data.message,
+                        timer: 3000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+                })
+        }
 
-            const getOffers = async () => {
-                axios.get('get-offers',)
-                    .then((response) => {
-                        offers.value = response.data.offers;
-                    })
-            }
-
-
-            const getFunds = async() => {
-
-                    axios.get('get-funds')
-                        .then((response) => {
-                            funds.value = response.data;
-                        })
-                    }
-
-            const getMatchStatus = async() => {
-
-                    axios.get('get-match-status')
-                        .then((response) => {
-                            if(response.data.status == true)
-                            {
-                                respond.value = true;
-                                matchOffer.value = response.data.offer;
-                                localStorage.setItem('matched-offer',JSON.stringify(matchOffer.value));
-                            }
-                        })
-                    }
-
-            const cancelTrade = async() => {
-
-                    axios.post('trade-cancel',matchOffer.value)
-                        .then((response) => {
-                            if(response.data.status == true)
-                            {
-                                respond.value = false;
-                                matchOffer = {};
-                                localStorage.removeItem('matched-offer');
-                            }
-                        })
-                    }
-
-
-            const removeOffer = async (offerId) => {
-                const data = {
-                    offerId: offerId
-                }
-                axios.post('remove-offer', data)
-                    .then((response) => {
-
-                        getOffers()
-
-                        Toast.fire({
-                            text: response.data.message,
-                            timer: 3000,
-                            icon: 'success',
-                            position: 'top-end',
-                        });
-                    })
-            }
-
-            return {
-                offers,
-                removeOffer,
-                funds,
-                respond,
-                cancelTrade
-            }
+        return {
+            offers,
+            removeOffer,
+            funds,
+            respond,
+            cancelTrade,
+            orderBy, checked
         }
     }
-
+}
 </script>
-<style>
 
+<style>
 .overlay {
     position: fixed;
     top: 0;
@@ -278,37 +287,41 @@ import { useRouter } from 'vue-router'
     visibility: visible;
     opacity: 1;
 }
-.pop-tos{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 20px;
+
+.pop-tos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
 }
-.pop-tos a{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 20px;
-  background: rgb(4, 138, 79);
-  border-radius: 4px;
-  text-decoration: none;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
-  border: 1px solid rgb(4, 138, 79);
-  border-radius:10px;
-  text-decoration: none;
-  cursor: pointer;
-  width: 142px;
+
+.pop-tos a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    background: rgb(4, 138, 79);
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid rgb(4, 138, 79);
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    width: 142px;
 }
-.pop-tos a:hover{
-  background-color: transparent;
-  border: 1px solid rgb(4, 138, 79);
-  transition: all .5s ease-in-out;
-  color: rgb(4, 138, 79);
+
+.pop-tos a:hover {
+    background-color: transparent;
+    border: 1px solid rgb(4, 138, 79);
+    transition: all .5s ease-in-out;
+    color: rgb(4, 138, 79);
 }
-.tos1{
-  padding-right: 10px;
-  color:#fff;
+
+.tos1 {
+    padding-right: 10px;
+    color: #fff;
 }
 </style>

@@ -7,6 +7,7 @@ use App\Http\Controllers\API\OfferController;
 use App\Http\Controllers\API\AccountSettingController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\FundsController;
+use App\Http\Controllers\Api\OrderByController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,8 +56,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('get_permissions', [AuthController::class, 'get_permissions']);
         Route::post('assign_permission_role', [AuthController::class, 'assign_permission_role']);
         // contact us mail module
-        Route::apiResource('contact', ContactUsController::class)->only(['index','destroy']);
-
+        Route::apiResource('contact', ContactUsController::class)->only(['index', 'destroy']);
     });
 
     Route::group(['middleware' => 'can:Offers,Getting Match'], function () {
@@ -67,8 +67,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('update-offer', [OfferController::class, 'update']);
         Route::post('match-offers', [OfferController::class, 'match_offers']);
         Route::get('get-match-status', [OfferController::class, 'get_match_status']);
+        Route::get('get-history', [OrderByController::class, 'get_history']);
+        Route::get('get-cancel-data', [OrderByController::class, 'hide_cancel']);
         Route::post('trade-cancel', [OfferController::class, 'trade_cancel']);
         Route::post('get-match-offer-user', [OfferController::class, 'get_match_offers']);
+
+        Route::post('create-trade-settings', [AccountSettingController::class, 'create_trade_settings']);
         Route::get('get-funds', [FundsController::class, 'get_funds']);
         // Contact us mail module
         Route::apiResource('contact', ContactUsController::class)->only('store');
@@ -112,5 +116,3 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 // Route::apiResource('contact', ContactUsController::class);
 // Route::get('all_contacts', [ContactUsController::class, 'index']);
-
-

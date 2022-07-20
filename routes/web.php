@@ -8,6 +8,7 @@ use App\Http\Controllers\API\OfferController;
 use App\Http\Controllers\API\AccountSettingController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\FundsController;
+use App\Http\Controllers\Api\OrderByController;
 use App\Http\Controllers\API\ContactUsController;
 
 /*
@@ -78,6 +79,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('match-offers', [OfferController::class, 'match_offers']);
         Route::get('get-match-status', [OfferController::class, 'get_match_status']);
         Route::post('trade-cancel', [OfferController::class, 'trade_cancel']);
+        Route::post('order-history', [OrderByController::class, 'order_history']);
+        Route::get('get-cancel-data', [OrderByController::class, 'hide_cancel']);
+        Route::get('get-history', [OrderByController::class, 'get_history']);
+
         Route::post('get-match-offer-user', [OfferController::class, 'get_match_offers']);
         Route::get('get-funds', [FundsController::class, 'get_funds']);
 
@@ -90,7 +95,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('add-funds', [FundsController::class, 'add_funds']);
     });
 
-    Route::get('/user/permissions', [PermissionController::class,'getPermissions']);
+    Route::get('/user/permissions', [PermissionController::class, 'getPermissions']);
 
     Route::post('send-phone-verification-code', [AuthController::class, 'send_phone_verification_code']);
     Route::post('verify-phone-verification-code', [AuthController::class, 'verify_phone_verification_code']);
@@ -117,5 +122,4 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
 Route::get('{any}', function () {
     return view('welcome');
-})->where('any','.*');
-
+})->where('any', '.*');
