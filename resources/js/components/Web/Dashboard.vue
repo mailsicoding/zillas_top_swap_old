@@ -99,7 +99,7 @@
                                 </div>
                                 <div class="acivity-details" v-for="history in orderBy" :key="history.id">
 
-                                    <div class="activity-info" v-if="history.offer_order.status == 'cancel'">
+                                    <div class="activity-info">
                                         <div class="activity-shop">
                                             <div class="activity-icon"><i class="fa fa-shopping-cart"
                                                     aria-hidden="true"></i></div>
@@ -166,7 +166,6 @@ import {
 export default {
     name: 'Dashboard',
     setup() {
-        const checked= ref([])
         const offers = ref([])
         const orderBy = ref([])
         const router = useRouter()
@@ -269,7 +268,7 @@ export default {
             funds,
             respond,
             cancelTrade,
-            orderBy, checked
+            orderBy
         }
     }
 }
