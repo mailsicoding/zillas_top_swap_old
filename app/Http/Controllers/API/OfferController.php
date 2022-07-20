@@ -46,7 +46,7 @@ class OfferController extends Controller
         if ($v->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $v->errors()->first()
+                'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors()
 
             ]);
         }
@@ -133,7 +133,7 @@ class OfferController extends Controller
         if ($v->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => $v->errors()->first()
+                'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors()
 
             ]);
         }
@@ -227,7 +227,7 @@ class OfferController extends Controller
             ];
         } else {
             $o = $matched_offer[0];
-            $o->update(['status' => 'matched']);
+            $o->update(['status' => 'matched', 'match_user_id'=>Auth::user()->id]);
             $data = [
                 'success' => true,
                 'offer' => [
@@ -244,6 +244,8 @@ class OfferController extends Controller
     public function get_match_offers(Request $request)
     {
         $offer = Offers::find($request->offerId);
+        $offer->match_user_id = Auth::user()->id;
+        $offer->save();
         $user = User::find($offer->user_id);
         return $user;
     }

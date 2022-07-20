@@ -14,15 +14,17 @@
                 $(this).addClass("active");
             }
         });
-        $(document).ready( function () {
-          $('#table').DataTable();
-      } );
+    //     $(document).ready( function () {
+    //       $('#table').DataTable();
+    //   } );
     // Toggle the side navigation
     // $("#sidebarToggle").on("click", function(e) {
     //     e.preventDefault();
     //     $("body").toggleClass("sb-sidenav-toggled");
     // });
-
+    $('.send').on('click',function(){
+      $(".messages_container").stop().animate({ scrollTop: $(".messages_container")[0].scrollHeight}, 1000);
+    })
     $(".faq-a").click(function(){
         $(".faq-a").toggleClass("show");
         $(".main-lb-a").toggleClass("lb-show");
@@ -53,5 +55,5 @@
       $('.dropdown-item').on('click',function(){
         $('.dropdown-menu.dropdown__menu-right').toggle();
       })
-      
+
 })(jQuery);

@@ -19,6 +19,7 @@ class CreateOrderBiesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('offer_id');
             $table->foreign('offer_id')->references('id')->on('offers')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('match_user_id')->nullable();
             $table->integer('price');
             $table->timestamps();
         });

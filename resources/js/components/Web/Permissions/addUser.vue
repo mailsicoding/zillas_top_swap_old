@@ -99,14 +99,14 @@
         useRouter, useRoute
     } from 'vue-router';
 import store from '../../../stores'
-    
+
     export default {
         name: 'addUser',
         setup() {
             const state = reactive({
                 username: '',
                 email: '',
-                code: '',
+                code: '+92',
                 phone: '',
                 password: '',
                 role: '1',
@@ -116,6 +116,7 @@ import store from '../../../stores'
             const router = useRouter()
             const route = useRoute()
             const user = reactive(store.getters["auth/currentUser"])
+            const path = ref('add_user')
 
             onMounted(()=>{
                         if(user.is_phone_verified === 0)
@@ -131,7 +132,7 @@ import store from '../../../stores'
                             edit_user()
                         }
                     })
-            
+
             const $externalResults = ref({})
             const rules = {
                 username: {
@@ -160,41 +161,10 @@ import store from '../../../stores'
             const v$ = useVuelidate(rules, state, {
                 $externalResults
             })
-            
-         
-            // const signup=async () => {
-            //     v$.value.$clearExternalResults()
-            //     v$.value.$validate() // checks all inputs
-            //     if (!v$.value.$error) {
-            //         const data = {
-            //             username: state.username,
-            //             email: state.email,
-            //             phone: '+92' + state.phone,
-            //             password: state.password,
-            //             role: state.role,
-            //         }
-            //         axios.post("add_user", data).then(response => {
-            //             if (response.data.success) {
-            //                 router.push({
-            //                     name: '/users'
-            //                 });
 
-            //                 Toast.fire({
-            //                     text: response.data.message,
-            //                     timer: 3000,
-            //                     icon: 'success',
-            //                     position: 'top-end',
-            //                 });
-            //             } else {
-            //                 $externalResults.value = response.data.message
-            //             }
-
-            //         })
-            //     }
-            // }
-            const path = ref('add_user')
 
              const signup = async() => {
+                v$.value.$clearExternalResults()
             v$.value.$validate()
             if (!v$.value.$error) {
               let result = await axios.post(path.value, state)
@@ -210,12 +180,7 @@ import store from '../../../stores'
                     });
                 }
                 else{
-                    Toast.fire({
-                        text: result.data.message,
-                        timer: 2000,
-                        icon: 'success',
-                        position: 'top-end',
-                    });
+                    $externalResults.value = result.data.message
                 }
 
             } else {
@@ -233,7 +198,7 @@ import store from '../../../stores'
                                     path.value = 'update-user'
                                     state.username = response.data.user.username
                                     state.email = response.data.user.email
-                                    state.password =response.data.user.password 
+                                    state.password =response.data.user.password
                                     state.phone = response.data.user.phone
                                     state.role = response.data.user.role[0].id
                                     state.userId = data.userId

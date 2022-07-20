@@ -59,16 +59,10 @@ class AuthController extends Controller
             'phone' => 'required|unique:users',
             'password' => 'required',
         ]);
-        $errors = $v->errors()->toArray();
-        $err = [];
-        foreach($errors as $index => $e){
-            $err[$index] = $e[0];
-        }
         if ($v->fails()) {
             return response()->json([
                 'success' => false,
-                // 'errors' => $err,
-                'message' => reset($err),
+                'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors(),
                 'user'=>(object) []
             ]);
         }
@@ -79,26 +73,31 @@ class AuthController extends Controller
             'password' => Hash::make($inputs['password']),
         ]);
 
+        Auth::login($user);
+
+        $this->sendMessage($user);
+        $this->sendEmail($user);
+
         $token = $user->createToken($user->email)->plainTextToken;
-        $user['token'] = $token;
 
-        $role = Role::whereId(1)->pluck('name');
-        $user->assignRole($role);
+        $role = Role::find(1);
+        $user->assignRole($role->name);
+        $role->givePermissionTo(['Dashboard','Account Setting']);
 
 
-        $users = User::find($user->id)->only(['username','email','phone','is_email_verified','is_phone_verified']);
-        $users['token'] = $token;
+        $u = User::find($user->id)->only(['id','username','email','phone','is_email_verified','is_phone_verified']);
+        $u['token'] = $token;
         return response()->json([
             'success' => true,
             'message' => 'User registered Successfully.',
-            'user' => $users,
-            // 'errors' => (object) [],
+            'user' => $u,
         ]);
     }
     public function store_user(Request $request)
     {
 
         $inputs = $request->all();
+        $inputs['phone'] = $inputs['code'].$inputs['phone'];
         $v = Validator::make($inputs, [
             'username' => 'required|string|alpha_dash|min:3|unique:users',
             'email' => 'required|email|unique:users',
@@ -202,16 +201,10 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-        $errors = $v->errors()->toArray();
-        $err = [];
-        foreach($errors as $index => $e){
-            $err[$index] = $e[0];
-        }
         if ($v->fails()) {
             return response()->json([
                 'success' => false,
-                // 'errors' => $err,
-                'message' => reset($err),
+                'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors(),
                 'user' => (object) [],
             ]);
         }
@@ -219,8 +212,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            // $this->sendMessage($user);
-            // $this->sendEmail($user);
+
 
             // User online or not
             $u= User::find($user->id);
@@ -229,7 +221,7 @@ class AuthController extends Controller
 
             $token = $user->createToken($user->email)->plainTextToken;
 
-            $user = User::find($user->id)->only(['username','email','phone','is_email_verified','is_phone_verified',]);
+            $user = User::find($user->id)->only(['username','email','phone','is_email_verified','is_phone_verified','id','image',]);
             $user['token'] = $token;
 
             return response()->json([
@@ -290,7 +282,7 @@ class AuthController extends Controller
             'email_code' => $code
         ]);
 
-        Mail::to($user->email)->send(new VerificationMail($user, $code));
+        // Mail::to($user->email)->send(new VerificationMail($user, $code));
     }
 
     public function send_phone_verification_code()

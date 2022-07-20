@@ -12,15 +12,16 @@ class orderBy extends Model
     protected $fillable = [
         'user_id',
         'offer_id',
+        'match_user_id',
         'price'
     ];
 
     public function user_order()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function offer_order()
     {
-        return $this->hasMany(Offers::class);
+        return $this->belongsTo(Offers::class, 'offer_id');
     }
 }
