@@ -60,13 +60,13 @@ class OrderByController extends Controller
 
     public function hide_cancel(Request $request)
     {
-        $offer = Offers::where($request->offer_id)->orWhere(['status' => 'open'])->get();
+        // $offer = Offers::where($request->offer_id)->orWhere(['status' => 'open'])->get();
         $gethidden = orderBy::with('user_order', 'offer_order')->get();
 
         $response = [
             'success' => true,
             'history' => $gethidden,
-            'not_cancel' => $offer,
+            // 'not_cancel' => $offer,
             'message' => 'Order  List.',
         ];
         return response()->json($response);
