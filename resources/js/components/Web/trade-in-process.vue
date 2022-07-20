@@ -266,7 +266,7 @@
                         type: 'chat',
                         id: currentuser.id,
                         username: currentuser.username,
-                        image: currentuser.image,
+                        // image: currentuser.image,
                         message: data.message
                     });
                     message.value=''                    
