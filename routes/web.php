@@ -9,6 +9,7 @@ use App\Http\Controllers\API\AccountSettingController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\FundsController;
 use App\Http\Controllers\Api\OrderByController;
+use App\Http\Controllers\API\ContactUsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('edit_roles', [AuthController::class, 'edit_roles']);
         Route::get('get_permissions', [AuthController::class, 'get_permissions']);
         Route::post('assign_permission_role', [AuthController::class, 'assign_permission_role']);
+        // contact us mail module
+        Route::get('all_contacts', [ContactUsController::class, 'index']);
+        Route::post('delete-contact', [ContactUsController::class, 'delete_contact']);
     });
 
     Route::group(['middleware' => 'can:Offers,Getting Match'], function () {
@@ -81,6 +85,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         Route::post('get-match-offer-user', [OfferController::class, 'get_match_offers']);
         Route::get('get-funds', [FundsController::class, 'get_funds']);
+
+        // contact us mail module
+        Route::post('add_contact_us', [ContactUsController::class, 'add_contact_us']);
     });
 
     Route::group(['middleware' => 'can:Funds'], function () {
@@ -108,9 +115,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     // Funds
 
 
+    Route::post('add_contact_us', [ContactUsController::class, 'add_contact_us']);
+
     Route::post('logout', [AuthController::class, 'logout']);
 });
-
 
 Route::get('{any}', function () {
     return view('welcome');
