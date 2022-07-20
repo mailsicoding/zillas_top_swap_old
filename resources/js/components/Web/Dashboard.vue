@@ -155,7 +155,6 @@ import {
     onMounted,
     ref,
     reactive,
-    computed,
     onUnmounted,
     onBeforeMount,
 } from 'vue'
@@ -192,6 +191,7 @@ export default {
                 getOffers(), getHistory()
             }
         })
+    
 
         onUnmounted(() => {
             clearInterval(fundsInterval);
