@@ -36,11 +36,11 @@
                 </router-link>
 
 
-                <!-- <router-link  v-if="can('Dashboard') == true" class="nav-link"  to="/trade-setting"><div  class="sb-nav-link-icon ">
+                <router-link  v-if="can('Dashboard') == true" class="nav-link"  to="/trade-setting"><div  class="sb-nav-link-icon ">
                       <i class="fa fa-tachometer-alt" aria-hidden="true"></i>
                     </div>
                     Trade Setting
-                  </router-link> -->
+                  </router-link>
 
                 <router-link v-if="can('Account Setting') == true" class="nav-link" to="/account-setting">
                     <div class="sb-nav-link-icon ">
@@ -67,6 +67,12 @@
                         <i class="fa fa-tachometer-alt" aria-hidden="true"></i>
                     </div>
                     Contact Us
+                </router-link>
+                <router-link class="nav-link" to="/admin_user_chat">
+                    <div class="sb-nav-link-icon ">
+                        <i class="fas fa-comment" aria-hidden="true"></i>
+                    </div>
+                    Chat with Users
                 </router-link>
 
 
