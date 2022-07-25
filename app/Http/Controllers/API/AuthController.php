@@ -575,4 +575,9 @@ class AuthController extends Controller
             'message' => "Assign Permissions successfully",
         ]);
     }
+    public function search_admin_chat(Request $request){
+        $users = User::where('username', 'LIKE', "%{$request->name}%")->get();
+        return response()->json(['users'=>$users]);
+    }
+    
 }

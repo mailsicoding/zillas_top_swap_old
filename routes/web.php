@@ -56,6 +56,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(['middleware' => 'can:Users,Roles'], function () {
         Route::get('all_users', [AuthController::class, 'index']);
+        Route::post('search_admin_chat', [AuthController::class, 'search_admin_chat']);
         Route::post('add_user', [AuthController::class, 'store_user']);
         Route::post('edit-user', [AuthController::class, 'edit_user']);
         Route::post('update-user', [AuthController::class, 'update']);
