@@ -8,7 +8,7 @@ use App\Http\Controllers\API\OfferController;
 use App\Http\Controllers\API\AccountSettingController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\FundsController;
-use App\Http\Controllers\Api\OrderByController;
+use App\Http\Controllers\API\OrderByController;
 use App\Http\Controllers\API\ContactUsController;
 
 /*
@@ -54,8 +54,9 @@ Route::post('update-password', [AuthController::class, 'update_password']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
+    Route::get('getRole', [PermissionController::class, 'getRole']);
+
     Route::group(['middleware' => 'can:Users,Roles'], function () {
-        Route::get('all_users', [AuthController::class, 'index']);
         Route::post('search_admin_chat', [AuthController::class, 'search_admin_chat']);
         Route::post('add_user', [AuthController::class, 'store_user']);
         Route::post('edit-user', [AuthController::class, 'edit_user']);
@@ -80,7 +81,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('match-offers', [OfferController::class, 'match_offers']);
         Route::get('get-match-status', [OfferController::class, 'get_match_status']);
         Route::post('trade-cancel', [OfferController::class, 'trade_cancel']);
-        Route::post('order-history', [OrderByController::class, 'order_history']);
         Route::get('get-cancel-data', [OrderByController::class, 'hide_cancel']);
         Route::get('get-history', [OrderByController::class, 'get_history']);
 
@@ -89,11 +89,24 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
         // contact us mail module
         Route::post('add_contact_us', [ContactUsController::class, 'add_contact_us']);
+
+        Route::get('find_operator', [OfferController::class, 'find_operator']);
     });
+
+    Route::get('all_users', [AuthController::class, 'index']);
+
+    Route::get('get_player_count', [AuthController::class, 'get_player_count']);
+    Route::get('get_operator_count', [AuthController::class, 'get_operator_count']);
+
+    Route::post('get_buyer', [OfferController::class, 'get_buyer']);
+    Route::post('get_seller', [OfferController::class, 'get_seller']);
+    Route::post('change_operator_status', [OfferController::class, 'change_operator_status']);
+    Route::post('order-history', [OrderByController::class, 'order_history']);
 
     Route::group(['middleware' => 'can:Funds'], function () {
         Route::get('players', [FundsController::class, 'players']);
         Route::post('add-funds', [FundsController::class, 'add_funds']);
+        Route::get('getOperators', [AuthController::class, 'getOperators']);
     });
 
     Route::get('/user/permissions', [PermissionController::class, 'getPermissions']);

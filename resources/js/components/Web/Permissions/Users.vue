@@ -93,12 +93,7 @@ export default {
 
         const router = useRouter()
         const route = useRoute()
-        onBeforeMount(() => {
-            getUsers()
-            $(document).ready(function () {
-                $('#table').DataTable();
-            });
-        })
+
         onMounted(() => {
             if (user.is_phone_verified === 0) {
                 router.push('/verify/phone')
@@ -106,23 +101,22 @@ export default {
             else if (user.is_email_verified === 0) {
                 router.push('/verify/email')
             }
-        })
-        onUnmounted(() => {
             getUsers()
-
         })
+
         const getUsers = async () => {
-            axios.get('all_users',)
+            await axios.get('all_users',)
                 .then((response) => {
                     users.value = response.data.users;
                 })
+            $('#table').DataTable();
         }
 
         const delete_user = async (id) => {
             const data = {
                 user_id: id
             }
-            axios.post('delete-user', data)
+            await axios.post('delete-user', data)
                 .then((response) => {
                     getUsers()
                     Toast.fire({

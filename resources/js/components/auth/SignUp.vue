@@ -25,9 +25,11 @@
             </b>
         </div>
         <div class="email-feild account-feild phone-num-inter">
-            <input type="text" style="width:100px;margin-right:10px" v-model="state.code" disabled placeholder="+92"
-                class="code-num" required="">
-            <input type="text" v-model="state.phone" placeholder="3xxxxxxxxx" class="f-num" required="">
+            <select  v-model="state.code" style="width: 120px;padding: 20px;border-radius: 30px;outline: none;border: 1px solid rgb(241, 238, 238);">
+                    <option value="+1">+1</option>
+                    <option value="+92">+92</option>
+              </select>
+            <input type="text" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required="">
 
         </div>
         <div v-if="v$.phone.$error" style="text-align:center">
@@ -81,7 +83,7 @@ import store from '../../stores'
             const state = reactive({
                 username: '',
                 email: '',
-                code: '',
+                code: '+1',
                 phone: '',
                 password: '',
 
@@ -120,10 +122,10 @@ import store from '../../stores'
                     const data = {
                         username: state.username,
                         email: state.email,
-                        phone: '+92' + state.phone,
+                        phone: state.code + state.phone,
                         password: state.password,
                     }
-                    axios.post("signup", data).then(response => {
+                    await axios.post("signup", data).then(response => {
                         if (response.data.success) {
 
                         store.dispatch("auth/setCurrentUser", response.data.user);

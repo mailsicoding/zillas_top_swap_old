@@ -102,7 +102,7 @@
                     const data = {
                         roleId: route.params.roleId
                     }
-                    axios.post('edit_roles', data)
+                    await axios.post('edit_roles', data)
                         .then((response) => {
                             state.roleId = data.roleId
                             state.role = response.data.role.name
@@ -112,7 +112,7 @@
             }
 
             const get_permissions = async () => {
-                    axios.get('get_permissions')
+                    await axios.get('get_permissions')
                         .then((response) => {
                             u_perm.value = response.data.data
                             console.log(u_perm.value);
@@ -123,7 +123,7 @@
                     permissions:perm.value,
                     roleId: route.params.roleId
                 }
-                    axios.post('assign_permission_role', data)
+                    await axios.post('assign_permission_role', data)
                         .then((response) => {
                             router.push('/roles')
                         })

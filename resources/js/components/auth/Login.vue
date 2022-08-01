@@ -66,7 +66,7 @@ import { useRouter } from 'vue-router';
                         required: helpers.withMessage('Email must be required', required),
                         email: helpers.withMessage("Enter valid email address.",email),
                     },
-    
+
                     password: {
                         required: helpers.withMessage('Password must be required', required),
                         minLength: minLength(6)
@@ -81,9 +81,9 @@ import { useRouter } from 'vue-router';
             const login = async() => {
                 v$.value.$clearExternalResults()
                 v$.value.$validate() // checks all inputs
-                        
+
                 if (!v$.value.$error) {
-                    axios.post('login', state).then(response => {
+                    await axios.post('login', state).then(response => {
                         if (response.data.success == true) {
                             store.dispatch("auth/setCurrentUser", response.data.user);
 
@@ -98,7 +98,7 @@ import { useRouter } from 'vue-router';
                                 position: 'top-end',
                             });
 
-                            
+
 
 
                         }
@@ -113,7 +113,7 @@ import { useRouter } from 'vue-router';
                     })
 
                 }
-                
+
             }
 
             return {

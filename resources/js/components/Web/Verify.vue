@@ -248,7 +248,7 @@ import { useRouter } from 'vue-router'
             const ei4 = ref(null)
             const ei5 = ref(null)
             const ei6 = ref(null)
-            
+
             const phonePopup = ref(1)
             const emailPopup  = ref(1)
             const phone = ref(store.getters['auth/currentUser'].phone)
@@ -295,10 +295,10 @@ import { useRouter } from 'vue-router'
                     required: helpers.withMessage('Fill OTP Correctly.', required),
                 },
             }
-            
+
             const v$ = useVuelidate(rules, phoneCode)
             const v1$ = useVuelidate(rules1, emailCode)
-            
+
             onMounted(() => {
                     if( user.is_phone_verified === 0 )
                     {
@@ -317,8 +317,8 @@ import { useRouter } from 'vue-router'
                     }
             })
 
-            const resendPhoneOTP = () => {
-                axios.post('send-phone-verification-code').then((response) => {
+            const resendPhoneOTP = async() => {
+                await axios.post('send-phone-verification-code').then((response) => {
                     Toast.fire({
                             text: response.data.message,
                             timer: 3000,
@@ -326,16 +326,16 @@ import { useRouter } from 'vue-router'
                             position: 'top-end',
                         });
                 })
-            } 
+            }
 
-            const verifyPhone = () => {
+            const verifyPhone = async() => {
                 v$.value.$validate()
                 if (!v$.value.$error) {
                 const str = '';
                 const OTP = str.concat(phoneCode.p1) + str.concat(phoneCode.p2) + str.concat(phoneCode.p3) +
                             str.concat(phoneCode.p4) + str.concat(phoneCode.p5) + str.concat(phoneCode.p6);
-                
-                axios.post('verify-phone-verification-code',{code : OTP}).then((response) => {
+
+                await axios.post('verify-phone-verification-code',{code : OTP}).then((response) => {
                     if(response.data.success == true)
                     {
                         Toast.fire({
@@ -358,10 +358,10 @@ import { useRouter } from 'vue-router'
                     }
                 })
                 }
-            } 
-            
-            const resendEmailOTP = () => {
-                axios.post('send-email-verification-code').then((response) => {
+            }
+
+            const resendEmailOTP = async() => {
+                await axios.post('send-email-verification-code').then((response) => {
                     Toast.fire({
                             text: response.data.message,
                             timer: 3000,
@@ -369,16 +369,16 @@ import { useRouter } from 'vue-router'
                             position: 'top-end',
                         });
                 })
-            } 
+            }
 
-            const verifyEmail = () => {
+            const verifyEmail = async() => {
                 v1$.value.$validate()
                 if (!v1$.value.$error) {
                 const str = '';
                 const OTP = str.concat(emailCode.e1) + str.concat(emailCode.e2) + str.concat(emailCode.e3) +
                             str.concat(emailCode.e4) + str.concat(emailCode.e5) + str.concat(emailCode.e6);
-                
-                axios.post('verify-email-verification-code',{code : OTP}).then((response) => {
+
+                await axios.post('verify-email-verification-code',{code : OTP}).then((response) => {
                     if(response.data.success == true)
                     {
                         Toast.fire({
@@ -401,7 +401,7 @@ import { useRouter } from 'vue-router'
                     }
                 })
                 }
-            }  
+            }
 
             const updatePhone = () => {
                     localStorage.removeItem("currentUser");
@@ -451,13 +451,13 @@ import { useRouter } from 'vue-router'
                             ei6.value = '';
                             ei1.value.focus()
                             break;
-                    
+
                         default:
                             ei1.value.focus()
                             break;
                     }
                 }
-                
+
             const changePhoneTab = (el) => {
                     switch (el) {
                         case 2:
@@ -489,7 +489,7 @@ import { useRouter } from 'vue-router'
                             pi6.value = '';
                             pi1.value.focus()
                             break;
-                    
+
                         default:
                             pi1.value.focus()
                             break;
@@ -546,7 +546,7 @@ import { useRouter } from 'vue-router'
     transition: opacity 500ms;
     visibility: visible;
     opacity: 1;
-} 
+}
 .overlay2 {
     position: fixed;
     top: 0;
@@ -557,7 +557,7 @@ import { useRouter } from 'vue-router'
     transition: opacity 500ms;
     visibility: visible;
     opacity: 1;
-}          
+}
  .popup_phone {
     margin: 70px auto;
     padding: 50px;
@@ -566,14 +566,14 @@ import { useRouter } from 'vue-router'
     width: 545px;
      height:565;
     position: relative;
-}         
+}
  .popup_phone h2 {
     margin-top: 0;
     color: #333;
     text-align: left;
     font-size: 20px;
 }
-          
+
  .popup_phone h3 {
     margin-top: 0;
     color: #333;
@@ -590,7 +590,7 @@ import { useRouter } from 'vue-router'
     font-weight: bold;
     text-decoration: none;
     color: #333;
-}  
+}
           we p{
     font-size:14px;
     font-weight: 400;
@@ -602,12 +602,12 @@ import { useRouter } from 'vue-router'
                   padding: 10px 20px 10px 20px;
               border-radius: 5px;
           }
-          
+
           .edit_link{
               text-align: right;
                   padding-top: 12px;
-          } 
-          
+          }
+
           .edit_link a{
               color: #15b0b1;
           }
@@ -630,21 +630,21 @@ justify-content: center;
           }
 .code h3{
  text-align: center
-          }           
+          }
       .code code_form{
               text-align: center
           }
           .code{
               width: 100%
-          }          
+          }
  .code h6{
      font-size: 14px;
     font-weight: 300;
      color: ##a3a3a3;
      text-align:center;
      padding: 10px 0px 10px 0px
-     
-          } 
+
+          }
  .Verify {
     display: flex;
     align-items: center;
@@ -662,14 +662,14 @@ justify-content: center;
     transition: all 0.3s ease-out;
     width: 350px;
     margin: auto;
-}         
+}
  .Verify:hover {
     background-color: transparent;
     border: 1px solid #e6e6e6;
     transition: all .5s ease-in-out;
     color: #adadad;
     text-decoration: none;
-}         
+}
   .Resend {
     display: flex;
     align-items: center;
@@ -688,15 +688,15 @@ justify-content: center;
     transition: all 0.3s ease-out;
     width: 350px;
     margin: auto;
-}         
+}
  .Resend:hover {
     background-color: transparent;
     border: 1px solid #e6e6e6;
     transition: all .5s ease-in-out;
     color: #adadad;
     text-decoration: none;
-}         
-          
+}
+
   @media(min-width:320px) and (max-width:575px) {
 	  .popup_phone
 	  {
@@ -734,5 +734,5 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
-}   
+}
      </style>

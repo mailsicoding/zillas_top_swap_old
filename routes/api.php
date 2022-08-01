@@ -44,6 +44,8 @@ Route::post('update-password', [AuthController::class, 'update_password']);
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
+    Route::get('getRole', [PermissionController::class, 'getRole']);
+
     Route::group(['middleware' => 'can:Users,Roles'], function () {
         Route::get('all_users', [AuthController::class, 'index']);
         Route::post('search_admin_chat', [AuthController::class, 'search_admin_chat']);

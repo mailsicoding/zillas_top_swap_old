@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\method;
 use App\Models\Offers\Offers;
+use App\Models\Operator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -246,7 +247,7 @@ class OfferController extends Controller
         $offer = Offers::find($request->offerId);
         $offer->match_user_id = Auth::user()->id;
         $offer->save();
-        $user = User::find($offer->user_id);
+        $user = User::find($offer->user_id)->only(['id','username','isLogin']);
         return $user;
     }
 
@@ -281,5 +282,65 @@ class OfferController extends Controller
         return response()->json([
             'status' => false
         ]);
+    }
+
+    public function find_operator(Request $request)
+    {
+        $operators = Operator::whereStatus(0)->get();
+        $operator = (object) [];
+        foreach($operators as $o)
+        {
+            $operator = User::where('id',$o->operator_id)->where('isLogin',1)->first();
+            if(!empty($operator))
+            {
+                $o->delete();
+                Operator::create(['operator_id' => $operator->id, 'status' => 1]);
+                break;
+            }
+        }
+        return $operator;
+    }
+
+    public function change_operator_status(Request $request)
+    {
+        $user = Auth::user();
+        $operator = Operator::whereOperatorId($user->id)->first();
+        $operator->update([ 'status' => 0]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Status Updated Successfully.',
+        ]);
+    }
+
+    public function get_buyer(Request $request)
+    {
+            $user = User::where('id',$request->buyer_id)->first();
+            if(!empty($user))
+            {
+                return response()->json([
+                    'status' => true,
+                    'buyer' => $user->only(['id','username'])
+                ]);
+            }
+            return response()->json([
+                'status' => false,
+                'buyer' => (object) [],
+            ]);
+    }
+
+    public function get_seller(Request $request)
+    {
+            $user = User::where('id',$request->seller_id)->first();
+            if(!empty($user))
+            {
+                return response()->json([
+                    'status' => true,
+                    'seller' => $user->only(['id','username'])
+                ]);
+            }
+            return response()->json([
+                'status' => false,
+                'seller' => (object) [],
+            ]);
     }
 }

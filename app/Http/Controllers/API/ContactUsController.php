@@ -37,7 +37,7 @@ class ContactUsController extends Controller
 
         if ($inputs == true) {
             $contact = ContactUs::create($inputs);
-            Mail::to($inputs['email'])->send(new ContactUsMail($inputs['message']));
+            // Mail::to($inputs['email'])->send(new ContactUsMail($inputs['message']));
             return response()->json([
                 'success' => true,
                 'contact' => $contact,

@@ -1,11 +1,11 @@
 <template>
-   
+
     <div class="login-title">
         <h1>Verify Code</h1>
     </div>
     <div class="logoin-logo"><img :src="'images/login-icon.png'" alt="Login icon">
     </div>
-    
+
     <div class="login-form">
         <div class="email-feild">
             <input type="text" v-model="state.code" placeholder="Code" required />
@@ -21,7 +21,7 @@
             <div class="forget" style="cursor:pointer"><a @click.prevent="resendCode()">Resend Code</a></div>
         </div>
     </div>
-           
+
 
 </template>
 
@@ -56,7 +56,7 @@ export default {
             v$.value.$clearExternalResults()
             v$.value.$validate()
             if(!v$.value.$error){
-                axios.post('verify-forget-email-code', state).then(response => {
+                await axios.post('verify-forget-email-code', state).then(response => {
                     if (response.data.success == true) {
                         localStorage.setItem('reset_token', response.data.reset_token)
                         Toast.fire({
@@ -77,12 +77,12 @@ export default {
                         }
                     }
                 });
-            
+
             }
-        } 
+        }
 
         const resendCode = async() => {
-            axios.post('send-forget-email-code', {email:state.email}).then(response => {
+            await axios.post('send-forget-email-code', {email:state.email}).then(response => {
                         if (response.data.success == true) {
                             localStorage.removeItem('email')
                             localStorage.removeItem('request_token')
@@ -98,7 +98,7 @@ export default {
                         }
             })
         }
-        
+
         onMounted(()=> {
             if(!localStorage.getItem('request_token') && !localStorage.getItem('email'))
             {

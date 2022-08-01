@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Mail\VerificationMail;
+use App\Models\Operator;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
@@ -19,12 +20,40 @@ use \Spatie\Permission\Models\Role;
 class AuthController extends Controller
 {
     public function index(){
+        $user = Auth::user();
+        $role = $user->roles()->first();
+        if($role->name == "Player" || $role->name == "Operator")
+        {
+            return response()->json([
+                'success' => true,
+                'message' => "get all records successfully",
+                'users'=> [User::with('roles')->whereId($user->id)->first()]
+            ]);
+        }
         $all_users = User::with('roles')->whereNotIn('id',[1])->get();
         return response()->json([
             'success' => true,
             'message' => "get all records successfully",
             'users'=>$all_users
         ]);
+    }
+
+    public function getOperators(){
+        $all_users = User::role('Player')->get();
+        return response()->json([
+            'success' => true,
+            'message' => "get all records successfully",
+            'users'=>$all_users
+        ]);
+    }
+
+    public function get_player_count(){
+        $players = User::role('Player')->get();
+        return count($players);
+    }
+    public function get_operator_count(){
+        $Operators = User::role('Operator')->get();
+        return count($Operators);
     }
 
     public function edit_user(Request $request){
@@ -87,6 +116,8 @@ class AuthController extends Controller
 
         $u = User::find($user->id)->only(['id','username','email','phone','is_email_verified','is_phone_verified']);
         $u['token'] = $token;
+        $u['role'] = $user->roles()->first()->name;
+
         return response()->json([
             'success' => true,
             'message' => 'User registered Successfully.',
@@ -117,6 +148,10 @@ class AuthController extends Controller
             'password' => Hash::make($inputs['password']),
         ]);
 
+        if($inputs['role'] == 2)
+        {
+            Operator::create(['operator_id' => $user->id]);
+        }
 
         $role = Role::whereId($inputs['role'])->pluck('name');
 
@@ -223,6 +258,7 @@ class AuthController extends Controller
 
             $user = User::find($user->id)->only(['username','email','phone','is_email_verified','is_phone_verified','id','image',]);
             $user['token'] = $token;
+            $user['role'] = $u->roles()->first()->name;
 
             return response()->json([
                 'success' => true,
@@ -255,18 +291,18 @@ class AuthController extends Controller
     public function sendMessage(User $user)
     {
         $receiverNumber = $user->phone;
-        // $code = rand(100000,999999);
-        $code = '123456';
-        // $message = "Your Zilla's Top Swap Verification Code is ".$code;
+        $code = rand(100000,999999);
+        // $code = '123456';
+        $message = "Your Zilla's Top Swap Verification Code is ".$code;
 
-        // $account_sid = env("TWILIO_SID");
-        // $auth_token = env("TWILIO_TOKEN");
-        // $twilio_number = env("TWILIO_FROM");
+        $account_sid = env("TWILIO_SID");
+        $auth_token = env("TWILIO_TOKEN");
+        $twilio_number = env("TWILIO_FROM");
 
-        // $client = new Client($account_sid, $auth_token);
-        //     $client->messages->create($receiverNumber, [
-        //         'from' => $twilio_number,
-        //         'body' => $message]);
+        $client = new Client($account_sid, $auth_token);
+            $client->messages->create($receiverNumber, [
+                'from' => $twilio_number,
+                'body' => $message]);
 
         $user->update([
             'phone_code' => $code
@@ -275,14 +311,14 @@ class AuthController extends Controller
 
     public function sendEmail(User $user)
     {
-        // $code = rand(100000,999999);
-        $code = '123456';
+        $code = rand(100000,999999);
+        // $code = '123456';
 
         $user->update([
             'email_code' => $code
         ]);
 
-        // Mail::to($user->email)->send(new VerificationMail($user, $code));
+        Mail::to($user->email)->send(new VerificationMail($user, $code));
     }
 
     public function send_phone_verification_code()
@@ -579,5 +615,5 @@ class AuthController extends Controller
         $users = User::where('username', 'LIKE', "%{$request->name}%")->get();
         return response()->json(['users'=>$users]);
     }
-    
+
 }

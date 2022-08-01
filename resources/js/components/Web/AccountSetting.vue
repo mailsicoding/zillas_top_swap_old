@@ -42,9 +42,9 @@
                                         <input type="text" v-model="state.code" disabled placeholder="+92" class="code-num"
                                             required="">
                                         <input type="text" v-model="state.phone" placeholder="3xxxxxxxxx" class="f-num" required="">
-                                            
+
                                     </div>
-                                    
+
                                     <div class="login-form-btn account-f-btn">
                                         <div class="btn account-b"><a @click.prevent="update()">Update</a></div>
                                     </div>
@@ -105,7 +105,7 @@ export default {
 
         const v$ = useVuelidate(rules,state,{ $externalResults });
 
-        const update = () => {
+        const update = async() => {
             v$.value.$clearExternalResults()
             v$.value.$validate()
             if(!v$.value.$error)
@@ -115,7 +115,7 @@ export default {
                     email: state.email,
                     phone: '+92'+state.phone,
                 }
-                axios.post('/update-setting',data).then(response => {
+                await axios.post('/update-setting',data).then(response => {
                     if(response.data.success)
                     {
                         const user = response.data.user;

@@ -54,7 +54,7 @@ export default {
                 v$.value.$validate() // checks all inputs
 
                 if (!v$.value.$error) {
-                    axios.post('send-forget-email-code', state).then(response => {
+                    await axios.post('send-forget-email-code', state).then(response => {
                         if (response.data.success == true) {
                             localStorage.setItem('email', state.email)
                             localStorage.setItem('request_token', response.data.request_token)

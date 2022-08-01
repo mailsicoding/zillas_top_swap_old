@@ -30,9 +30,11 @@
 
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="text" style="width:100px;margin-right:10px" v-model="state.code" disabled
-                            placeholder="+92" class="code-num" required="">
-                        <input type="text" v-model="state.phone" placeholder="3xxxxxxxxx" class="f-num" required="">
+                        <select  v-model="state.code" style="width: 120px;padding: 20px;outline: none;border: 1px solid rgb(241, 238, 238);">
+                    <option value="+1">+1</option>
+                    <option value="+92">+92</option>
+              </select>
+                        <input type="text" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required="">
 
                     </div>
                     <div v-if="v$.phone.$error">
@@ -106,7 +108,7 @@ export default {
         const state = reactive({
             username: '',
             email: '',
-            code: '+92',
+            code: '+1',
             phone: '',
             password: '',
             role: '1',
@@ -190,13 +192,15 @@ export default {
                 const data = {
                     userId: route.params.userId
                 }
-                axios.post('edit-user', data)
+                await axios.post('edit-user', data)
                     .then((response) => {
                         path.value = 'update-user'
                         state.username = response.data.user.username
                         state.email = response.data.user.email
                         state.password = response.data.user.password
                         state.phone = response.data.user.phone
+                        let text = response.data.user.phone;
+                        state.code = text.substr(0, 2);
                         state.role = response.data.user.role[0].id
                         state.userId = data.userId
                     })

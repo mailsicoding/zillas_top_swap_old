@@ -8,16 +8,16 @@
           </button>
           <!-- Navbar Search-->
           <div class="flex__wrapper">
-            
+
             <!-- Navbar-->
             <div class="flex__wrapper--center">
-              <div class="mr__right-10">
+              <!-- <div class="mr__right-10">
                 <button type="button" class="btn">
                   <i class="fa fa-bell" aria-hidden="true"></i>
-                  
+
                 </button>
-              </div>
-              
+              </div> -->
+
              <div class="dropdown">
                <!-- <a class="dropdown-item" v-on:click="logout"><i class="fas fa-sign-out-alt pr-2"></i> Logout</a> -->
                 <img class="dropdown-toggle" :src="'assets/images/profile.png'" alt=""
@@ -40,7 +40,7 @@ export default {
         localStorage.removeItem("currentUser");
         this.$store.commit("auth/removeCurrentUser");
         this.$router.push({name:'login'});
-        // axios.post('logout');
+        // await axios.post('logout');
       },
       account_setting(){
         this.$router.push({name:'acount-setting.index'});

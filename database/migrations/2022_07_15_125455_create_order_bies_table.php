@@ -16,11 +16,10 @@ class CreateOrderBiesTable extends Migration
         Schema::create('order_bies', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('offer_id');
-            $table->foreign('offer_id')->references('id')->on('offers')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('match_user_id')->nullable();
             $table->integer('price');
+            $table->string('method');
             $table->timestamps();
         });
     }
