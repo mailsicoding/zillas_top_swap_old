@@ -20,6 +20,7 @@ class CreateOrderBiesTable extends Migration
             $table->unsignedBigInteger('match_user_id')->nullable();
             $table->integer('price');
             $table->string('method');
+            $table->string('status')->default('complete');
             $table->timestamps();
         });
     }

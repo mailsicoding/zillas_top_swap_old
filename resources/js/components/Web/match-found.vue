@@ -47,7 +47,13 @@ import {
 } from '@vue/runtime-core'
 
 import app from '../../firebase'
-import { getDatabase,ref as storageRef, set,push,onValue } from "firebase/database";
+import {
+    getDatabase,
+    ref as storageRef,
+    set,
+    push,
+    onValue
+} from "firebase/database";
 
 export default {
     name: 'match-found',
@@ -69,74 +75,97 @@ export default {
             countDownTimer()
         })
 
-
         const matchedUser = async () => {
             const offer = JSON.parse(localStorage.getItem('matched-offer'));
             const matchedWith = localStorage.getItem('matched-with');
             if (offer && matchedWith) {
 
-                    await axios.post('get-match-offer-user', {
-                        offerId: offer.offer.id
-                    }).then(response => {
-                        localStorage.setItem('matched-offer-user', JSON.stringify(response.data))
-                        // console.log(response.data)
-                        username.value = response.data.username
-                        is_user_login.value = response.data.isLogin
-                        matched_user.value = response.data
-                    })
-                    await axios.get('find_operator').then(response => {
-                        if(Object.keys(response.data).length)
-                        {
-                            operator.value = response.data
-                            is_operator_login.value = 1
-                        }
-                    })
-
-                    if(is_operator_login.value == 0)
-                    {
-                        localStorage.removeItem('matched-offer-user')
-                        localStorage.removeItem('matched-with')
-                        localStorage.removeItem('offer')
-                        Toast.fire({
-                            text: 'Operator is busy. Please Try again later',
-                            timer: 2000,
-                            icon: 'success',
-                            position: 'top-end',
-                        });
-                        router.push('/match-request')
+                await axios.post('get-match-offer-user', {
+                    offerId: offer.offer.id
+                }).then(response => {
+                    localStorage.setItem('matched-offer-user', JSON.stringify(response.data))
+                    // console.log(response.data)
+                    username.value = response.data.username
+                    is_user_login.value = response.data.isLogin
+                    matched_user.value = response.data
+                })
+                await axios.get('find_operator').then(response => {
+                    if (Object.keys(response.data).length) {
+                        operator.value = response.data
+                        is_operator_login.value = 1
                     }
-                    else if(is_user_login.value == 0) {
-                        localStorage.removeItem('matched-offer-user')
-                        localStorage.setItem('matched-with','operator')
-                        localStorage.removeItem('offer')
-                        localStorage.setItem('operator' , JSON.stringify(operator.value))
-                        const requestedOffer = JSON.parse(localStorage.setItem('requested-offer'))
-                        Toast.fire({
-                            text: 'Matched user is logged out. Continue Trade with Admin',
-                            timer: 2000,
-                            icon: 'success',
-                            position: 'top-end',
-                        });
-                        const db = getDatabase();
+                })
+
+                if (is_operator_login.value == 0) {
+                    localStorage.removeItem('matched-offer-user')
+                    localStorage.removeItem('matched-with')
+                    localStorage.removeItem('matched-offer')
+                    localStorage.removeItem('requested-offer')
+                    Toast.fire({
+                        text: 'Operator is busy. Please Try again later',
+                        timer: 2000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+                    await axios.post('change_offer_status',{id: offer.offer.id})
+                    router.push('/match-request')
+                } else if (is_user_login.value == 0) {
+                    localStorage.removeItem('matched-offer-user')
+                    localStorage.setItem('matched-with', 'operator')
+                    localStorage.removeItem('offer')
+                    localStorage.setItem('operator', JSON.stringify(operator.value))
+                    const requestedOffer = JSON.parse(localStorage.setItem('requested-offer'))
+                    Toast.fire({
+                        text: 'Matched user is logged out. Continue Trade with Admin',
+                        timer: 2000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+                    const db = getDatabase();
                     const Fb_ref = storageRef(db, 'chat_matches')
 
                     const fb_push = push(Fb_ref)
-                        const methods = requestedOffer.methods;
-                        set(fb_push, {
-                            operator: operator.value.id,
-                            buyer: currentuser.id,
-                            seller: 0,
-                            offerId: 0,
-                            price: requestedOffer.price,
-                            methods: methods.toString(),
-                            operator_response: 0,
-                            seller_response: 0
-                        });
-                        router.push('/trade-in-process')
-                    }
+                    const methods = requestedOffer.methods;
+                    set(fb_push, {
+                        operator: operator.value.id,
+                        buyer: currentuser.id,
+                        seller: 0,
+                        offerId: 0,
+                        price: requestedOffer.price,
+                        methods: methods.toString(),
+                        operator_response: 0,
+                        seller_response: 0
+                    });
+                    router.push('/trade-in-process')
+                } else {
+                    localStorage.setItem('operator', JSON.stringify(operator.value))
+                    localStorage.setItem('seller', JSON.stringify(matched_user.value))
+                    const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'))
+                    Toast.fire({
+                        text: 'Continue Trade with Player',
+                        timer: 2000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+                    const db = getDatabase();
+                    const Fb_ref = storageRef(db, 'chat_matches')
 
-            }
-            else {
+                    const fb_push = push(Fb_ref)
+                    const methods = offer.matched_methods;
+                    set(fb_push, {
+                        operator: operator.value.id,
+                        buyer: currentuser.id,
+                        seller: matched_user.value.id,
+                        offerId: offer.offer.id,
+                        price: offer.offer.price,
+                        methods: methods.toString(),
+                        operator_response: 0,
+                        seller_response: 0
+                    });
+                    router.push('/trade-in-process')
+                }
+
+            } else {
                 router.push('/dashboard')
             }
         }

@@ -21,7 +21,11 @@
                             <div class="acivity-details process-details">
                                 <div class="activity-info process-info">
                                     <div class="activity-shop">
-                                        <div class="activity-name">{{ state.username }}</div>
+                                        <div class="activity-name">
+                                            <span v-if="trade.operator != ''"><b>Operator : </b> {{ trade.operator }}</span>
+                                            <span v-if="trade.buyer != ''"><br><b>Buyer : </b> {{ trade.buyer }}</span>
+                                            <span v-if="trade.seller != ''"><br><b>Seller : </b> {{ trade.seller }}</span>
+                                        </div>
                                     </div>
 
                                     <div class="activity-shop">
@@ -199,22 +203,21 @@ export default {
         const popup = ref(false)
         const router = useRouter()
         const state = reactive({
-            offer_id: '',
-            operator_id: '',
-            seller_id: '',
-            buyer_id: '',
+            offer_id: 0,
+            operator_id: 0,
+            seller_id: 0,
+            buyer_id: 0,
             username: '',
             price: '',
             methods: '',
         })
-        const operator = JSON.parse(localStorage.getItem('operator'));
-        const buyer = JSON.parse(localStorage.getItem('buyer'));
+        const trade = reactive({
+            operator: '',
+            buyer: '',
+            seller: '',
+        });
         let hasScrolledToBottom = ref('')
         const db = getDatabase();
-        if(user.role == 'Operator' && buyer)
-        var Fb_ref = storageRef(db, 'chat_messages/' + '0_' + user.id + '_0_' + buyer.id )
-        else if(user.role == 'Player' && operator)
-        var Fb_ref = storageRef(db, 'chat_messages/' + '0_' + operator.id + '_0_' + user.id )
 
         // console.log('hasScrolledToBottom', hasScrolledToBottom)
         onMounted(() => {
@@ -224,37 +227,97 @@ export default {
                 router.push('/verify/email')
             } else {
                 const operator = JSON.parse(localStorage.getItem('operator'));
+                const offer = JSON.parse(localStorage.getItem('matched-offer'));
+                const seller = JSON.parse(localStorage.getItem('seller'));
                 const buyer = JSON.parse(localStorage.getItem('buyer'));
                 const matchedWith = localStorage.getItem('matched-with');
                 const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'));
-                if (buyer && requestedOffer) {
+                if(offer){
+                    if(matchedWith && matchedWith == 'user'){
+                        state.username = user.username
+                        state.offer_id = offer.offer.id
+                        state.operator_id = operator.id
+                        state.seller_id = seller.id
+                        state.buyer_id = user.id
+                        state.price = offer.offer.price
+                        const meth = offer.matched_methods;
+                        state.methods = meth.toString()
+
+                        trade.operator = operator.username
+                        trade.seller = seller.username
+
+
+                        get(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id)).then((snapshot) => {
+
+                                messages.value = snapshot.val()
+                        })
+                    }
+                    else if(seller){
+                        state.username = buyer.username
+                        state.offer_id = offer.offer.id
+                        state.operator_id = user.id
+                        state.seller_id = seller.id
+                        state.buyer_id = buyer.id
+                        state.price = offer.offer.price
+                        const meth = offer.matched_methods;
+                        state.methods = meth.toString()
+
+                        trade.buyer = buyer.username
+                        trade.seller = seller.username
+
+
+                        get(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id)).then((snapshot) => {
+
+                                messages.value = snapshot.val()
+                        })
+                    }
+                    else{
+                        state.username = buyer.username
+                        state.offer_id = offer.offer.id
+                        state.operator_id = operator.id
+                        state.seller_id = user.id
+                        state.buyer_id = buyer.id
+                        state.price = offer.offer.price
+                        const meth = offer.matched_methods;
+                        state.methods = meth.toString()
+
+                        trade.operator = operator.username
+                        trade.buyer = buyer.username
+
+
+                        get(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id)).then((snapshot) => {
+
+                                messages.value = snapshot.val()
+                        })
+                    }
+                }
+                else if (buyer && requestedOffer) {
                     state.username = buyer.username
-                    state.offer_id = 0
                     state.operator_id = user.id
-                    state.seller_id = 0
                     state.buyer_id = buyer.id
                     state.price = requestedOffer.price
                     const meth = requestedOffer.methods;
                     state.methods = meth.toString()
 
+                    trade.buyer = buyer.username
 
-                    get(Fb_ref).then((snapshot) => {
+                    get(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id)).then((snapshot) => {
 
                             messages.value = snapshot.val()
                     })
 
                 } else if (matchedWith && matchedWith == 'operator' && requestedOffer) {
                     state.username = operator.username
-                    state.offer_id = 0
                     state.operator_id = operator.id
-                    state.seller_id = 0
                     state.buyer_id = user.id
                     state.price = requestedOffer.price
                     const meth = requestedOffer.methods;
                     state.methods = meth.toString()
 
+                    trade.operator = operator.username
 
-                    get(Fb_ref).then((snapshot) => {
+
+                    get(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id)).then((snapshot) => {
 
                             messages.value = snapshot.val()
                     })
@@ -267,6 +330,44 @@ export default {
         })
         onUpdated(() => {
             OnlineChat()
+            onValue(storageRef(db, 'order_cancel/' + state.offer_id), (snapshot) => {
+                if(snapshot.exists()){
+                remove(storageRef(db, 'order_cancel/' + state.offer_id))
+                delete_chat()
+                if(user.role == 'Player')
+                {
+                    localStorage.removeItem('buyer');
+                    localStorage.removeItem('seller');
+                    localStorage.removeItem('requested-offer');
+                    localStorage.removeItem('matched-with');
+                    localStorage.removeItem('matched-offer');
+                    localStorage.removeItem('matched-offer-user');
+                    localStorage.removeItem('isFundsAdded')
+                    localStorage.removeItem('operator');
+                    Toast.fire({
+                        text: 'Seller has cancelled the trade.',
+                        timer: 2000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+                    router.push('/dashboard')
+                }
+                if(user.role == 'Operator')
+                {
+                    localStorage.removeItem('buyer');
+                    localStorage.removeItem('seller');
+                    localStorage.removeItem('matched-offer');
+                    localStorage.removeItem('isFundsAdded')
+                    Toast.fire({
+                        text: 'Seller has cancelled the trade.',
+                        timer: 2000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+                    router.push('/dashboard')
+                }
+                }
+        });
             scrollBottom()
         })
 
@@ -276,7 +377,7 @@ export default {
             }
             if (message.value != '') {
 
-                const fb_push = push(Fb_ref)
+                const fb_push = push(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
 
                 set(fb_push, {
                     offer_id: state.offer_id,
@@ -295,18 +396,19 @@ export default {
         }
 
         const OnlineChat = () => {
-        onValue(Fb_ref, (snapshot) => {
+        onValue(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id), (snapshot) => {
 
                     messages.value = snapshot.val()
                 });
         }
 
 
-        // const delete_chat = ()=>{
-        //      const db = getDatabase();
-        //        Fb_ref = storageRef(db, 'chat_' + state.offer_id + '/'+state.id+'_'+state.match_user_id)
-        //        remove(Fb_ref)
-        // }
+
+        const delete_chat = ()=>{
+             const db = getDatabase();
+
+               remove(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
+        }
 
 
 
@@ -343,15 +445,43 @@ export default {
 
 
 
-        onValue(storageRef(db,'order_complete/' + user.id),(snapshot) => {
+        onValue(storageRef(db,'order_complete/seller/' + user.id),(snapshot) => {
+
+                    if(user.role == 'Player' && snapshot.exists())
+                    {
+                    // localStorage.removeItem('matched-offer');
+                    // localStorage.removeItem('buyer');
+                    // localStorage.removeItem('operator');
+
+                    remove(storageRef(db,'order_complete/seller/' + user.id))
+                    // remove(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
+
+                    Toast.fire({
+                        text: 'Trade completed successfully.',
+                        timer: 2000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+
+                    router.push('/trade-complete')
+
+                    }
+        })
+
+        onValue(storageRef(db,'order_complete/buyer/' + user.id),(snapshot) => {
 
                     if(user.role == 'Player' && snapshot.exists())
                     {
                     // localStorage.removeItem('requested-offer');
                     // localStorage.removeItem('matched-with');
                     // localStorage.removeItem('operator');
+                    // localStorage.removeItem('seller');
+                    // localStorage.removeItem('matched-offer');
+                    // localStorage.removeItem('matched-offer-user');
 
-                    remove(Fb_ref)
+                    remove(storageRef(db,'order_complete/buyer/' + user.id))
+
+                    // remove(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
 
                     Toast.fire({
                         text: 'Trade completed successfully.',
@@ -375,6 +505,7 @@ export default {
             showPopup,
             popup,
             historyMatch,
+            trade
         }
     }
 }

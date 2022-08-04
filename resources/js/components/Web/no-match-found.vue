@@ -47,7 +47,7 @@
                 </div>
                 <div class="active-details">
                     <div class="no-match-seacrh">
-                        <img src="assets/img/search.png" alt="">
+                        <img src="assets/images/search.png" alt="">
                     </div>
                     <div class="active-description">
                         <div class="active-info">

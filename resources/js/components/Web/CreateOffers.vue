@@ -186,6 +186,7 @@ export default {
             methods: [],
             offerId: 0
         })
+            const $externalResults = ref({})
 
         const rules =  {
               price: {
@@ -196,8 +197,10 @@ export default {
                 },
             }
 
+        const v$ = useVuelidate(rules, state, {
+                        $externalResults
+                    })
 
-        const v$ = useVuelidate(rules, state)
 
         onMounted(()=>{
                 if(user.is_phone_verified === 0)
@@ -233,6 +236,7 @@ export default {
             }
 
         const createOffer = async() => {
+                v$.value.$clearExternalResults()
             v$.value.$validate()
             if (!v$.value.$error) {
               let result = await axios.post(path.value, state)
@@ -247,7 +251,9 @@ export default {
                         icon: 'success',
                         position: 'top-end',
                     });
-                }
+                }else {
+                            $externalResults.value = result.data.message
+                        }
 
             } else {
                 console.log('Form failed validation')

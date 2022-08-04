@@ -56,21 +56,39 @@ export default {
                 const offer = JSON.parse(localStorage.getItem('matched-offer'));
                 const operator = JSON.parse(localStorage.getItem('operator'));
                 const buyer = JSON.parse(localStorage.getItem('buyer'));
+                const seller = JSON.parse(localStorage.getItem('seller'));
                 const matchedWith = localStorage.getItem('matched-with');
                 const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'));
                 if(requestedOffer){
-                    if(buyer)
-                    state.username = buyer.username
-                    if(operator)
-                    state.username = operator.username
                     state.price = requestedOffer.price
-                    localStorage.removeItem('buyer');
-                    localStorage.removeItem('requested-offer');
-                    localStorage.removeItem('matched-with');
-                    localStorage.removeItem('operator');
-                } else {
+                    if(buyer)
+                    {
+                        state.username = buyer.username
+                    }
+                    if(operator)
+                    {
+                        state.username = operator.username
+                    }
+                } else if(offer){
+                    state.price = offer.offer.price
+                    if(buyer && seller)
+                    state.username = seller.username
+                    else if(operator && seller)
+                    state.username = seller.username
+                    else
+                    state.username = buyer.username
+
+                }else {
                     router.push('/dashboard')
                 }
+                localStorage.removeItem('buyer');
+                localStorage.removeItem('seller');
+                localStorage.removeItem('requested-offer');
+                localStorage.removeItem('matched-with');
+                localStorage.removeItem('matched-offer');
+                localStorage.removeItem('matched-offer-user');
+                localStorage.removeItem('isFundsAdded')
+                localStorage.removeItem('operator');
         })
 
         return {

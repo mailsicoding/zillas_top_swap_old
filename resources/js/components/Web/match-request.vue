@@ -226,10 +226,11 @@ export default {
                         icon: 'success',
                         position: 'top-end',
                     });
-                    // localStorage.setItem('matched-offer',JSON.stringify(result.data.offer))
-                    // localStorage.setItem('matched-with','user')
-                    // localStorage.setItem('requested-offer',JSON.stringify(state))
-                    // router.push('/match-found')
+                    console.log(result.data.offer)
+                    localStorage.setItem('matched-offer',JSON.stringify(result.data.offer))
+                    localStorage.setItem('matched-with','user')
+                    localStorage.setItem('requested-offer',JSON.stringify(state))
+                    router.push('/match-found')
                 }
                 else{
                     localStorage.setItem('matched-with','operator')

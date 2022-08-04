@@ -14,6 +14,7 @@ class orderBy extends Model
         'offer_id',
         'match_user_id',
         'price',
+        'status',
         'method'
     ];
 

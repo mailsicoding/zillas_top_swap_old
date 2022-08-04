@@ -100,12 +100,16 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::post('get_buyer', [OfferController::class, 'get_buyer']);
     Route::post('get_seller', [OfferController::class, 'get_seller']);
+    Route::post('get_operator', [OfferController::class, 'get_operator']);
     Route::post('change_operator_status', [OfferController::class, 'change_operator_status']);
+    Route::post('change_offer_status', [OfferController::class, 'change_offer_status']);
     Route::post('order-history', [OrderByController::class, 'order_history']);
+    Route::get('order-cancel-history', [OrderByController::class, 'order_cancel_history']);
 
     Route::group(['middleware' => 'can:Funds'], function () {
         Route::get('players', [FundsController::class, 'players']);
         Route::post('add-funds', [FundsController::class, 'add_funds']);
+        Route::post('sub-funds', [FundsController::class, 'sub_funds']);
         Route::get('getOperators', [AuthController::class, 'getOperators']);
     });
 

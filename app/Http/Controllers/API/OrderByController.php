@@ -39,7 +39,7 @@ class OrderByController extends Controller
         ]);
         return response()->json([
             'status' => true,
-            'message' => 'order saved successfully.'
+            'message' => 'order saved successfully.',
         ]);
     }
 
@@ -47,7 +47,7 @@ class OrderByController extends Controller
     public function get_history()
     {
         $user = Auth::user();
-        $get = orderBy::with('user_order', 'offer_order')->where('user_id',$user->id)->get();
+        $get = orderBy::with('user_order', 'offer_order')->where('user_id',$user->id)->orWhere('match_user_id',$user->id)->get();
         $response = [
             'success' => true,
             'history' => $get,
@@ -56,15 +56,13 @@ class OrderByController extends Controller
         return response()->json($response);
     }
 
-    public function hide_cancel(Request $request)
+    public function order_cancel_history(Request $request)
     {
-        // $offer = Offers::where($request->offer_id)->orWhere(['status' => 'open'])->get();
-        $gethidden = orderBy::with('user_order', 'offer_order')->get();
-
+        $user = Auth::user();
+        $get = orderBy::with('user_order', 'offer_order')->where('user_id',$user->id)->where('status','complete')->orWhere('match_user_id',$user->id)->get();
         $response = [
             'success' => true,
-            'history' => $gethidden,
-            // 'not_cancel' => $offer,
+            'history' => $get,
             'message' => 'Order  List.',
         ];
         return response()->json($response);

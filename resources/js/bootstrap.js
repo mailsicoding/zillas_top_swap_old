@@ -26,9 +26,15 @@ window.Toast = Swal.mixin({
 
 window.Startloader = (val) => {
     if (val == true)
+    {
+        // document.getElementsByTagName('body')[0].style.overflow = 'hidden';
         document.getElementById('loader-overlay').style.display = 'flex';
+    }
     else
+    {
+        // document.getElementsByTagName('body')[0].style.overflow = 'auto';
         $(".loader-wrapper").fadeOut("slow");
+    }
 }
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';

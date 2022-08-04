@@ -92,7 +92,7 @@
                         <div class="graph__wrapper-width">
                             <div class="hide-cancel">
                                 <div class="hide-detail">
-                                    <input type="checkbox" :name="checked" id="" @click="getHistory">
+                                    <input type="checkbox" v-model="checked" value="1">
                                     <p>Hide canceled Trades</p>
                                 </div>
                             </div>
@@ -116,9 +116,15 @@
                                         <div class="acivity-price">${{history.price}}</div>
                                         <div class="activity-next-icon"><a href="#"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div>
                                     </div>
+                                    <div class="activity-shop">
+                                        <div class="acivity-price">{{history.status}}</div>
+                                        <div class="activity-next-icon"><a href="#"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+
 
                     </div>
                 </div>
@@ -174,54 +180,56 @@
                         </div>
                         <div v-else class="acivity-details">
 
-                                <div class="activity-info" v-if="mOff">
-                                    <div class="activity-shop">
-                                        <div class="acivity-price">Offer</div>
-                                    </div>
-                                    <div class="activity-shop">
-                                        <div class="acivity-price">${{matchOffer.price}}</div>
-                                    </div>
-                                    <div class="activity-shop">
+                            <div class="activity-info" v-if="mOff">
+                                <div class="activity-shop">
+                                    <div class="acivity-price">Offer</div>
+                                </div>
+                                <div class="activity-shop">
+                                    <div class="acivity-price">${{matchOffer.price}}</div>
+                                </div>
+                                <div class="activity-shop">
 
-                                        <div class="activity-date">
-                                            <select  v-model="method" style="width: 120px;padding: 10px;outline: none;border: 1px solid rgb(241, 238, 238);">
-                                                    <option  v-for="(method,index) in matchOffer.methods" :key="index">{{ method }}</option>
-                                            </select>
-                                        </div>
+                                    <div class="activity-date">
+                                        <select v-model="method" style="width: 120px;padding: 10px;outline: none;border: 1px solid rgb(241, 238, 238);">
+                                            <option v-for="(method,index) in matchOffer.methods" :key="index">{{ method }}</option>
+                                        </select>
                                     </div>
                                 </div>
+                            </div>
 
-                                <div class="activity-info" v-if="buy">
-                                    <div class="activity-shop">
-                                        <div class="acivity-price">Buyer</div>
-                                    </div>
-                                    <div class="activity-shop">
-                                        <div class="acivity-price">{{buyer.username}}</div>
-                                    </div>
-                                    <div class="activity-shop">
-                                        <div class="activity-date"><a href="#" class="btn btn-success" @click.prevent="addFunds()">add</a></div>
+                            <div class="activity-info" v-if="buy">
+                                <div class="activity-shop">
+                                    <div class="acivity-price">Buyer</div>
+                                </div>
+                                <div class="activity-shop">
+                                    <div class="acivity-price">{{buyer.username}}</div>
+                                </div>
+                                <div class="activity-shop">
+                                    <div class="activity-date"><a href="#" v-if="fundsAdded == 0" class="btn btn-success" @click.prevent="addFunds()">add</a></div>
+                                </div>
+                            </div>
+
+                            <div class="activity-info" v-if="sell">
+                                <div class="activity-shop">
+                                    <div class="acivity-price">Seller</div>
+                                </div>
+                                <div class="activity-shop">
+                                    <div class="acivity-price">{{seller.username}}</div>
+                                </div>
+                                <div class="activity-shop">
+                                    <div class="activity-date"><a href="#" v-if="subtract == 1" class="btn btn-success" @click.prevent="subFunds()">substract</a></div>
+                                </div>
+                            </div>
+
+                            <div class="activity-info d-flex justify-content-center">
+                                <div class="activity-shop">
+                                    <div class="acivity-price">
+                                        <router-link class="btn btn-primary" to="/trade-in-process">
+                                            Continue Chat
+                                        </router-link>
                                     </div>
                                 </div>
-
-                                <div class="activity-info" v-if="sell">
-                                    <div class="activity-shop">
-                                        <div class="acivity-price">Seller</div>
-                                    </div>
-                                    <div class="activity-shop">
-                                        <div class="acivity-price">{{seller.username}}</div>
-                                    </div>
-                                    <div class="activity-shop">
-                                        <div class="activity-date"><a href="#" class="btn btn-success">substract</a></div>
-                                    </div>
-                                </div>
-
-                                <div class="activity-info d-flex justify-content-center">
-                                    <div class="activity-shop">
-                                        <div class="acivity-price"><router-link class="btn btn-primary" to="/trade-in-process">
-                                        Continue Chat
-                                        </router-link></div>
-                                    </div>
-                                </div>
+                            </div>
 
                         </div>
 
@@ -312,13 +320,23 @@ import {
     reactive,
     onUnmounted,
     onBeforeMount,
+    watch
 } from 'vue'
 import store from '../../stores'
 import {
     useRouter
 } from 'vue-router'
 import app from '../../firebase'
-import { getDatabase,ref as storageRef, set,push,onValue,remove,update } from "firebase/database";
+import {
+    getDatabase,
+    ref as storageRef,
+    set,
+    push,
+    onValue,
+    remove,
+    update,
+    get
+} from "firebase/database";
 export default {
     name: 'Dashboard',
     setup() {
@@ -326,8 +344,11 @@ export default {
         const Role = user.role
         const offers = ref([])
         const users = ref(0)
+        const subtract = ref(0)
+        const offerId = ref(0)
         const method = ref('')
         const orderBy = ref([])
+        const fundsAdded = ref(0)
         const router = useRouter()
         const funds = ref(0.0);
         const respond = ref(false);
@@ -341,7 +362,7 @@ export default {
         const mOff = ref(0);
         const db = getDatabase();
         const Fb_ref = storageRef(db, 'chat_matches')
-
+        const checked = ref([])
 
         onMounted(() => {
             if (user.is_phone_verified === 0) {
@@ -357,35 +378,36 @@ export default {
                 getFunds()
                 getOffers();
                 getHistory()
-                remove(storageRef(db,'order_complete/' + user.id))
+                remove(storageRef(db, 'order_complete/' + user.id))
             }
             if (Role == 'Operator') {
+                const isFundsAdded = localStorage.getItem('isFundsAdded')
+                if(isFundsAdded && isFundsAdded == 1)
+                {
+                    fundsAdded.value = 1
+                    subtract.value = 1
+                }
                 const buyerr = JSON.parse(localStorage.getItem('buyer'));
                 const sellerr = JSON.parse(localStorage.getItem('seller'));
                 const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'));
-                if(requestedOffer)
-                {
-                    if(buyerr)
-                {
-                    users.value = 1;
-                    buy.value = 1;
-                    buyer.value = buyerr;
-                }
-                if(sellerr)
-                {
-                    users.value = 1;
-                    sell.value = 1;
-                    seller.value = sellerr;
-                }
-                if(requestedOffer)
-                {
-                    mOff.value = 1;
-                    matchOffer.value = requestedOffer;
-                    method.value = requestedOffer.methods[0];
-                }
-                }
-                else
-                {
+                const matchedOffer = JSON.parse(localStorage.getItem('matched-offer'));
+                if (requestedOffer) {
+                    if (buyerr) {
+                        users.value = 1;
+                        buy.value = 1;
+                        buyer.value = buyerr;
+                    }
+                    if (sellerr) {
+                        users.value = 1;
+                        sell.value = 1;
+                        seller.value = sellerr;
+                    }
+                    if (requestedOffer) {
+                        mOff.value = 1;
+                        matchOffer.value = requestedOffer;
+                        method.value = requestedOffer.methods[0];
+                    }
+                } else {
                     router.push('/dashboard')
                 }
 
@@ -393,6 +415,17 @@ export default {
                 // console.log(sellerr)
                 // console.log(requestedOffer)
 
+            }
+
+        })
+
+        watch(checked, (newVal,oldVal) => {
+            if(newVal == 1)
+            {
+                getCancelHistory()
+            }
+            else{
+                getHistory()
             }
         })
 
@@ -423,6 +456,13 @@ export default {
                 })
         }
 
+        const getCancelHistory = async () => {
+            await axios.get('order-cancel-history', )
+                .then((response) => {
+                    orderBy.value = response.data.history;
+                })
+        }
+
         const getFunds = async () => {
 
             await axios.get('get-funds')
@@ -432,39 +472,76 @@ export default {
         }
 
         const cancelTrade = async () => {
+            const operator = JSON.parse(localStorage.getItem('operator'))
+            await axios.post('change_operator_status',{
+                                id: operator.id
+                            })
 
-            await axios.post('trade-cancel', matchOffer.value)
+            await axios.post('trade-cancel', {
+                offerId : offerId.value,
+                user_id : buyer.value.id
+                })
                 .then((response) => {
                     if (response.data.status == true) {
                         respond.value = false;
-                        matchOffer = {};
+                        matchOffer.value = {};
                         localStorage.removeItem('matched-offer');
+                        localStorage.removeItem('buyer');
+                        localStorage.removeItem('operator');
+                        const db = getDatabase();
+                        const Fb_ref2 = storageRef(db, 'order_cancel/' + offerId.value)
+
+                        const fb_push = push(Fb_ref2)
+                        set(fb_push, {
+                            trade: 'cancel',
+                        });
+
+                        remove(storageRef(db, 'chat_matches'))
+
+
                     }
                 })
+
         }
 
         const getBuyer = async (bid) => {
 
-            await axios.post('get_buyer',{buyer_id: bid})
+            await axios.post('get_buyer', {
+                    buyer_id: bid
+                })
                 .then((response) => {
                     if (response.data.status == true) {
                         users.value = 1;
                         buy.value = 1;
                         buyer.value = response.data.buyer;
-                        localStorage.setItem('buyer',JSON.stringify(response.data.buyer));
+                        localStorage.setItem('buyer', JSON.stringify(response.data.buyer));
                     }
                 })
         }
 
         const getSeller = async (sid) => {
 
-            await axios.post('get_seller',{seller_id: sid})
+            await axios.post('get_seller', {
+                    seller_id: sid
+                })
                 .then((response) => {
                     if (response.data.status == true) {
                         users.value = 1;
                         sell.value = 1;
                         seller.value = response.data.seller;
-                        localStorage.setItem('seller',JSON.stringify(response.data.seller));
+                        localStorage.setItem('seller', JSON.stringify(response.data.seller));
+                    }
+                })
+        }
+
+        const getOperator = async (oid) => {
+
+            await axios.post('get_operator', {
+                    operator_id: oid
+                })
+                .then((response) => {
+                    if (response.data.status == true) {
+                        localStorage.setItem('operator', JSON.stringify(response.data.operator));
                     }
                 })
         }
@@ -487,83 +564,180 @@ export default {
                 })
         }
 
-
-
         onValue(Fb_ref, (snapshot) => {
             snapshot.forEach((childSnapshot) => {
                 const childKey = childSnapshot.key;
                 const childData = childSnapshot.val();
-                if(childData.operator == user.id && user.role == 'Operator')
-                {
-                    getBuyer(childData.buyer)
-                    if(childData.offerId == 0)
-                    {
+                if (childData.operator == user.id && user.role == 'Operator') {
+                    if (childData.offerId == 0) {
+                        getBuyer(childData.buyer)
                         const price = childData.price;
                         const methods = childData.methods;
                         const reqOffer = {
                             price: price,
                             methods: methods.split(',')
                         }
-                        localStorage.setItem('requested-offer',JSON.stringify(reqOffer))
+                        matchOffer.value = {
+                            price : price,
+                            methods: methods.split(',')
+                        }
+                        mOff.value = 1;
+                        offerId.value = childData.offerId
+                        respond.value = true;
+                        method.value = methods.split(',')[0];
+                        localStorage.setItem('requested-offer', JSON.stringify(reqOffer))
+                        remove(storageRef(db, 'chat_matches/' + childKey))
+                    } else {
+                        getBuyer(childData.buyer)
+                        getSeller(childData.seller)
+                        const price = childData.price;
+                        const methods = childData.methods;
+                        const reqOffer = {
+                            offer: {
+                                id: childData.offerId,
+                                price: price
+                            },
+                            matched_methods: methods.split(',')
+                        }
+                        mOff.value = 1;
+                        offerId.value = childData.offerId
+                        matchOffer.value = {
+                            price : price,
+                            methods: methods.split(',')
+                        }
+                        method.value = methods.split(',')[0];
+                        localStorage.setItem('matched-offer', JSON.stringify(reqOffer))
+                        if(childData.seller_response == 0)
+                        respond.value = true;
+                        update(storageRef(db, 'chat_matches/' + childKey), {
+                            operator_response: 1
+                        })
                     }
-                    // if(childData.seller != 0)
-                    // {
-
-                    //     getSeller(childData.seller_id);
+                } else if (childData.seller == user.id && user.role == 'Player') {
+                    // if (childData.seller_response == 0) {
+                        getBuyer(childData.buyer)
+                        getOperator(childData.operator)
+                        const price = childData.price;
+                        const methods = childData.methods;
+                        const reqOffer = {
+                            offer: {
+                                id: childData.offerId,
+                                price: price
+                            },
+                            matched_methods: methods.split(',')
+                        }
+                        offerId.value = childData.offerId
+                        localStorage.setItem('matched-offer', JSON.stringify(reqOffer))
+                        respond.value = true;
+                        update(storageRef(db, 'chat_matches/' + childKey), {
+                            seller_response: 1
+                        })
                     // }
-                    respond.value = true;
-                    remove( storageRef(db,'chat_matches/' + childKey))
                 }
+                get(storageRef(db, 'chat_matches/' + childKey), (snapshot) => {
+                    const data = snapshot.val()
+                    const key = snapshot.key
+                    if (snapshot.exists() && data.seller_response == 0 && data.operator_response == 0) {
+                        remove(storageRef(db, 'chat_matches/' + key))
+                    }
+                })
 
-                // if(childData.seller == user.id && user.role == 'Player')
-                // {
-                //     if(childData.seller_response == 0)
-                //     respond.value = true;
-                //     update( storageRef(db,'chat_matches/' + childKey),{
-                //         seller_response: 1
-                //     })
-                // }
             });
-
 
         });
 
         const addFunds = async () => {
-            await axios.post('add-funds',{
+            await axios.post('add-funds', {
                 user_id: buyer.value.id,
+                price: matchOffer.value.price
+            })
+            localStorage.setItem('isFundsAdded',1)
+            fundsAdded.value = 1
+            if(offerId.value == 0)
+            {
+                await axios.post('change_operator_status')
+            }
+            const data = {
+                user_id: buyer.value.id,
+                offer_id: offerId.value,
+                price: matchOffer.value.price,
+                payment_method: method.value
+            }
+            await axios.post('order-history', data).then((response) => {
+                if (response.data.status == true) {
+                    const db = getDatabase();
+                        const Fb_ref2 = storageRef(db, 'order_complete/buyer/' + buyer.value.id)
+
+                        const fb_push = push(Fb_ref2)
+                        set(fb_push, {
+                            trade: 'complete',
+                        });
+
+                    if(offerId.value != 0)
+                    {
+                            subtract.value = 1
+                        Toast.fire({
+                            text: '$' + data.price + ' added to buyer account.',
+                            timer: 2000,
+                            icon: 'success',
+                            position: 'top-end',
+                        });
+
+
+                    }
+                    else{
+                        // localStorage.removeItem('buyer');
+                        // localStorage.removeItem('requested-offer');
+                        // localStorage.removeItem('matched-with');
+                        // localStorage.removeItem('operator');
+                        // localStorage.removeItem('isFundsAdded');
+                        remove(storageRef(db, 'chat_messages/' + '0_' + user.id + '_0_' + buyer.value.id));
+                        users.value = 0;
+                        sell.value = 0;
+                        buy.value = 0;
+                        mOff.value = 0;
+                        respond.value = false;
+                        buyer.value = {};
+                        seller.value = {};
+                        matchOffer.value = {};
+                        router.push('/trade-complete')
+                    }
+
+
+
+
+                }
+            })
+        }
+
+        const subFunds = async () => {
+            await axios.post('sub-funds', {
+                user_id: seller.value.id,
                 price: matchOffer.value.price
             })
 
             await axios.post('change_operator_status')
 
-            const data = {
-                user_id: buyer.value.id,
-                offer_id: 0,
-                price: matchOffer.value.price,
-                payment_method: method.value
-            }
-            await axios.post('order-history', data).then((response) => {
-                if(response.data.status == true)
-                {
+
                     // localStorage.removeItem('buyer');
-                    // localStorage.removeItem('requested-offer');
-                    // localStorage.removeItem('matched-with');
-                    // localStorage.removeItem('operator');
+                    // localStorage.removeItem('seller');
+                    // localStorage.removeItem('matched-offer');
+                    // localStorage.removeItem('isFundsAdded')
                     Toast.fire({
                         text: 'Trade completed successfully.',
                         timer: 2000,
                         icon: 'success',
                         position: 'top-end',
                     });
-                        const db = getDatabase();
-                    const Fb_ref2 = storageRef(db, 'order_complete/' + buyer.value.id)
+                    const db = getDatabase();
+                    const Fb_ref2 = storageRef(db, 'order_complete/seller/' + seller.value.id)
 
                     const fb_push = push(Fb_ref2)
-                        set( fb_push , {
-                            trade: 'complete',
-                        });
-                    remove(storageRef(db, 'chat_messages/' + '0_' + user.id + '_0_' + buyer.value.id ));
-                        users.value = 0;
+                    set(fb_push, {
+                        trade: 'complete',
+                    });
+                    remove(storageRef(db, 'chat_messages/' + '0_' + user.id + '_0_' + buyer.value.id));
+                    users.value = 0;
                     sell.value = 0;
                     buy.value = 0;
                     mOff.value = 0;
@@ -572,12 +746,12 @@ export default {
                     seller.value = {};
                     matchOffer.value = {};
 
+
+                    remove(storageRef(db, 'chat_matches'))
+
                     router.push('/trade-complete')
 
-                }
-            })
         }
-
 
         return {
             offers,
@@ -598,13 +772,17 @@ export default {
             addFunds,
             method,
             players,
-            operators
+            operators,
+            subFunds,
+            subtract,
+            fundsAdded,
+            checked
         }
     }
 }
 </script>
-<style>
 
+<style>
 .overlay {
     position: fixed;
     top: 0;
@@ -616,37 +794,48 @@ export default {
     visibility: visible;
     opacity: 1;
 }
-.pop-tos{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-top: 20px;
+
+.pop-tos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
 }
-.pop-tos a{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 20px;
-  background: rgb(4, 138, 79);
-  border-radius: 4px;
-  text-decoration: none;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
-  border: 1px solid rgb(4, 138, 79);
-  border-radius:10px;
-  text-decoration: none;
-  cursor: pointer;
-  width: 142px;
+
+.pop-tos a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    background: rgb(4, 138, 79);
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid rgb(4, 138, 79);
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    width: 142px;
 }
-.pop-tos a:hover{
-  background-color: transparent;
-  border: 1px solid rgb(4, 138, 79);
-  transition: all .5s ease-in-out;
-  color: rgb(4, 138, 79);
+
+.pop-tos a:hover {
+    background-color: transparent;
+    border: 1px solid rgb(4, 138, 79);
+    transition: all .5s ease-in-out;
+    color: rgb(4, 138, 79);
 }
-.tos1{
-  padding-right: 10px;
-  color:#fff;
+
+.pop-tos .tos1 a:hover {
+    background-color: transparent;
+    border: 1px solid rgb(4, 138, 79);
+    transition: all .5s ease-in-out;
+    color: rgb(4, 138, 79);
+}
+
+.tos1 {
+    padding-right: 10px;
+    color: #fff;
 }
 </style>
