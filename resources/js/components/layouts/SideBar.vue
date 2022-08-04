@@ -72,7 +72,8 @@
                     <div class="sb-nav-link-icon ">
                         <i class="fas fa-comment" aria-hidden="true"></i>
                     </div>
-                    Chat with Users
+                    <span v-if="user.role == 'Admin'">Chat with Users</span>
+                    <span v-else>Chat with Admin</span>
                 </router-link>
 
 

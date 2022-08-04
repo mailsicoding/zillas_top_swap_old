@@ -4671,7 +4671,7 @@ input[type="button"].btn-block {
   background-color: #fff;
   background-clip: border-box;
   /* border: 1px solid rgba(0, 0, 0, 0.125); */
-  
+
 }
 .card > hr {
   margin-right: 0;
@@ -8068,12 +8068,12 @@ button.bg-dark:focus {
 
 .p-0 {
   padding: 0 10px 10px 0 !important;
-  
+
 }
 @media (max-width:767px) {
   .p-0 {
     padding: 0 0px 10px 0 !important;
-    
+
   }
 }
 .pt-0,
@@ -10578,7 +10578,7 @@ body {
   padding-left: 1rem;
   padding-right: 1rem;
   margin-top: 10px;
-  
+
 }
 .sb-topnav.navbar-dark #sidebarToggle {
   color: rgba(255, 255, 255, 0.5);
@@ -10847,7 +10847,7 @@ background-color: #017f4a;
   filter: drop-shadow(0 0 2.5px rgba(162, 180, 198, 0.56));
   background-color: #ffffff;
   padding: 30px;
- 
+
   border-radius: 10px;
 }
 .margin__wrapper-top {
@@ -11078,7 +11078,7 @@ body {
 	color:#fff;
 	font-size:16px;
 	background-color:#2e8e39;
-	
+
 }
 .setting_active
 {
@@ -11203,7 +11203,7 @@ body {
 
 
 
-.modal-confirm {		
+.modal-confirm {
 	color: #636363;
 	width: 400px;
 }
@@ -11215,7 +11215,7 @@ body {
 	font-size: 14px;
 }
 .modal-confirm .modal-header {
-	border-bottom: none;   
+	border-bottom: none;
 	position: relative;
 }
 .modal-confirm h4 {
@@ -11233,14 +11233,14 @@ body {
 }
 .modal-confirm .modal-footer {
 	border: none;
-	text-align: center;		
+	text-align: center;
 	border-radius: 5px;
 	font-size: 13px;
 	padding: 10px 15px 25px;
 }
 .modal-confirm .modal-footer a {
 	color: #999;
-}		
+}
 .modal-confirm .icon-box {
 	width: 80px;
 	height: 80px;
@@ -11356,22 +11356,22 @@ body {
 .page_404  img{ width:100%;}
 
 .four_zero_four_bg{
- 
+
  background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
     height: 400px;
     background-position: center;
  }
- 
- 
+
+
  .four_zero_four_bg h1{
  font-size:80px;
  }
- 
+
   .four_zero_four_bg h3{
 			 font-size:80px;
 			 }
-			 
-			 .link_404{			 
+
+			 .link_404{
 	color: #fff!important;
     padding: 10px 20px;
     background: #39ac31;
@@ -11428,35 +11428,35 @@ body {
 
 form {
 	min-width: 25rem;
-	
+
 	.title {
 		font-family: 'Pacifico', cursive;
 		color: #212529;
 		font-size: 2.5rem;
 	}
-	
+
   .form-control {
     background-color: #f2f6f8;
 		border-radius: 2rem;
     border: none;
     box-shadow: 0px 7px 5px rgba(0, 0, 0, 0.11);
-		
+
     &.thick {
       height: 3.3rem;
       padding: .5rem 3.5rem;
     }
-		
+
 		&:focus {
 			background-color: #f2f6f8;
 			border: none;
 			box-shadow: 0px 7px 5px rgba(0, 0, 0, 0.11);
 		}
   }
-	
+
 	.message .form-control {
 			padding: .5rem 1.8rem;
 	}
-	
+
   ::placeholder {
     font-family: 'Quicksand', sans-serif;
 		font-weight: 600;
@@ -11465,14 +11465,14 @@ form {
     position: relative;
     left: 0;
   }
-	
+
   input,
   textarea {
 		font-family: 'Quicksand', sans-serif;
     color: #212529;
     font-size: 1.1rem;
   }
-	
+
   .icon {
     color: #57565c;
     height: 1.3rem;
@@ -11610,7 +11610,7 @@ form {
 	box-shadow: 0 0.5em 0.5em -0.4em #ff923cba;
 	background-size: 100% 100%;
 	transform: translateY(-0.15em);
-} 
+}
 
 .visitors-loc{
   margin-bottom: 10px !important;
@@ -11620,7 +11620,7 @@ form {
 .account-detail{
   padding-top: 50px;
   width: 100%;
-  
+
 }
 .account-title h4{
   border-bottom: 1px solid rgb(241, 238, 238);
@@ -11629,7 +11629,7 @@ form {
 .account-conatct-detail{
   width: 500px;
   margin: 45px auto;
-  
+
 }
 .account-info{
   padding: 20px;
@@ -11650,7 +11650,7 @@ form {
 }
 .account-f-btn{
   padding: 15px 3px !important;
-  
+
 }
 
 .from-description{
@@ -11668,7 +11668,7 @@ form {
 }
 .from-description .data{
   font-weight: 400;
-  
+
 }
 .change-pass{
   font-size: 16px;
@@ -11685,7 +11685,7 @@ form {
   align-items: center;
   justify-content: center;
   border-radius: 30px;
- 
+
   margin: 20px auto;
 }
 .form-btn a{
@@ -11722,7 +11722,7 @@ form {
     padding-left: 1.2rem;
     padding-right: 0.2rem;
   }
-  
+
   .btn .badge{
     top: -35px;
     left: 8px;
@@ -11757,14 +11757,14 @@ body{
       background-position: center;
   background-repeat: no-repeat;
   background-size: 100% 100%;
-    
+
 	min-height: 100%;
 }
 .container{
     width: 90%;
-   
+
     margin: auto;
-    
+
 }
 .logo-top{
     width: 100%;
@@ -11792,7 +11792,7 @@ box-shadow: 0px 0px 13px -4px rgba(204,204,204,1);
 }
 
 .login-title h1{
-    font-size: 48px;
+    font-size: 30px;
     text-transform: uppercase;
     text-align: center;
     font-weight: bold;
@@ -11817,7 +11817,7 @@ box-shadow: 0px 0px 13px -4px rgba(204,204,204,1);
     border-radius: 30px;
     outline: none;
     border: 1px solid rgb(241, 238, 238);
-    
+
 }
 .email-feild input:focus{
     box-shadow: 0px 0px 35px -19px rgba(105,237,16,0.75);
@@ -11906,7 +11906,7 @@ color: rgb(4, 138, 79);
 {
 	 margin-top: 250px;
     position: relative;
-  
+
     width: 100%;
     height: 50px;
 }
@@ -11920,7 +11920,7 @@ color: rgb(4, 138, 79);
 {
 	    margin-top:200px;
     position: relative;
-  
+
     width: 100%;
     height: 50px;
 }
@@ -11960,7 +11960,7 @@ color: rgb(4, 138, 79);
 		.login-section{
 
   background-size: cover;
-    
+
 
 }
 }
@@ -11968,7 +11968,7 @@ color: rgb(4, 138, 79);
 	.login-section{
 
   background-size: cover;
-    
+
 
 }
 .account-b{
@@ -12002,9 +12002,9 @@ color: rgb(4, 138, 79);
     .login-form-btn .forget a{
         font-size: 14px;
     }
-    
+
     .uper{
-       
+
         font-size: 11px;
         margin-bottom: 0;
         padding-bottom: 5px;
@@ -12012,7 +12012,7 @@ color: rgb(4, 138, 79);
     .lower{
         font-size: 10px;
         color: white;
-     
+
     }
 	.footer
 {
@@ -12035,7 +12035,7 @@ color: rgb(4, 138, 79);
     transform: translate(0, 0);
 }
 .uper{
-       
+
   font-size: 11px;
   margin-bottom: 0;
   padding-bottom: 5px;
@@ -12137,7 +12137,7 @@ padding-left: 5px;
 }
 .hide-detail input[type='checkbox']{
   padding: 20px;
-  
+
 }
 
 .hide-detail p{
@@ -12234,7 +12234,7 @@ padding-left: 5px;
   }
   .hide-cancel{
     padding: 7px 7px 10px 0;
-    
+
   }
   .hide-detail p{
     font-size: 12px;
@@ -12256,7 +12256,7 @@ padding-left: 5px;
 }
 
 .faq-text {
-    
+
   font-weight: 400;
   color: #919191;
   width:95%;
@@ -12270,7 +12270,7 @@ padding-left: 5px;
   background: white;
   border-radius: 4px;
   position: relative;
-  
+
 }
 .faq label{
   display: block;
@@ -12279,9 +12279,9 @@ padding-left: 5px;
   cursor: pointer;
   height: 5px;
   padding-top:1px;
- 
-  
- 
+
+
+
 }
 
 .faq input[type="checkbox"] {
@@ -12403,7 +12403,7 @@ padding-left: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   padding-top: 20px;
 }
 .btn1{
@@ -12415,7 +12415,7 @@ padding-left: 5px;
   }
   .btn1{
     padding:10px !important;
-    
+
     width: 100%;
   }
   .btn2{
@@ -12430,7 +12430,7 @@ padding-left: 5px;
 }
 .method-img img{
   width: 40px;
-  
+
 }
 .method-info{
   padding: 0px !important;
@@ -12591,7 +12591,7 @@ padding-left: 5px;
     height: 38px !important;
 }
 .popup .close {
- 
+
   top: 5px !important;
   right: 15px !important;
 }
@@ -12816,7 +12816,7 @@ width: 250px;
 }
 .pop-proces{
   padding-top: 30px;
-  
+
 }
 .pop-tos{
   display: flex;

@@ -20,7 +20,7 @@
 
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="text" name="email" v-model="state.email" placeholder="Email" required>
+                        <input type="email" name="email" v-model="state.email" placeholder="Email" required >
                     </div>
                     <div v-if="v$.email.$error">
                         <b style="color:red;">
@@ -35,7 +35,7 @@
                     <option>+1</option>
                     <option>+92</option>
               </select>
-                        <input type="text" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required="">
+                        <input type="number" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required="">
 
                     </div>
                     <div v-if="v$.phone.$error">
@@ -47,7 +47,7 @@
 
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="password" name="password" v-model="state.password" placeholder="Password" required>
+                        <input type="password" name="password" v-model="state.password" placeholder="Password" required  autocomplete="false">
                     </div>
                     <div v-if="v$.password.$error">
                         <b style="color:red;">
@@ -200,12 +200,13 @@ export default {
                         state.username = response.data.user.username
                         state.email = response.data.user.email
                         state.password = response.data.user.password
-                        state.phone = response.data.user.phone
                         let text = response.data.user.phone;
-                        state.code =  text.substr(0, 2);
+                        state.code =  text.substr(0, 3);
+                        state.phone = text.substr(3, 13);
                         state.role = response.data.user.role[0].id
                         state.userId = data.userId
                     })
+                    console.log(state)
             }
         }
 
