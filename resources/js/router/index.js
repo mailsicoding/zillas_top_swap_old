@@ -14,8 +14,9 @@ import CreateOffers from '../components/Web/CreateOffers.vue'
 import TradeInProcess from '../components/Web/trade-in-process.vue'
 import MatchRequest from '../components/Web/match-request.vue'
 import MatchFound from '../components/Web/match-found.vue'
+import NoMatchFound from '../components/Web/no-match-found.vue'
 import TradeComplete from '../components/Web/trade-complete.vue'
-import AddFunds from '../components/Web/AddFunds.vue'
+import Funds from '../components/Web/Funds.vue'
 import Verify from '../components/Web/Verify.vue'
 import PageNotFound from '../components/PageNotFound.vue'
 import Role from '../components/Web/Permissions/Role.vue'
@@ -119,6 +120,11 @@ const routes = [
                 component: MatchFound
             },
             {
+                path: '/no-match-found',
+                name: 'no-match-found',
+                component: NoMatchFound
+            },
+            {
                 path: '/trade-complete',
                 name: 'trade-complete',
                 component: TradeComplete
@@ -149,9 +155,9 @@ const routes = [
                 component: EditRole
             },
             {
-                path: '/add-funds',
-                name: 'AddFunds',
-                component: AddFunds
+                path: '/funds',
+                name: 'funds',
+                component: Funds
             },
             {
                 path: '/contacts',

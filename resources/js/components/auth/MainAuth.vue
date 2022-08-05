@@ -4,7 +4,7 @@
     <div class="container">
 
         <div class="logo-top">
-            <img :src="'images/login-logo.png'" alt="">
+            <router-link to="/"><img :src="'images/login-logo.png'" alt=""></router-link>
         </div>
         <div class="login-page">
             <div class="login-info">

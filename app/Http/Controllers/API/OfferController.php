@@ -5,7 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\method;
 use App\Models\Offers\Offers;
+use App\Models\Operator;
 use App\Models\User;
+use App\Models\orderBy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -50,6 +52,20 @@ class OfferController extends Controller
 
             ]);
         }
+
+        if($user->funds < $request->price)
+        {
+            return response()->json([
+                'status' => false,
+                'message' => ($request->is('api/*')) ? 'Offer price must be less than your available credits.' : [
+                    'price' => [
+                        'Offer price must be less than your available credits.'
+                    ]
+                ]
+
+            ]);
+        }
+
         $offer = Offers::create([
             'user_id' => $user->id,
             'price' => $request->price,
@@ -124,6 +140,7 @@ class OfferController extends Controller
 
     public function update(Request $request)
     {
+        $user = Auth::user();
         $inputs = $request->all();
         $v = Validator::make($inputs, [
             'price'       => 'required',
@@ -138,6 +155,18 @@ class OfferController extends Controller
             ]);
         }
 
+        if($user->funds < $request->price)
+        {
+            return response()->json([
+                'status' => false,
+                'message' => ($request->is('api/*')) ? 'Offer price must be less than your available credits.' : [
+                    'price' => [
+                        'Offer price must be less than your available credits.'
+                    ]
+                ]
+
+            ]);
+        }
         $offer = Offers::find($request->offerId);
         if ($offer) {
             $offer->offer_methods()->detach();
@@ -246,7 +275,7 @@ class OfferController extends Controller
         $offer = Offers::find($request->offerId);
         $offer->match_user_id = Auth::user()->id;
         $offer->save();
-        $user = User::find($offer->user_id);
+        $user = User::find($offer->user_id)->only(['id','username','isLogin']);
         return $user;
     }
 
@@ -271,9 +300,18 @@ class OfferController extends Controller
 
     public function trade_cancel(Request $request)
     {
-        $offer = Offers::find($request->offer['id']);
+        $offer = Offers::find($request->offerId);
         if ($offer) {
-            $offer->update(['status' => 'cancel']);
+
+            $history = orderBy::create([
+                'user_id' => $request->user_id,
+                'offer_id' =>  $offer->id,
+                'match_user_id' => $offer->user_id,
+                'price'  =>  $offer->price,
+                'method'  =>  '-'
+
+            ]);
+
             return response()->json([
                 'status' => true
             ]);
@@ -282,4 +320,99 @@ class OfferController extends Controller
             'status' => false
         ]);
     }
+
+    public function find_operator(Request $request)
+    {
+        $operators = Operator::whereStatus(0)->get();
+        $operator = (object) [];
+        foreach($operators as $o)
+        {
+            $operator = User::where('id',$o->operator_id)->where('isLogin',1)->first();
+            if(!empty($operator))
+            {
+                $o->delete();
+                Operator::create(['operator_id' => $operator->id, 'status' => 1]);
+                break;
+            }
+        }
+        return $operator;
+    }
+
+    public function change_operator_status(Request $request)
+    {
+        if($request->id)
+        {
+            $operator = Operator::whereOperatorId($request->id)->first();
+            $operator->update([ 'status' => 0]);
+            return response()->json([
+                'status' => true,
+                'message' => 'Status Updated Successfully.',
+            ]);
+        }
+        $user = Auth::user();
+        $operator = Operator::whereOperatorId($user->id)->first();
+        $operator->update([ 'status' => 0]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Status Updated Successfully.',
+        ]);
+    }
+
+    public function change_offer_status(Request $request)
+    {
+        $offer = Offers::whereId($request->id)->first();
+        $offer->update([ 'status' => 'open']);
+        return response()->json([
+            'status' => true,
+            'message' => 'Status Updated Successfully.',
+        ]);
+    }
+
+    public function get_buyer(Request $request)
+    {
+            $user = User::where('id',$request->buyer_id)->first();
+            if(!empty($user))
+            {
+                return response()->json([
+                    'status' => true,
+                    'buyer' => $user->only(['id','username'])
+                ]);
+            }
+            return response()->json([
+                'status' => false,
+                'buyer' => (object) [],
+            ]);
+    }
+
+    public function get_seller(Request $request)
+    {
+            $user = User::where('id',$request->seller_id)->first();
+            if(!empty($user))
+            {
+                return response()->json([
+                    'status' => true,
+                    'seller' => $user->only(['id','username'])
+                ]);
+            }
+            return response()->json([
+                'status' => false,
+                'seller' => (object) [],
+            ]);
+    }
+    public function get_operator(Request $request)
+    {
+            $user = User::where('id',$request->operator_id)->first();
+            if(!empty($user))
+            {
+                return response()->json([
+                    'status' => true,
+                    'operator' => $user->only(['id','username'])
+                ]);
+            }
+            return response()->json([
+                'status' => false,
+                'operator' => (object) [],
+            ]);
+    }
+
 }

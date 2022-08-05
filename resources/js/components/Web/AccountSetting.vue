@@ -1,12 +1,7 @@
 <template>
     <main>
         <div class="container ">
-            <div class="top-text-btn">
-                <div class="view-text">
-                    <p>Viewing MatchPay for:</p>
-                </div>
-                <div class="view-btn"><a href="">IGN</a></div>
-            </div>
+
 
             <div class="row">
                 <div class="account-detail">
@@ -16,7 +11,7 @@
                         </div>
                         <div class="account-conatct-detail">
                             <div class="account-description">
-                                <p>We use your email and phone number to communicate with you. <br> if you wan</p>
+                                <p>We use your email and phone number to communicate with you.</p>
                             </div>
                             <div class="account-form">
                                 <form>
@@ -39,12 +34,14 @@
                                             </b>
                                     </div>
                                     <div class="email-feild account-feild phone-num-inter">
-                                        <input type="text" v-model="state.code" disabled placeholder="+92" class="code-num"
-                                            required="">
+                                        <select  v-model="state.code" style="width: 120px;padding: 20px;outline: none;border: 1px solid rgb(241, 238, 238);">
+                    <option>+1</option>
+                    <option>+92</option>
+              </select>
                                         <input type="text" v-model="state.phone" placeholder="3xxxxxxxxx" class="f-num" required="">
-                                            
+
                                     </div>
-                                    
+
                                     <div class="login-form-btn account-f-btn">
                                         <div class="btn account-b"><a @click.prevent="update()">Update</a></div>
                                     </div>
@@ -72,7 +69,7 @@ export default {
         const state = reactive({
             username: store.getters['auth/currentUser'].username,
             email: store.getters['auth/currentUser'].email,
-            code: '+92',
+            code: '+1',
             phone: '',
 
         })
@@ -100,12 +97,13 @@ export default {
         onMounted(() => {
             const phoneStr = store.getters['auth/currentUser'].phone;
             state.phone = phoneStr.slice(3,phoneStr.length);
+            state.code = phoneStr.substr(0,3);
 
         })
 
         const v$ = useVuelidate(rules,state,{ $externalResults });
 
-        const update = () => {
+        const update = async() => {
             v$.value.$clearExternalResults()
             v$.value.$validate()
             if(!v$.value.$error)
@@ -115,7 +113,7 @@ export default {
                     email: state.email,
                     phone: '+92'+state.phone,
                 }
-                axios.post('/update-setting',data).then(response => {
+                await axios.post('/update-setting',data).then(response => {
                     if(response.data.success)
                     {
                         const user = response.data.user;

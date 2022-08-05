@@ -1,5 +1,4 @@
 
-    (function($) {
     "use strict";
     $(document).ready(function() {
       $('#example-getting-started').multiselect({
@@ -56,4 +55,3 @@
         $('.dropdown-menu.dropdown__menu-right').toggle();
       })
 
-})(jQuery);

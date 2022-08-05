@@ -21,5 +21,6 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'Offers']);
         Permission::create(['name' => 'Getting Match']);
         Permission::create(['name' => 'Account Setting']);
+        Permission::create(['name' => 'AdminChat']);
     }
 }

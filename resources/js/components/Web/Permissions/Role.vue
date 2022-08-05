@@ -87,7 +87,7 @@
                 }
             })
             const getRoles = async () => {
-                axios.get('get_roles', )
+                await axios.get('get_roles', )
                     .then((response) => {
                         roles.value = response.data.roles
                     })

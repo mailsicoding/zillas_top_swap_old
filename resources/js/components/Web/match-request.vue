@@ -57,12 +57,12 @@
             <div class="email-feild d-flex flex-wrap">
               <!-- <label for="price"> Amount</label> -->
               <input type="number" name="price" id="price" v-model="state.price" placeholder="Amount" required>
-              <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 10px;" v-if="v$.price.$error"> 
+              <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 10px;" v-if="v$.price.$error">
                 {{ v$.price.$errors[0].$message }}
               </span>
               <input type="hidden" name="user_id" v-model="state.user_id">
               <div class="icon"><img :src="'images/user.png'" alt=""></div>
-              
+
             </div>
             <div class="col-xl-12 col-md-12 ">
 
@@ -137,7 +137,7 @@
                   </div>
                   <div class="zelle-details">
                     <p>Trades made with Zelle can only be processed on business days</p>
-                    <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.methods.$error"> 
+                    <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.methods.$error">
                       {{ v$.methods.$errors[0].$message }}
                     </span>
                   </div>
@@ -198,16 +198,22 @@ export default {
                 },
             }
 
-        
+
         const v$ = useVuelidate(rules, state)
 
         onMounted(()=>{
+            const operator = JSON.parse(localStorage.getItem('operator'));
+            const matchedWith = localStorage.getItem('matched-with');
+            if(operator && matchedWith)
+            {
+                router.push('/trade-in-process')
+            }
 
         })
 
 
-   
-        
+
+
         const matchRequestOffer = async() => {
             v$.value.$validate()
            console.log("waseem",state);
@@ -220,20 +226,25 @@ export default {
                         icon: 'success',
                         position: 'top-end',
                     });
+                    console.log(result.data.offer)
                     localStorage.setItem('matched-offer',JSON.stringify(result.data.offer))
+                    localStorage.setItem('matched-with','user')
+                    localStorage.setItem('requested-offer',JSON.stringify(state))
                     router.push('/match-found')
                 }
                 else{
-                  router.push('/trade-in-process')
+                    localStorage.setItem('matched-with','operator')
+                    localStorage.setItem('requested-offer',JSON.stringify(state))
                   Toast.fire({
-                            text: result.data.message,
+                            text: 'Offer Not Matched',
                             timer: 2000,
                             icon: 'success',
                             position: 'top-end',
                         });
+                  router.push('/no-match-found')
                 }
             }
-            
+
         }
 
 

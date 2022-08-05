@@ -6,7 +6,7 @@
                 <div class="text-center mr-top-2">
                     <img class="dashboard-icon-border" :src="'assets/images/dashboard-profile.png'" alt="" />
                     <p class="heading-wrapper--one text-capitalize">{{user.username}}</p>
-                    <p class="label__wrapper--one">Steven tailr</p>
+                    <!-- <p class="label__wrapper--one">Steven tailr</p> -->
                 </div>
 
 
@@ -36,11 +36,11 @@
                 </router-link>
 
 
-                <router-link  v-if="can('Dashboard') == true" class="nav-link"  to="/trade-setting"><div  class="sb-nav-link-icon ">
+                <!-- <router-link  v-if="can('Dashboard') == true" class="nav-link"  to="/trade-setting"><div  class="sb-nav-link-icon ">
                       <i class="fa fa-tachometer-alt" aria-hidden="true"></i>
                     </div>
                     Trade Setting
-                  </router-link>
+                  </router-link> -->
 
                 <router-link v-if="can('Account Setting') == true" class="nav-link" to="/account-setting">
                     <div class="sb-nav-link-icon ">
@@ -49,12 +49,12 @@
                     Account Setting
                 </router-link>
 
-                <router-link v-if="can('Funds') == true" class="nav-link" to="/add-funds">
+                <!-- <router-link v-if="can('Funds') == true" class="nav-link" to="/funds">
                     <div class="sb-nav-link-icon ">
                         <i class="fa fa-tachometer-alt" aria-hidden="true"></i>
                     </div>
-                    Add Funds
-                </router-link>
+                    Funds
+                </router-link> -->
 
                 <router-link v-if="can('Users')" class="nav-link" to="/contacts">
                     <div class="sb-nav-link-icon ">
@@ -72,7 +72,8 @@
                     <div class="sb-nav-link-icon ">
                         <i class="fas fa-comment" aria-hidden="true"></i>
                     </div>
-                    Chat with Users
+                    <span v-if="user.role == 'Admin'">Chat with Users</span>
+                    <span v-else>Chat with Admin</span>
                 </router-link>
 
 
@@ -106,7 +107,7 @@ export default {
         }
 
         const getPermissions = async (permissionName) => {
-            axios.get('user/permissions')
+            await axios.get('user/permissions')
                 .then((response) => {
                     permissions.value = response.data;
                 })

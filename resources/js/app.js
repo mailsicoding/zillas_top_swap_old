@@ -46,7 +46,7 @@ axios.interceptors.response.use(undefined, function (error) {
       Toast.fire({
         text: 'Access Denied.',
         timer: 3000,
-        icon: 'success',
+        icon: 'error',
         position: 'top-end',
       });
     }

@@ -93,7 +93,7 @@ export default {
         //     // getContacts()
         // })
         const getContacts = async () => {
-            axios.get('/api/contact')
+            await axios.get('/api/contact')
                 .then((response) => {
                     contacts.value = response.data.contact;
                 })

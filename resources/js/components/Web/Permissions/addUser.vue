@@ -2,7 +2,8 @@
     <main>
         <div class="container">
             <div class="d-flex flex-wrap justify-content-between">
-                <h1 class="mt-4 title-dashboard">Add User</h1>
+                <h1 class="mt-4 title-dashboard" v-if="path == 'add_user'">Add User</h1>
+                <h1 class="mt-4 title-dashboard" v-else>Edit User</h1>
             </div>
 
             <div class="row">
@@ -19,7 +20,7 @@
 
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="text" name="email" v-model="state.email" placeholder="Email" required>
+                        <input type="email" name="email" v-model="state.email" placeholder="Email" required >
                     </div>
                     <div v-if="v$.email.$error">
                         <b style="color:red;">
@@ -30,9 +31,11 @@
 
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="text" style="width:100px;margin-right:10px" v-model="state.code" disabled
-                            placeholder="+92" class="code-num" required="">
-                        <input type="text" v-model="state.phone" placeholder="3xxxxxxxxx" class="f-num" required="">
+                        <select  v-model="state.code" style="width: 120px;padding: 20px;outline: none;border: 1px solid rgb(241, 238, 238);">
+                    <option>+1</option>
+                    <option>+92</option>
+              </select>
+                        <input type="number" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required="">
 
                     </div>
                     <div v-if="v$.phone.$error">
@@ -44,7 +47,7 @@
 
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="password" name="password" v-model="state.password" placeholder="Password" required>
+                        <input type="password" name="password" v-model="state.password" placeholder="Password" required  autocomplete="false">
                     </div>
                     <div v-if="v$.password.$error">
                         <b style="color:red;">
@@ -106,7 +109,7 @@ export default {
         const state = reactive({
             username: '',
             email: '',
-            code: '+92',
+            code: '+1',
             phone: '',
             password: '',
             role: '1',
@@ -126,6 +129,7 @@ export default {
                 router.push('/verify/email')
             }
             else {
+                if(route.params.userId)
                 edit_user()
             }
         })
@@ -190,16 +194,19 @@ export default {
                 const data = {
                     userId: route.params.userId
                 }
-                axios.post('edit-user', data)
+                await axios.post('edit-user', data)
                     .then((response) => {
                         path.value = 'update-user'
                         state.username = response.data.user.username
                         state.email = response.data.user.email
                         state.password = response.data.user.password
-                        state.phone = response.data.user.phone
+                        let text = response.data.user.phone;
+                        state.code =  text.substr(0, 3);
+                        state.phone = text.substr(3, 13);
                         state.role = response.data.user.role[0].id
                         state.userId = data.userId
                     })
+                    console.log(state)
             }
         }
 
@@ -208,6 +215,7 @@ export default {
             state,
             signup,
             v$,
+            path
         }
 
     }

@@ -13,7 +13,9 @@ class orderBy extends Model
         'user_id',
         'offer_id',
         'match_user_id',
-        'price'
+        'price',
+        'status',
+        'method'
     ];
 
     public function user_order()

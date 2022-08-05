@@ -53,15 +53,15 @@
         </div>
         <div class="col-md-12 main-b">
           <div class="row">
-            <div class="email-feild">
+            <div class="email-feild d-flex flex-wrap w-100">
               <!-- <label for="price"> Amount</label> -->
               <input type="number" name="price" id="price" v-model="state.price" placeholder="Amount" required>
-              <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.price.$error"> 
+              <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 10px;margin-top: 5px;" v-if="v$.price.$error">
                 {{ v$.price.$errors[0].$message }}
               </span>
               <input type="hidden" name="user_id" v-model="state.user_id">
               <div class="icon"><img :src="'images/user.png'" alt=""></div>
-              
+
             </div>
             <div class="col-xl-12 col-md-12 ">
 
@@ -136,8 +136,8 @@
                   </div>
                   <div class="zelle-details">
                     <p>Trades made with Zelle can only be processed on business days</p>
-                    
-                    <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.methods.$error"> 
+
+                    <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 50px;" v-if="v$.methods.$error">
                       {{ v$.methods.$errors[0].$message }}
                     </span>
                   </div>
@@ -186,6 +186,7 @@ export default {
             methods: [],
             offerId: 0
         })
+            const $externalResults = ref({})
 
         const rules =  {
               price: {
@@ -196,8 +197,10 @@ export default {
                 },
             }
 
-        
-        const v$ = useVuelidate(rules, state)
+        const v$ = useVuelidate(rules, state, {
+                        $externalResults
+                    })
+
 
         onMounted(()=>{
                 if(user.is_phone_verified === 0)
@@ -215,14 +218,14 @@ export default {
         })
 
 
-        
+
 
         const editOffer = async () => {
           if(route.params.offerId){
               const data = {
                 offerId : route.params.offerId
               }
-                axios.post('edit-offer',data)
+                await axios.post('edit-offer',data)
                     .then((response) => {
                         path.value = 'update-offer'
                         state.price = response.data.offer.price;
@@ -233,6 +236,7 @@ export default {
             }
 
         const createOffer = async() => {
+                v$.value.$clearExternalResults()
             v$.value.$validate()
             if (!v$.value.$error) {
               let result = await axios.post(path.value, state)
@@ -247,7 +251,9 @@ export default {
                         icon: 'success',
                         position: 'top-end',
                     });
-                }
+                }else {
+                            $externalResults.value = result.data.message
+                        }
 
             } else {
                 console.log('Form failed validation')

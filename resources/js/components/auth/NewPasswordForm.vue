@@ -92,7 +92,7 @@ export default {
                 v$.value.$clearExternalResults()
                 v$.value.$validate()
                 if (!v$.value.$error) {
-                        axios.post("update-password", state).then(response => {
+                        await axios.post("update-password", state).then(response => {
                         if (response.data.success == true) {
                             localStorage.removeItem("email");
                             localStorage.removeItem("request_token");
@@ -113,7 +113,7 @@ export default {
 
                     })
                 }
-            }  
+            }
 
         const v$ = useVuelidate(rules, state,{$externalResults})
 
@@ -123,6 +123,6 @@ export default {
             updatePassword
         }
     }
-    
+
 }
 </script>

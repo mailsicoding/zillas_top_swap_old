@@ -57,7 +57,7 @@
                             {{mess.message}}
                         </div>
                     </div>
-                    
+
                 </li>
             </ul>
             <footer>
@@ -171,7 +171,7 @@
             const showPopup = () => {
                 popup.value = true;
             }
-            
+
 
             const scrollBottom = () => {
                 if (messages.value) {
@@ -181,23 +181,23 @@
                 }
             }
             const getUsers = async () => {
-            axios.get('all_users',)
+            await axios.get('all_users',)
                 .then((response) => {
                     users.value = response.data.users;
                 })
             }
-            
-                
+
+
             const search = async () => {
             const data = {
                 name:state.search
             }
-            axios.post('search_admin_chat',data)
+            await axios.post('search_admin_chat',data)
                 .then((response) => {
                     users.value = response.data.users;
             })
             }
-            
+
             onUnmounted(() => {})
             return {
                 messages,

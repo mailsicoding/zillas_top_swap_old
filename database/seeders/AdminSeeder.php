@@ -28,5 +28,11 @@ class AdminSeeder extends Seeder
         $role = Role::find(3);
         $user->assignRole($role->name);
         $role->givePermissionTo(['Dashboard','Users','Roles','Account Setting']);
+
+        $role = Role::find(1);
+        $role->givePermissionTo(['Dashboard','Getting Match','Offers','Account Setting']);
+
+        $role = Role::find(2);
+        $role->givePermissionTo(['Dashboard','Funds','Account Setting']);
     }
 }

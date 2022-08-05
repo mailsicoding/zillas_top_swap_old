@@ -154,7 +154,7 @@ export default {
         const addFunds = async () => {
                 v$.value.$validate();
                 if(!v$.value.$error){
-                axios.post('add-funds',state)
+                await axios.post('add-funds',state)
                     .then((response) => {
                         if(response.data.success == true)
                         {
@@ -173,7 +173,7 @@ export default {
             }
 
         const getUsers = async () => {
-                axios.get('players',state)
+                await axios.get('players',state)
                     .then((response) => {
                         users.value = response.data
                     })

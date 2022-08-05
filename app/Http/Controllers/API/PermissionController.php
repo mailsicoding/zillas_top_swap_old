@@ -18,4 +18,10 @@ class PermissionController extends Controller
             'permissions' => $permissions
         ]);
     }
+
+    function getRole() {
+        $user = Auth::user();
+        $role = $user->roles()->first();
+        return $role->name;
+    }
 }
