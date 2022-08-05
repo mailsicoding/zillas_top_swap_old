@@ -1,12 +1,6 @@
 <template>
 <main>
     <div class="container">
-        <div class="top-text-btn">
-            <div class="view-text">
-                <p>Viewing MatchPay for:</p>
-            </div>
-            <div class="view-btn"><a href="">IGN</a></div>
-        </div>
         <div class="account-title match-title">
             <h4>No Match Found</h4>
         </div>
@@ -82,6 +76,11 @@ export default {
         const router = useRouter()
 
         onMounted(() => {
+            if (currentuser.is_phone_verified === 0) {
+                router.push('/verify/phone')
+            } else if (currentuser.is_email_verified === 0) {
+                router.push('/verify/email')
+            } else {
             const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'));
             const matchedWith = localStorage.getItem('matched-with');
             if (requestedOffer && matchedWith) {
@@ -89,6 +88,7 @@ export default {
             }
             else{
                 router.push('/dashboard');
+            }
             }
         })
 
@@ -113,6 +113,20 @@ export default {
                             operator_response: 0,
                             seller_response: 0
                         });
+
+                        const fb_push2 = push(storageRef(db, 'chat_messages/' + 0 + '_' + response.data.id + '_' + 0 + '_' + currentuser.id))
+
+                        set(fb_push2, {
+                            offer_id: 0,
+                            operator_id: response.data.id,
+                            seller_id: 0,
+                            buyer_id: currentuser.id,
+                            type: 'chat',
+                            id: currentuser.id,
+                            username: currentuser.username,
+                            message: 'I wants to buy game credits of $' + requestedOffer.price
+                        });
+
                         router.push('/trade-in-process')
                 }
                 else{

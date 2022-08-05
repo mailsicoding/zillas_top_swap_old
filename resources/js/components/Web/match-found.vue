@@ -68,7 +68,13 @@ export default {
         const matched_user = ref({})
 
         onMounted(() => {
+            if (currentuser.is_phone_verified === 0) {
+                router.push('/verify/phone')
+            } else if (currentuser.is_email_verified === 0) {
+                router.push('/verify/email')
+            } else {
             matchedUser();
+            }
         })
 
         onBeforeMount(() => {
@@ -136,6 +142,20 @@ export default {
                         operator_response: 0,
                         seller_response: 0
                     });
+
+                    const fb_push2 = push(storageRef(db, 'chat_messages/' + 0 + '_' + response.data.id + '_' + 0 + '_' + currentuser.id))
+
+                        set(fb_push2, {
+                            offer_id: 0,
+                            operator_id: response.data.id,
+                            seller_id: 0,
+                            buyer_id: currentuser.id,
+                            type: 'chat',
+                            id: currentuser.id,
+                            username: currentuser.username,
+                            message: 'I wants to buy game credits of $' + requestedOffer.price
+                        });
+
                     router.push('/trade-in-process')
                 } else {
                     localStorage.setItem('operator', JSON.stringify(operator.value))
@@ -162,6 +182,20 @@ export default {
                         operator_response: 0,
                         seller_response: 0
                     });
+
+                    const fb_push2 = push(storageRef(db, 'chat_messages/' + offer.offer.id + '_' + operator.value.id + '_' + matched_user.value.id + '_' + currentuser.id))
+
+                        set(fb_push2, {
+                            offer_id: offer.offer.id,
+                            operator_id: operator.value.id,
+                            seller_id: matched_user.value.id,
+                            buyer_id: currentuser.id,
+                            type: 'chat',
+                            id: currentuser.id,
+                            username: currentuser.username,
+                            message: 'I am interested in your offer.'
+                        });
+
                     router.push('/trade-in-process')
                 }
 
