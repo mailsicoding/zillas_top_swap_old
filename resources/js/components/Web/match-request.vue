@@ -202,13 +202,18 @@ export default {
         const v$ = useVuelidate(rules, state)
 
         onMounted(()=>{
+            if (currentuser.is_phone_verified === 0) {
+                router.push('/verify/phone')
+            } else if (currentuser.is_email_verified === 0) {
+                router.push('/verify/email')
+            } else {
             const operator = JSON.parse(localStorage.getItem('operator'));
             const matchedWith = localStorage.getItem('matched-with');
             if(operator && matchedWith)
             {
                 router.push('/trade-in-process')
             }
-
+            }
         })
 
 

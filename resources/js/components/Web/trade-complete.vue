@@ -41,11 +41,13 @@
             </main>
 </template>
 <script>
+import store from '../../stores'
 import { onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 export default {
     name: 'trade-complete',
     setup(){
+        const user = reactive(store.getters["auth/currentUser"])
         const state = reactive({
             username : '',
             price : '',
@@ -53,6 +55,11 @@ export default {
         const router = useRouter()
 
         onMounted(()=>{
+            if (user.is_phone_verified === 0) {
+                router.push('/verify/phone')
+            } else if (user.is_email_verified === 0) {
+                router.push('/verify/email')
+            } else {
                 const offer = JSON.parse(localStorage.getItem('matched-offer'));
                 const operator = JSON.parse(localStorage.getItem('operator'));
                 const buyer = JSON.parse(localStorage.getItem('buyer'));
@@ -89,6 +96,7 @@ export default {
                 localStorage.removeItem('matched-offer-user');
                 localStorage.removeItem('isFundsAdded')
                 localStorage.removeItem('operator');
+            }
         })
 
         return {

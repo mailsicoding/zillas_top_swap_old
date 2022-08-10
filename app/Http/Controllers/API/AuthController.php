@@ -111,7 +111,7 @@ class AuthController extends Controller
 
         $role = Role::find(1);
         $user->assignRole($role->name);
-        $role->givePermissionTo(['Dashboard','Account Setting']);
+        // $role->givePermissionTo(['Dashboard','Account Setting']);
 
 
         $u = User::find($user->id)->only(['id','username','email','phone','is_email_verified','is_phone_verified']);
@@ -186,6 +186,7 @@ class AuthController extends Controller
     {
 
         $inputs = $request->all();
+        $inputs['phone'] = $inputs['code'].$inputs['phone'];
         $v = Validator::make($inputs, [
             'username' => 'required|string|alpha_dash|min:3|unique:users,username,'.$inputs['userId'],
             'email' => 'required|email|unique:users,email,'.$inputs['userId'],

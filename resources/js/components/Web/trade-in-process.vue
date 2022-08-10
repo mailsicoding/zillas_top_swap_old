@@ -135,12 +135,19 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- <div class="pop-proces">
+                            <div class="pop-proces" v-if="trade.buyer == ''">
                                 <div class="box1">
-                                    <a class="button" @click.prevent="showPopup()">I have Sent the credits</a>
+                                    <a class="button" style="font-size:17px" @click.prevent="showPopup()">I have Sent the Payment</a>
                                 </div>
 
-                            </div> -->
+                            </div>
+
+                            <div class="pop-proces" v-if="trade.buyer != '' && trade.operator != ''">
+                                <div class="box1">
+                                    <a class="button" style="font-size:17px" @click.prevent="showPopup2()">I have Recieved the Payment</a>
+                                </div>
+
+                            </div>
                         </div>
 
                     </div>
@@ -154,16 +161,33 @@
     <div id="popup1" v-if="popup == true" class="overlay">
         <div class="popup">
             <h2>confirm transfer</h2>
-            <a class="close" href="#">&times;</a>
-            <div class="content-pop">
-                <input type="checkbox" class="pop-chec">
-                <div class="tex">i can confirm that i have sent <b>USD {{ state.price }}</b> via <b>Zelle</b> to
-                    ealanaj</div>
+            <a class="close" href="#" @click.prevent="closePopup()">&times;</a>
+            <div class="content-pop" v-for="(method,index) in state.methodsArr" :key="index">
+                <input type="radio" v-model="state.pmethod" name="pmethod" :value="method" class="pop-chec">
+                <div class="tex">i can confirm that i have sent <b>USD {{ state.price }}</b> via <b>{{method}}</b> to
+                    {{state.seller}}</div>
             </div>
             <div class="pop-tos">
-                <div class="tos1"><a href="#">Cancel</a></div>
+                <div class="tos1"><a href="#" @click.prevent="closePopup()">Cancel</a></div>
                 <div class="tos2">
-                    <router-link to="/trade-complete" @click="historyMatch">Confirm</router-link>
+                    <a style="color:white" @click.prevent="confirmPayment()">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="popup1" v-if="popup2 == true" class="overlay">
+        <div class="popup">
+            <h2>confirm transfer</h2>
+            <a class="close" href="#" @click.prevent="closePopup2()">&times;</a>
+            <div class="content-pop" v-for="(method,index) in state.methodsArr" :key="index">
+                <input type="radio" v-model="state.pmethod" name="pmethod" :value="method" class="pop-chec">
+                <div class="tex">i can confirm that i have recieved <b>USD {{ state.price }}</b> via <b>{{method}}</b> from
+                    {{state.buyer}}</div>
+            </div>
+            <div class="pop-tos">
+                <div class="tos1"><a href="#" @click.prevent="closePopup2()">Cancel</a></div>
+                <div class="tos2">
+                    <a style="color:white" @click.prevent="confirmRecieved()">Confirm</a>
                 </div>
             </div>
         </div>
@@ -201,6 +225,7 @@ export default {
         const messages = ref([])
         const message = ref('')
         const popup = ref(false)
+        const popup2 = ref(false)
         const router = useRouter()
         const state = reactive({
             offer_id: 0,
@@ -210,6 +235,10 @@ export default {
             username: '',
             price: '',
             methods: '',
+            methodsArr: '',
+            seller: 'Seller',
+            buyer: 'Buyer',
+            pmethod: '',
         })
         const trade = reactive({
             operator: '',
@@ -242,6 +271,8 @@ export default {
                         state.price = offer.offer.price
                         const meth = offer.matched_methods;
                         state.methods = meth.toString()
+                        state.methodsArr = offer.matched_methods
+                        state.pmethod = offer.matched_methods[0]
 
                         trade.operator = operator.username
                         trade.seller = seller.username
@@ -261,6 +292,8 @@ export default {
                         state.price = offer.offer.price
                         const meth = offer.matched_methods;
                         state.methods = meth.toString()
+                        state.methodsArr = offer.matched_methods
+                        state.pmethod = offer.matched_methods[0]
 
                         trade.buyer = buyer.username
                         trade.seller = seller.username
@@ -280,6 +313,8 @@ export default {
                         state.price = offer.offer.price
                         const meth = offer.matched_methods;
                         state.methods = meth.toString()
+                        state.methodsArr = offer.matched_methods
+                        state.pmethod = offer.matched_methods[0]
 
                         trade.operator = operator.username
                         trade.buyer = buyer.username
@@ -298,6 +333,8 @@ export default {
                     state.price = requestedOffer.price
                     const meth = requestedOffer.methods;
                     state.methods = meth.toString()
+                    state.methodsArr = requestedOffer.methods
+                    state.pmethod = requestedOffer.methods[0]
 
                     trade.buyer = buyer.username
 
@@ -313,6 +350,8 @@ export default {
                     state.price = requestedOffer.price
                     const meth = requestedOffer.methods;
                     state.methods = meth.toString()
+                    state.methodsArr = requestedOffer.methods
+                    state.pmethod = requestedOffer.methods[0]
 
                     trade.operator = operator.username
 
@@ -416,6 +455,17 @@ export default {
             popup.value = true;
         }
 
+        const showPopup2 = () => {
+            popup2.value = true;
+        }
+
+        const closePopup = () => {
+            popup.value = false;
+        }
+        const closePopup2 = () => {
+            popup2.value = false;
+        }
+
         const scrollBottom = () => {
             if (messages.value) {
                 let el = hasScrolledToBottom.value;
@@ -423,23 +473,15 @@ export default {
                 el.scrollTop = el.scrollHeight;
             }
         }
-        const historyMatch = async () => {
-            const offer = JSON.parse(localStorage.getItem('matched-offer'));
-            const data = {
-                user_id: offer.offer.user_id,
-                offer_id: offer.offer.id,
-                price: offer.offer.price
-            }
-            await axios.post('order-history', data, {
-                offerId: offer.offer.id
-            }).then((response) => {
-                console.log(response.data)
-                // this.offerId=response.data.id
-                // if (response.data.status == true) {
-                //     // state.price = '';
-                //     // state.user_id = '';
-                // }
-            })
+        const confirmPayment = async () => {
+            message.value = 'I can confirm that I have sent USD '+ state.price +' via '+ state.pmethod + ' to ' + state.seller
+            addMessage()
+            popup.value = false
+        }
+        const confirmRecieved = async () => {
+            message.value = 'I can confirm that I have recieved USD '+ state.price +' via '+ state.pmethod + ' from ' + state.buyer
+            addMessage()
+            popup2.value = false
         }
 
 
@@ -503,10 +545,81 @@ export default {
             state,
             hasScrolledToBottom,
             showPopup,
+            showPopup2,
             popup,
-            historyMatch,
-            trade
+            popup2,
+            confirmPayment,
+            trade,
+            closePopup,
+            closePopup2,
+            confirmRecieved
         }
     }
 }
 </script>
+<style>
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    transition: opacity 500ms;
+    visibility: visible;
+    opacity: 1;
+}
+
+.pop-tos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.pop-tos a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    background: rgb(4, 138, 79);
+    border-radius: 4px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid rgb(4, 138, 79);
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    width: 142px;
+}
+
+.pop-tos a:hover {
+    background-color: transparent;
+    border: 1px solid rgb(4, 138, 79);
+    transition: all .5s ease-in-out;
+    color: rgb(4, 138, 79);
+}
+
+.pop-tos .tos1 a:hover {
+    background-color: transparent;
+    border: 1px solid rgb(4, 138, 79);
+    transition: all .5s ease-in-out;
+    color: rgb(4, 138, 79);
+}
+
+.tos1 {
+    padding-right: 10px;
+    color: #fff;
+}
+.tos2 {
+    color: #fff;
+}
+.pop-tos .tos2 a:hover {
+    background-color: transparent;
+    border: 1px solid rgb(4, 138, 79);
+    transition: all .5s ease-in-out;
+    color: rgb(4, 138, 79)!important;
+}
+</style>
