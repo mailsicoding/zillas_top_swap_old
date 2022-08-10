@@ -93,7 +93,7 @@ export default {
                     });
                     props.message = ''
                 }
-                
+
                 onValue(Fb_ref, (snapshot) => {
                     const data = snapshot.val();
                     props.messages = data
@@ -101,7 +101,7 @@ export default {
 
             }
             return addMessage;
-            
+
         }
 }
 </script>

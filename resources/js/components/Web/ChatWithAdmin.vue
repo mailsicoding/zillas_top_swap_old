@@ -7,7 +7,7 @@
                 <button type="submit" @click="search"><i class="fa fa-search"></i></button>
             </header>
             <ul>
-                <li v-for="user in users" :key="user.id" :id='user.id' class="pointer"  @click="chat_room">
+                <li v-for="user in users" :key="user.id" :id='user.id' :username='user.username' class="pointer"  @click="chat_room">
                     <img :src="'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg'" alt="user image">
                     <div>
                         <h2>{{user.username}}</h2>
@@ -28,10 +28,10 @@
             <header>
                 <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="">
                 <div>
-                    <h2>Chat with Vincent Porter</h2>
-                    <h3>already 1902 messages</h3>
+                    <h2>.</h2>
+                    <h3>Chat with {{state.username}}</h3>
                 </div>
-                <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt="">
+                <!-- <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt=""> -->
             </header>
             <ul id="chat" >
                 <li class="you" v-for="mess in messages" :key="mess.id">
@@ -128,6 +128,7 @@
             const chat_room = () => {
                 $('.pointer').on('click',function(){
                     state.chat_user = $(this).attr('id');
+                    state.username = $(this).attr('username');
                     const db = getDatabase();
                     const Fb_ref = storageRef(db, 'admin_chat/'+1+'_'+state.chat_user)
                     onValue(Fb_ref, (snapshot) => {
