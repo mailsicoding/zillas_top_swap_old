@@ -114,11 +114,11 @@
                                     </div>
                                     <div class="activity-shop">
                                         <div class="acivity-price">${{history.price}}</div>
-                                        <div class="activity-next-icon"><a href="#"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div>
+                                        <!-- <div class="activity-next-icon"><a href="#"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div> -->
                                     </div>
                                     <div class="activity-shop">
                                         <div class="acivity-price">{{history.status}}</div>
-                                        <div class="activity-next-icon"><a href="#"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div>
+                                        <!-- <div class="activity-next-icon"><a href="#"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div> -->
                                     </div>
                                 </div>
                             </div>
@@ -497,8 +497,6 @@ export default {
                         });
 
                         remove(storageRef(db, 'chat_matches'))
-
-
                     }
                 })
 
@@ -700,6 +698,7 @@ export default {
                         buyer.value = {};
                         seller.value = {};
                         matchOffer.value = {};
+                    localStorage.setItem('trade-complete',1)
                         router.push('/trade-complete')
                     }
 
@@ -749,6 +748,7 @@ export default {
 
                     remove(storageRef(db, 'chat_matches'))
 
+                    localStorage.setItem('trade-complete',1)
                     router.push('/trade-complete')
 
         }

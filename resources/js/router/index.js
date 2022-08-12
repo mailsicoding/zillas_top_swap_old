@@ -25,7 +25,7 @@ import addUser from '../components/Web/Permissions/AddUser.vue'
 import EditRole from '../components/Web/Permissions/EditRole.vue'
 import ContactUs from '../components/Web/ContactUs.vue'
 import AddContactUs from '../components/Web/AddContactUs.vue'
-import ChatWithAdmin from '../components/Web/ChatWithAdmin.vue'
+// import ChatWithAdmin from '../components/Web/ChatWithAdmin.vue'
 import Store from "./../stores";
 // import router from 'vue-router'
 
@@ -169,11 +169,11 @@ const routes = [
                 name: 'add_contact_us',
                 component: AddContactUs
             },
-            {
-                path: '/admin_user_chat',
-                name: 'chat_with_admin',
-                component: ChatWithAdmin
-            }
+            // {
+            //     path: '/admin_user_chat',
+            //     name: 'chat_with_admin',
+            //     component: ChatWithAdmin
+            // }
         ],
         meta: { requiresAuth: true }
     },

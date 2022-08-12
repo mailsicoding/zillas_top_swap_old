@@ -415,4 +415,14 @@ class OfferController extends Controller
             ]);
     }
 
+    public function get_admin_username(Request $request)
+    {
+            $user = User::find(1);
+            if(!empty($user))
+            {
+                return $user->username;
+            }
+            return '';
+    }
+
 }
