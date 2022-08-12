@@ -308,17 +308,29 @@ class OfferController extends Controller
                 'offer_id' =>  $offer->id,
                 'match_user_id' => $offer->user_id,
                 'price'  =>  $offer->price,
-                'method'  =>  '-'
-
+                'method'  =>  '-',
+                'status'  =>  ($request->has('status')) ? $request->status : 'cancel',
             ]);
 
             return response()->json([
                 'status' => true
             ]);
         }
-        return response()->json([
-            'status' => false
-        ]);
+        else {
+
+            $history = orderBy::create([
+                'user_id' => $request->user_id,
+                'offer_id' =>  0,
+                'match_user_id' => 0,
+                'price'  =>  22,
+                'method'  =>  '-',
+                'status'  =>  'cancel',
+            ]);
+
+            return response()->json([
+                'status' => true
+            ]);
+        }
     }
 
     public function find_operator(Request $request)

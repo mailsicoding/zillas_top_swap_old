@@ -59,7 +59,8 @@ class OrderByController extends Controller
     public function order_cancel_history(Request $request)
     {
         $user = Auth::user();
-        $get = orderBy::with('user_order', 'offer_order')->where('user_id',$user->id)->where('status','complete')->orWhere('match_user_id',$user->id)->get();
+        $get = orderBy::with('user_order', 'offer_order')->where('user_id',$user->id)->orWhere('match_user_id',$user->id)->get();
+        $get = $get->where('status','complete');
         $response = [
             'success' => true,
             'history' => $get,
