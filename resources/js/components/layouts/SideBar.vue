@@ -74,13 +74,13 @@
                     </div>
                     Contact Us
                 </router-link>
-                <router-link class="nav-link" to="/admin_user_chat">
+                <!-- <router-link class="nav-link" to="/admin_user_chat">
                     <div class="sb-nav-link-icon ">
                         <i class="fas fa-comment" aria-hidden="true"></i>
                     </div>
                     <span v-if="user.role == 'Admin'">Chat with Users</span>
                     <span v-else>Chat with Admin</span>
-                </router-link>
+                </router-link> -->
 
 
             </div>

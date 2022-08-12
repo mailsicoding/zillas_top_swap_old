@@ -28,6 +28,7 @@ import AddContactUs from '../components/Web/AddContactUs.vue'
 import ChatWithAdmin from '../components/Web/ChatWithAdmin.vue'
 import AdminTranferCredits from '../components/Web/Permissions/AdminTranferCredits.vue'
 // import AdminEditCredits from '../components/Web/Permissions/AdminEditCredits.vue'
+// import ChatWithAdmin from '../components/Web/ChatWithAdmin.vue'
 import Store from "./../stores";
 // import router from 'vue-router'
 
@@ -187,6 +188,11 @@ const routes = [
             //     component: AdminEditCredits
             // }
 
+            // {
+            //     path: '/admin_user_chat',
+            //     name: 'chat_with_admin',
+            //     component: ChatWithAdmin
+            // }
         ],
         meta: { requiresAuth: true }
     },

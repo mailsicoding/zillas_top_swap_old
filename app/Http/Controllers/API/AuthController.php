@@ -98,6 +98,7 @@ class AuthController extends Controller
                 'user' => (object) []
             ]);
         }
+
         $user = User::create([
             'username' => $inputs['username'],
             'email' => $inputs['email'],
@@ -127,6 +128,7 @@ class AuthController extends Controller
             'user' => $u,
         ]);
     }
+
     public function store_user(Request $request)
     {
 
@@ -207,7 +209,22 @@ class AuthController extends Controller
                 'email' => $inputs['email'],
                 'password' => $inputs['password'],
                 'phone' => $inputs['phone'],
+                'password' => Hash::make($inputs['password']),
             ]);
+
+            if ($user->roles()->first()->name == 'Operator' && $inputs['role'] != 2) {
+                $o = Operator::where('operator_id', $user->id)->first();
+                if ($o) {
+                    $o->delete();
+                }
+            }
+        }
+
+        if ($inputs['role'] == 2) {
+            $o = Operator::where('operator_id', $user->id)->first();
+            if (!$o) {
+                Operator::create(['operator_id' => $user->id]);
+            }
         }
         if ($inputs['role'] == 2) {
             $o = Operator::where('operator_id', $user->id)->first();
@@ -260,15 +277,15 @@ class AuthController extends Controller
 
             $token = $user->createToken($user->email)->plainTextToken;
 
-            $user = User::find($user->id)->only(['username', 'email', 'phone', 'is_email_verified', 'is_phone_verified', 'id', 'image',]);
-            $user['token'] = $token;
-            $user['role'] = $u->roles()->first()->name;
+            $user1 = User::find($user->id)->only(['username', 'email', 'phone', 'is_email_verified', 'is_phone_verified', 'id', 'image',]);
+            $user1['token'] = $token;
+            $user1['role'] = $u->roles()->first()->name;
 
             return response()->json([
                 'success' => true,
                 // 'errors' => (object) [],
                 'message' => 'User Login Successfully.',
-                'user' => $user,
+                'user' => $user1,
             ]);
         }
         return response()->json([

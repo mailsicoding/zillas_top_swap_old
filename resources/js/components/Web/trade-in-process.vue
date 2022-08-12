@@ -49,6 +49,9 @@
                                         <div class="no-match-p">
                                             <p>Please make the transfer before the timer runs out</p>
                                         </div>
+                                        <div class="no-match-p">
+                                            <p> <button class="btn btn-success">{{ countDown }}</button></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -226,6 +229,7 @@ export default {
         const message = ref('')
         const popup = ref(false)
         const popup2 = ref(false)
+        const countDown = ref(0.0)
         const router = useRouter()
         const state = reactive({
             offer_id: 0,
@@ -240,6 +244,7 @@ export default {
             buyer: 'Buyer',
             pmethod: '',
         })
+        const minutes = ref(0)
         const trade = reactive({
             operator: '',
             buyer: '',
@@ -247,6 +252,7 @@ export default {
         });
         let hasScrolledToBottom = ref('')
         const db = getDatabase();
+        let interval;
 
         // console.log('hasScrolledToBottom', hasScrolledToBottom)
         onMounted(() => {
@@ -260,6 +266,8 @@ export default {
                 const seller = JSON.parse(localStorage.getItem('seller'));
                 const buyer = JSON.parse(localStorage.getItem('buyer'));
                 const matchedWith = localStorage.getItem('matched-with');
+                const paymentSent = localStorage.getItem('payment-sent');
+                const paymentRecieved = localStorage.getItem('payment-recieved');
                 const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'));
                 if(offer){
                     if(matchedWith && matchedWith == 'user'){
@@ -276,6 +284,11 @@ export default {
 
                         trade.operator = operator.username
                         trade.seller = seller.username
+                        if(!paymentSent)
+                        {
+                            minutes.value = 10
+                            countDownTimer()
+                        }
 
 
                         get(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id)).then((snapshot) => {
@@ -283,7 +296,7 @@ export default {
                                 messages.value = snapshot.val()
                         })
                     }
-                    else if(seller){
+                    else if(seller && buyer){
                         state.username = buyer.username
                         state.offer_id = offer.offer.id
                         state.operator_id = user.id
@@ -304,7 +317,7 @@ export default {
                                 messages.value = snapshot.val()
                         })
                     }
-                    else{
+                    else if(buyer){
                         state.username = buyer.username
                         state.offer_id = offer.offer.id
                         state.operator_id = operator.id
@@ -324,6 +337,9 @@ export default {
 
                                 messages.value = snapshot.val()
                         })
+                    }
+                    else{
+                        router.push('/dashboard')
                     }
                 }
                 else if (buyer && requestedOffer) {
@@ -355,6 +371,11 @@ export default {
 
                     trade.operator = operator.username
 
+                        if(!paymentSent)
+                        {
+                            minutes.value = 10
+                            countDownTimer()
+                        }
 
                     get(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id)).then((snapshot) => {
 
@@ -367,6 +388,14 @@ export default {
 
             }
         })
+
+        onUnmounted(()=> {
+            if(user.role != 'Operator')
+            {
+                return;
+            }
+        })
+
         onUpdated(() => {
             OnlineChat()
             onValue(storageRef(db, 'order_cancel/' + state.offer_id), (snapshot) => {
@@ -441,12 +470,31 @@ export default {
                 });
         }
 
+        const countDownTimer = () => {
+                    interval = setInterval(function () {
+                        var d = new Date();
+                        var seconds = d.getMinutes() * 60 + d.getSeconds(); //convet 00:00 to seconds for easier caculation
+                        var fiveMin = 60 * minutes.value; //five minutes is 300 seconds!
+                        var timeleft = fiveMin - seconds % fiveMin; // let's say 01:30, then current seconds is 90, 90%300 = 90, then 300-90 = 210. That's the time left!
+                        var result = parseInt(timeleft / 60) + ':' + timeleft % 60; //formart seconds into 00:00
 
+                        if (result == '0:1') {
+                            clearTimer()
+                        }
+                        countDown.value = result;
+
+                    }, 1000)
+                }
 
         const delete_chat = ()=>{
-             const db = getDatabase();
+            const db = getDatabase();
 
-               remove(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
+            remove(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
+        }
+
+        const clearTimer = () => {
+            minutes.value = 0
+            clearInterval(interval)
         }
 
         const showPopup = () => {
@@ -475,11 +523,13 @@ export default {
             message.value = 'I can confirm that I have sent USD '+ state.price +' via '+ state.pmethod + ' to ' + state.seller
             addMessage()
             popup.value = false
+            clearTimer()
         }
         const confirmRecieved = async () => {
             message.value = 'I can confirm that I have recieved USD '+ state.price +' via '+ state.pmethod + ' from ' + state.buyer
             addMessage()
             popup2.value = false
+            clearTimer()
         }
 
 
@@ -490,6 +540,7 @@ export default {
                     // localStorage.removeItem('matched-offer');
                     // localStorage.removeItem('buyer');
                     // localStorage.removeItem('operator');
+                    localStorage.setItem('trade-complete',1)
 
                     remove(storageRef(db,'order_complete/seller/' + user.id))
                     // remove(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
@@ -516,6 +567,7 @@ export default {
                     // localStorage.removeItem('seller');
                     // localStorage.removeItem('matched-offer');
                     // localStorage.removeItem('matched-offer-user');
+                    localStorage.setItem('trade-complete',1)
 
                     remove(storageRef(db,'order_complete/buyer/' + user.id))
 
@@ -548,7 +600,8 @@ export default {
             trade,
             closePopup,
             closePopup2,
-            confirmRecieved
+            confirmRecieved,
+            countDown
         }
     }
 }
