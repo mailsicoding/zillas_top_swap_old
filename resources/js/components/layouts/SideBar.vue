@@ -22,6 +22,12 @@
                     </div>
                     Users
                 </router-link>
+                <router-link v-if="can('Users') == true" class="nav-link" to="/admin_tranfer_credit">
+                    <div class="sb-nav-link-icon ">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </div>
+                    Transfer Credits
+                </router-link>
                 <router-link v-if="can('Roles') == true" class="nav-link" to="/roles">
                     <div class="sb-nav-link-icon ">
                         <i class="fa fa-user" aria-hidden="true"></i>

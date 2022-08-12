@@ -497,8 +497,6 @@ export default {
             clearInterval(interval)
         }
 
-
-
         const showPopup = () => {
             popup.value = true;
         }
@@ -533,8 +531,6 @@ export default {
             popup2.value = false
             clearTimer()
         }
-
-
 
 
         onValue(storageRef(db,'order_complete/seller/' + user.id),(snapshot) => {

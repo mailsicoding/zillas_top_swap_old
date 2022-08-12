@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminTranferCredit;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\API\AuthController;
@@ -70,6 +71,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         // contact us mail module
         Route::get('all_contacts', [ContactUsController::class, 'index']);
         Route::post('delete-contact', [ContactUsController::class, 'delete_contact']);
+        Route::get('admin_plyers_credit', [AdminTranferCredit::class, 'getPlayers']);
+        Route::post('admin_edit_credit', [AdminTranferCredit::class, 'edit_Credits']);
+        Route::post('admin_minus_credit', [AdminTranferCredit::class, 'remove_crdite']);
     });
 
     Route::group(['middleware' => 'can:Offers,Getting Match'], function () {

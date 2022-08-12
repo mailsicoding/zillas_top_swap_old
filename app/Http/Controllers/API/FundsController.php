@@ -18,14 +18,13 @@ class FundsController extends Controller
 
     public function players()
     {
-        return User::role('Player')->get(['id','username']);
+        return User::role('Player')->get(['id', 'username']);
     }
 
     public function add_funds(Request $request)
     {
         $user = User::find($request->user_id);
-        if($user)
-        {
+        if ($user) {
             $user->update([
                 'funds' => $user->funds + $request->price
             ]);
@@ -44,8 +43,7 @@ class FundsController extends Controller
     public function sub_funds(Request $request)
     {
         $user = User::find($request->user_id);
-        if($user)
-        {
+        if ($user) {
             $user->update([
                 'funds' => $user->funds - $request->price
             ]);
