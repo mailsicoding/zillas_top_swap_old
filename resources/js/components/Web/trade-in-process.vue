@@ -11,7 +11,6 @@
         <div class="row">
             <div class="col-md-12 main-b">
                 <div class="row">
-
                     <div class="col-xl-12 col-md-12 process-col ">
 
                         <div class="graph__wrapper-width">
@@ -504,8 +503,6 @@ export default {
             countDownTimer()
         }
 
-
-
         const showPopup = () => {
             popup.value = true;
         }
@@ -549,8 +546,6 @@ export default {
             popup2.value = false
             clearTimer()
         }
-
-
 
 
         onValue(storageRef(db,'order_complete/seller/' + user.id),(snapshot) => {

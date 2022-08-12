@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminTranferCredit;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ContactUsController;
 use App\Http\Controllers\API\MessageController;
@@ -58,6 +59,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('edit_roles', [AuthController::class, 'edit_roles']);
         Route::get('get_permissions', [AuthController::class, 'get_permissions']);
         Route::post('assign_permission_role', [AuthController::class, 'assign_permission_role']);
+        Route::get('admin_plyers_credit', [AdminTranferCredit::class, 'getPlayers']);
+        Route::post('admin_edit_credit', [AdminTranferCredit::class, 'edit_Credits']);
+        Route::post('admin_minus_credit', [AdminTranferCredit::class, 'remove_crdite']);
         // contact us mail module
         Route::apiResource('contact', ContactUsController::class)->only(['index', 'destroy']);
     });
