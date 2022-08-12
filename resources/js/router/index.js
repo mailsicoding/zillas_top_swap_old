@@ -26,6 +26,8 @@ import EditRole from '../components/Web/Permissions/EditRole.vue'
 import ContactUs from '../components/Web/ContactUs.vue'
 import AddContactUs from '../components/Web/AddContactUs.vue'
 import ChatWithAdmin from '../components/Web/ChatWithAdmin.vue'
+import AdminTranferCredits from '../components/Web/Permissions/AdminTranferCredits.vue'
+// import AdminEditCredits from '../components/Web/Permissions/AdminEditCredits.vue'
 import Store from "./../stores";
 // import router from 'vue-router'
 
@@ -173,7 +175,18 @@ const routes = [
                 path: '/admin_user_chat',
                 name: 'chat_with_admin',
                 component: ChatWithAdmin
-            }
+            },
+            {
+                path: '/admin_tranfer_credit',
+                name: 'tranfer_credits',
+                component: AdminTranferCredits
+            },
+            // {
+            //     path: '/admin_edit_credit/:offerId',
+            //     name: 'admin_edit_credit',
+            //     component: AdminEditCredits
+            // }
+
         ],
         meta: { requiresAuth: true }
     },
@@ -211,7 +224,7 @@ router.beforeEach((to, from, next) => {
     ) {
         next("/dashboard");
     }
-     else {
+    else {
         next();
     }
 });
@@ -221,16 +234,16 @@ router.beforeEach((to, from, next) => {
 router.beforeResolve((to, from, next) => {
     // If this isn't an initial page load.
     if (to.name) {
-      // Start the route progress bar.
-      Startloader(true)
+        // Start the route progress bar.
+        Startloader(true)
     }
     next()
-  })
+})
 
-  router.afterEach((to, from) => {
+router.afterEach((to, from) => {
     // Complete the animation of the route progress bar.
-      Startloader(false)
-  })
+    Startloader(false)
+})
 
 
 export default router;

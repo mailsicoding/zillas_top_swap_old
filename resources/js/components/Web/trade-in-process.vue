@@ -449,8 +449,6 @@ export default {
                remove(storageRef(db, 'chat_messages/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
         }
 
-
-
         const showPopup = () => {
             popup.value = true;
         }
@@ -483,8 +481,6 @@ export default {
             addMessage()
             popup2.value = false
         }
-
-
 
 
         onValue(storageRef(db,'order_complete/seller/' + user.id),(snapshot) => {

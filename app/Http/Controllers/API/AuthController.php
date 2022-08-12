@@ -19,47 +19,50 @@ use \Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $user = Auth::user();
         $role = $user->roles()->first();
-        if($role->name == "Player" || $role->name == "Operator")
-        {
+        if ($role->name == "Player" || $role->name == "Operator") {
             return response()->json([
                 'success' => true,
                 'message' => "get all records successfully",
-                'users'=> [User::with('roles')->whereId($user->id)->first()]
+                'users' => [User::with('roles')->whereId($user->id)->first()]
             ]);
         }
-        $all_users = User::with('roles')->whereNotIn('id',[1])->get();
+        $all_users = User::with('roles')->whereNotIn('id', [1])->get();
         return response()->json([
             'success' => true,
             'message' => "get all records successfully",
-            'users'=>$all_users
+            'users' => $all_users
         ]);
     }
 
-    public function getOperators(){
+    public function getOperators()
+    {
         $all_users = User::role('Player')->get();
         return response()->json([
             'success' => true,
             'message' => "get all records successfully",
-            'users'=>$all_users
+            'users' => $all_users
         ]);
     }
 
-    public function get_player_count(){
+    public function get_player_count()
+    {
         $players = User::role('Player')->get();
         return count($players);
     }
-    public function get_operator_count(){
+    public function get_operator_count()
+    {
         $Operators = User::role('Operator')->get();
         return count($Operators);
     }
 
-    public function edit_user(Request $request){
+    public function edit_user(Request $request)
+    {
         $user = User::find($request->userId);
-        if($user)
-        {
+        if ($user) {
 
             $data = [
                 'success' => true,
@@ -92,7 +95,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors(),
-                'user'=>(object) []
+                'user' => (object) []
             ]);
         }
         $user = User::create([
@@ -114,7 +117,7 @@ class AuthController extends Controller
         // $role->givePermissionTo(['Dashboard','Account Setting']);
 
 
-        $u = User::find($user->id)->only(['id','username','email','phone','is_email_verified','is_phone_verified']);
+        $u = User::find($user->id)->only(['id', 'username', 'email', 'phone', 'is_email_verified', 'is_phone_verified']);
         $u['token'] = $token;
         $u['role'] = $user->roles()->first()->name;
 
@@ -128,7 +131,7 @@ class AuthController extends Controller
     {
 
         $inputs = $request->all();
-        $inputs['phone'] = $inputs['code'].$inputs['phone'];
+        $inputs['phone'] = $inputs['code'] . $inputs['phone'];
         $v = Validator::make($inputs, [
             'username' => 'required|string|alpha_dash|min:3|unique:users',
             'email' => 'required|email|unique:users',
@@ -148,8 +151,7 @@ class AuthController extends Controller
             'password' => Hash::make($inputs['password']),
         ]);
 
-        if($inputs['role'] == 2)
-        {
+        if ($inputs['role'] == 2) {
             Operator::create(['operator_id' => $user->id]);
         }
 
@@ -159,38 +161,36 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'users'=>$user,
+            'users' => $user,
             'message' => 'User Add Successfully.',
         ]);
     }
-    public function delete_user(Request $request){
+    public function delete_user(Request $request)
+    {
         // dd($request->user_id);
-        $user= User::find($request->user_id)->delete();
-        if($user)
-        {
-        $data = [
-            'success' => true,
-            'message' => 'Delete User Successfully.',
-        ];
-        }
-        else{
+        $user = User::find($request->user_id)->delete();
+        if ($user) {
+            $data = [
+                'success' => true,
+                'message' => 'Delete User Successfully.',
+            ];
+        } else {
             $data = [
                 'success' => false,
                 'message' => 'User Not Found',
             ];
         }
         return response()->json($data);
-
     }
     public function update(Request $request)
     {
 
         $inputs = $request->all();
-        $inputs['phone'] = $inputs['code'].$inputs['phone'];
+        $inputs['phone'] = $inputs['code'] . $inputs['phone'];
         $v = Validator::make($inputs, [
-            'username' => 'required|string|alpha_dash|min:3|unique:users,username,'.$inputs['userId'],
-            'email' => 'required|email|unique:users,email,'.$inputs['userId'],
-            'phone' => 'required|unique:users,phone,'.$inputs['userId'],
+            'username' => 'required|string|alpha_dash|min:3|unique:users,username,' . $inputs['userId'],
+            'email' => 'required|email|unique:users,email,' . $inputs['userId'],
+            'phone' => 'required|unique:users,phone,' . $inputs['userId'],
             'role' => 'required',
             'password' => 'required',
         ]);
@@ -201,7 +201,7 @@ class AuthController extends Controller
             ]);
         }
         $user = User::find($inputs['userId']);
-        if($user){
+        if ($user) {
             $user->update([
                 'username' => $inputs['username'],
                 'email' => $inputs['email'],
@@ -209,19 +209,22 @@ class AuthController extends Controller
                 'phone' => $inputs['phone'],
             ]);
         }
-
+        if ($inputs['role'] == 2) {
+            $o = Operator::where('operator_id', $user->id)->first();
+            if (!$o) {
+                Operator::create(['operator_id' => $user->id]);
+            }
+        }
         $role = Role::whereId($inputs['role'])->pluck('name');
 
         $user->syncRoles([$role]);
 
-        if($user)
-        {
-        $data = [
-            'success' => true,
-            'message' => 'Update User Successfully.',
-        ];
-        }
-        else{
+        if ($user) {
+            $data = [
+                'success' => true,
+                'message' => 'Update User Successfully.',
+            ];
+        } else {
             $data = [
                 'success' => false,
                 'message' => 'User Not Found',
@@ -251,13 +254,13 @@ class AuthController extends Controller
 
 
             // User online or not
-            $u= User::find($user->id);
+            $u = User::find($user->id);
             $u->isLogin = true;
             $u->save();
 
             $token = $user->createToken($user->email)->plainTextToken;
 
-            $user = User::find($user->id)->only(['username','email','phone','is_email_verified','is_phone_verified','id','image',]);
+            $user = User::find($user->id)->only(['username', 'email', 'phone', 'is_email_verified', 'is_phone_verified', 'id', 'image',]);
             $user['token'] = $token;
             $user['role'] = $u->roles()->first()->name;
 
@@ -292,18 +295,19 @@ class AuthController extends Controller
     public function sendMessage(User $user)
     {
         $receiverNumber = $user->phone;
-        $code = rand(100000,999999);
+        $code = rand(100000, 999999);
         // $code = '123456';
-        $message = "Your Zilla's Top Swap Verification Code is ".$code;
+        $message = "Your Zilla's Top Swap Verification Code is " . $code;
 
         $account_sid = env("TWILIO_SID");
         $auth_token = env("TWILIO_TOKEN");
         $twilio_number = env("TWILIO_FROM");
 
         $client = new Client($account_sid, $auth_token);
-            $client->messages->create($receiverNumber, [
-                'from' => $twilio_number,
-                'body' => $message]);
+        $client->messages->create($receiverNumber, [
+            'from' => $twilio_number,
+            'body' => $message
+        ]);
 
         $user->update([
             'phone_code' => $code
@@ -312,7 +316,7 @@ class AuthController extends Controller
 
     public function sendEmail(User $user)
     {
-        $code = rand(100000,999999);
+        $code = rand(100000, 999999);
         // $code = '123456';
 
         $user->update([
@@ -332,9 +336,8 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'We sent a verification code to '.$receiverNumber,
+            'message' => 'We sent a verification code to ' . $receiverNumber,
         ]);
-
     }
 
 
@@ -353,8 +356,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        if($user->phone_code === $request->code)
-        {
+        if ($user->phone_code === $request->code) {
             $user->update([
                 'phone_code' => null,
                 'is_phone_verified' => 1
@@ -379,9 +381,8 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'We sent a verification code to '.$user->email,
+            'message' => 'We sent a verification code to ' . $user->email,
         ]);
-
     }
 
 
@@ -400,8 +401,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        if($user->email_code === $request->code)
-        {
+        if ($user->email_code === $request->code) {
             $user->update([
                 'email_code' => null,
                 'is_email_verified' => 1
@@ -432,7 +432,7 @@ class AuthController extends Controller
 
         $email = $request->email;
 
-        $user = User::where('email',$email)->first();
+        $user = User::where('email', $email)->first();
 
         if (!$user) {
             return response()->json([
@@ -441,7 +441,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $code = rand(100000,999999);
+        $code = rand(100000, 999999);
 
         $user->update([
             'email_code' => $code,
@@ -460,9 +460,8 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'request_token' => $token,
-            'message' => 'We sent a verification code to '.$user->email,
+            'message' => 'We sent a verification code to ' . $user->email,
         ]);
-
     }
 
     public function verify_forget_email_code(Request $request)
@@ -482,9 +481,9 @@ class AuthController extends Controller
         $code = $request->code;
         $request_token = $request->request_token;
 
-        $user = User::where('email',$email)
-                    ->where('email_code',$code)
-                    ->where('request_token',$request_token)->first();
+        $user = User::where('email', $email)
+            ->where('email_code', $code)
+            ->where('request_token', $request_token)->first();
 
         if (!$user) {
             return response()->json([
@@ -512,7 +511,6 @@ class AuthController extends Controller
             'reset_token' => $token,
             'message' => 'Email Verified Successfully.',
         ]);
-
     }
 
     public function update_password(Request $request)
@@ -530,8 +528,8 @@ class AuthController extends Controller
         } else {
             $email = $request->email;
             $request_token = $request->reset_token;
-            $user = User::where('email',$email)
-                    ->where('reset_token',$request_token)->first();
+            $user = User::where('email', $email)
+                ->where('reset_token', $request_token)->first();
             if (!($user)) {
                 return response()->json([
                     'success' => false,
@@ -562,31 +560,30 @@ class AuthController extends Controller
 
         $user->update(['isLogin' => false]);
 
-        if($user){
+        if ($user) {
             $request->user()->currentAccessToken()->delete();
             return response()->json([
                 'success' => true,
                 'message' => "Logout Successfully",
             ]);
-        }
-        else{
+        } else {
             return response()->json([
                 'success' => false,
                 'message' => "user must be login first",
             ]);
         }
-
-
     }
-    public function get_roles(){
+    public function get_roles()
+    {
         $roles =  Role::with('permissions')->get();
         return response()->json([
             'success' => true,
             'message' => "get all records successfully",
-            'roles'=>$roles
+            'roles' => $roles
         ]);
     }
-    public function edit_roles(Request $request){
+    public function edit_roles(Request $request)
+    {
         $role =  Role::find($request->roleId);
         $permissions = $role->permissions()->pluck('id')->toArray();
         return response()->json([
@@ -596,15 +593,17 @@ class AuthController extends Controller
             'permissions' => $permissions,
         ]);
     }
-    public function get_permissions(Request $request){
+    public function get_permissions(Request $request)
+    {
         $all_perm = Permission::all();
         return PermissionResource::collection($all_perm);
     }
-    public function assign_permission_role(Request $request){
+    public function assign_permission_role(Request $request)
+    {
         $role = Role::find($request->roleId);
         $data = [];
-        foreach( $request->permissions as $key=>$permission ) {
-               $data[]= Permission::find($permission);
+        foreach ($request->permissions as $key => $permission) {
+            $data[] = Permission::find($permission);
         }
         $role->syncPermissions($data);
         return response()->json([
@@ -612,9 +611,9 @@ class AuthController extends Controller
             'message' => "Assign Permissions successfully",
         ]);
     }
-    public function search_admin_chat(Request $request){
+    public function search_admin_chat(Request $request)
+    {
         $users = User::where('username', 'LIKE', "%{$request->name}%")->get();
-        return response()->json(['users'=>$users]);
+        return response()->json(['users' => $users]);
     }
-
 }

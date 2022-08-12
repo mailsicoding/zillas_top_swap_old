@@ -1,64 +1,89 @@
 <template>
     <main>
         <div class="container ">
-
-
             <div class="row">
-                <div class="account-detail">
-                    <div class="account-info">
-                        <div class="account-title">
-                            <h4>Contact Us</h4>
-                        </div>
-                        <div class="account-conatct-detail">
-                            <div class="account-description">
-                                <p></p>
-                            </div>
-                            <div class="account-form">
-                                <form>
-                                    <div class="email-feild account-feild">
-                                        <div class="user_input">
-                                            <input type="text" name="name" v-model="state.name" id="Name"
-                                                placeholder="Name" required>
-                                            <!-- <div class="icon"><img src="img/Layer174.png" alt=""></div> -->
-                                        </div>
-                                        <div v-if="v$.name.$error">
-                                            <b style="color:red;">
-                                                {{ v$.name.$errors[0].$message }}
-                                            </b>
-                                        </div>
-                                    </div>
-                                    <div class="email-feild account-feild">
-                                        <div class="user_input">
-                                            <input type="email" name="email" v-model="state.email" id="Email"
-                                                placeholder="Email" required>
-                                            <!-- <div class="icon"><img src="img/Layer175.png" alt=""></div> -->
-                                        </div>
-                                        <div v-if="v$.email.$error">
-                                            <b style="color:red;">
-                                                {{ v$.email.$errors[0].$message }}
-                                            </b>
-                                        </div>
-                                    </div>
-                                    <div class="email-feild account-feild">
-                                        <div class="user_input">
-                                            <input type="text" name="message" v-model="state.message" id="Message"
-                                                placeholder="Message" required>
-                                            <!-- <div class="icon"><img src="img/Layer174.png" alt=""></div> -->
-                                        </div>
-                                        <div v-if="v$.message.$error">
-                                            <b style="color:red;">
-                                                {{ v$.message.$errors[0].$message }}
-                                            </b>
-                                        </div>
-                                    </div>
+                <div class="chat-box">
+                    <div class="col col-md-12 col-lg-12 col-xl-12 mx-auto my-auto process-chat">
+                        <div class="card my-2 msgcard">
+                            <div class="card-body chat-card">
 
-                                    <div class="login-form-btn account-f-btn">
-                                        <div class="btn account-b">
-                                            <a @click.prevent="contactus()">Submit</a>
+                                <div id="messages_container" class="chat-log" ref="hasScrolledToBottom">
+                                    <!-- <div class="chat-log_item chat-log_item-own z-depth-0">
+                                                            <div class="row justify-content-end mx-1 d-flex">
+                                                                <div class="col-auto px-0">
+                                                                    <span class="chat-log_author">
+                                                                        @waseemasghar
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col-auto px-0">
+                                                                </div>
+                                                            </div>
+                                                            <hr class="my-1 py-0 col-8" style="opacity: 0.1">
+                                                            <div class="chat-log_message">
+                                                                <p>{{ message.message }}</p>
+                                                            </div>
+                                                            <hr class="my-1 py-0 col-8" style="opacity: 0.1">
+                                                            <div class="row chat-log_time m-0 p-0 justify-content-end">
+                                                                23:15
+                                                            </div>
+                                                        </div> -->
+                                    <template v-for="message in messages" :key="message.id">
+                                        <div v-if="message.username === user.username"
+                                            class="chat-log_item chat-log_item-own z-depth-0">
+                                            <div class="row justify-content-end mx-1 d-flex">
+                                                <div class="col-auto px-0">
+                                                    <span class="chat-log_author">
+                                                        @{{ message.username }}
+                                                    </span>
+                                                </div>
+                                                <div class="col-auto px-0">
+                                                </div>
+                                            </div>
+                                            <hr class="my-1 py-0 col-8" style="opacity: 0.1">
+                                            <div class="chat-log_message">
+                                                <p>{{ message.message }}</p>
+                                            </div>
+                                            <hr class="my-1 py-0 col-8" style="opacity: 0.1">
+                                            <div class="row chat-log_time m-0 p-0 justify-content-end">
+                                                23:15
+                                            </div>
+                                        </div>
+                                        <div v-else class="chat-log_item chat-log_item z-depth-0">
+                                            <div class="row justify-content-end mx-1 d-flex">
+                                                <div class="col-auto px-0">
+                                                    <span class="chat-log_author">
+                                                        @{{ message.username }}
+                                                    </span>
+                                                </div>
+                                                <div class="col-auto px-0">
+                                                </div>
+                                            </div>
+                                            <hr class="my-1 py-0 col-8" style="opacity: 0.1">
+                                            <div class="chat-log_message">
+                                                <p>{{ message.message }}
+                                                </p>
+                                            </div>
+                                            <hr class="my-1 py-0 col-8" style="opacity: 0.1">
+                                            <div class="row chat-log_time m-0 p-0 justify-content-end">
+                                                23:15
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                            </div>
+                            <div class="card-footer chat-feet" style="background-color: #D5F4E7">
+                                <div class="row">
+                                    <div class="chat-form-footer">
+                                        <input type="text" v-model="message">
+                                        <div class="chat-lower-btn">
+                                            <a href="#" @click.prevent="addMessage"><img src="assets/images/send.png"
+                                                    alt="" id="send"></a>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -72,82 +97,91 @@ import useVuelidate from '@vuelidate/core';
 import {
     reactive,
     ref,
+    onUpdated,
     onMounted
 } from 'vue';
 
 import {
-    required,
-    name,
-    email,
-    message,
-    helpers
-} from '@vuelidate/validators';
-
-import {
     useRouter, useRoute
 } from 'vue-router';
+import {
+    getDatabase,
+    ref as storageRef,
+    set,
+    push,
+    onValue,
+    get,
+    remove
+} from "firebase/database";
 
 import store from '../../stores';
 
 export default {
     name: 'add_contact_us',
     setup() {
-        const state = reactive({
-            name: '',
-            email: '',
-            message: ''
-        })
+        // const state = reactive({
+        //     admin_id: '',
+
+        // })
         const router = useRouter()
+        const messages = ref([])
+        const message = ref('')
         const route = useRoute()
         const user = reactive(store.getters["auth/currentUser"])
-        const path = ref("/api/contact")
-        console.log(path);
+        // const path = ref("/api/contact")
+        // console.log(path);
 
-        const $externalResults = ref({})
-        const rules = {
-            name: {
-                required: helpers.withMessage('Name is Required', required),
-            },
-            email: {
-                required: helpers.withMessage('email is required', required),
-                email: helpers.withMessage('Enter valid email address', email),
-            },
-            message: {
-                required: helpers.withMessage('Message is required', required),
-            },
-        }
-        const v$ = useVuelidate(rules, state, {
-            $externalResults
+        let hasScrolledToBottom = ref('')
+        const db = getDatabase();
+
+        onUpdated(() => {
+            OnlineChat()
+            scrollBottom()
         })
 
-        const contactus = async () => {
-            v$.value.$clearExternalResults()
-            v$.value.$validate()
-            if (!v$.value.$error) {
-                let result = await axios.post(path.value, state)
-                if (result.data.success == true) {
-                    router.push({
-                        name: 'add_contact_us'
-                    })
-                    Toast.fire({
-                        text: result.data.message,
-                        timer: 2000,
-                        icon: 'success',
-                        position: 'top-end',
-                    });
-                } else {
-                    $externalResults.value = result.data.message
-                    console.log("errorExternal");
-                }
-            } else {
-                console.log('form failed validation')
+
+        const addMessage = async () => {
+            const data = {
+                message: message.value
+            }
+            if (message.value != '') {
+
+                const fb_push = push(storageRef(db, 'contact_us/' + 1 + '-' + user.id))
+
+                set(fb_push, {
+                    id: user.id,
+                    username: user.username,
+                    message: data.message
+                });
+                message.value = ''
+            }
+
+
+        }
+
+        const OnlineChat = () => {
+            onValue(storageRef(db, 'contact_us/' + 1 + '-' + user.id), (snapshot) => {
+
+                messages.value = snapshot.val()
+                console.log(messages.value)
+            });
+        }
+
+        const scrollBottom = () => {
+            if (messages.value) {
+                let el = hasScrolledToBottom.value;
+                console.log('ele', el);
+                el.scrollTop = el.scrollHeight;
             }
         }
 
+
+
         return {
-            state,
-            contactus,
-            v$,
+           messages,
+            message,
+            addMessage,
+            hasScrolledToBottom
         }
     }
 }
