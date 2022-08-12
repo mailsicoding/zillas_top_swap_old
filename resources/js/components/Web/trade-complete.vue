@@ -44,6 +44,16 @@
 import store from '../../stores'
 import { onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import app from '../../firebase'
+import {
+    getDatabase,
+    ref as storageRef,
+    set,
+    push,
+    onValue,
+    get,
+    remove
+} from "firebase/database";
 export default {
     name: 'trade-complete',
     setup(){
@@ -53,6 +63,7 @@ export default {
             price : '',
         })
         const router = useRouter()
+        const db = getDatabase()
 
         onMounted(()=>{
             if (user.is_phone_verified === 0) {
@@ -60,12 +71,19 @@ export default {
             } else if (user.is_email_verified === 0) {
                 router.push('/verify/email')
             } else {
+
                 const offer = JSON.parse(localStorage.getItem('matched-offer'));
                 const operator = JSON.parse(localStorage.getItem('operator'));
                 const buyer = JSON.parse(localStorage.getItem('buyer'));
                 const seller = JSON.parse(localStorage.getItem('seller'));
                 const matchedWith = localStorage.getItem('matched-with');
+                const tradeComplate = localStorage.getItem('trade-complete');
                 const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'));
+                if(!tradeComplate)
+                {
+                    router.push('/dashboard')
+                }
+
                 if(requestedOffer){
                     state.price = requestedOffer.price
                     if(buyer)
@@ -92,6 +110,7 @@ export default {
                 localStorage.removeItem('seller');
                 localStorage.removeItem('requested-offer');
                 localStorage.removeItem('matched-with');
+                localStorage.removeItem('trade-complete');
                 localStorage.removeItem('matched-offer');
                 localStorage.removeItem('matched-offer-user');
                 localStorage.removeItem('isFundsAdded')

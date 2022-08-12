@@ -99,6 +99,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('get_operator_count', [AuthController::class, 'get_operator_count']);
 
     Route::post('get_buyer', [OfferController::class, 'get_buyer']);
+    Route::post('get_admin_username', [OfferController::class, 'get_admin_username']);
     Route::post('get_seller', [OfferController::class, 'get_seller']);
     Route::post('get_operator', [OfferController::class, 'get_operator']);
     Route::post('change_operator_status', [OfferController::class, 'change_operator_status']);

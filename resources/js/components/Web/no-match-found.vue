@@ -48,7 +48,7 @@
                             <p><b>Sorry We couldn't find an exact match.</b></p>
                         </div>
                         <div class="no-match-p"><br>
-                            <button class="btn btn-success" @click.prevent="matchOperator()">Buy From Admin</button><br>
+                            <button class="btn btn-success" @click.prevent="matchOperator()">Buy From {{username}}</button><br>
                             <button class="btn btn-info mt-3" @click.prevent="matchAgain()">Match Again</button>
                         </div>
                     </div>
@@ -73,6 +73,7 @@ export default {
     setup() {
         const currentuser = reactive(store.getters["auth/currentUser"])
         const amount = ref(0.0)
+        const username = ref('')
         const router = useRouter()
 
         onMounted(() => {
@@ -81,6 +82,7 @@ export default {
             } else if (currentuser.is_email_verified === 0) {
                 router.push('/verify/email')
             } else {
+                get_admin_username()
             const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'));
             const matchedWith = localStorage.getItem('matched-with');
             if (requestedOffer && matchedWith) {
@@ -146,12 +148,18 @@ export default {
             localStorage.removeItem('matched-with')
             router.push('/match-request')
         }
+        const get_admin_username = async() => {
+            await axios.get('get_admin_username').then(res => {
+                username.value = res.data
+            })
+        }
 
         return {
             currentuser,
             amount,
             matchOperator,
-            matchAgain
+            matchAgain,
+            username
         }
 
     }
