@@ -147,7 +147,7 @@ export default {
         const getTranferCredit = async () => {
             await axios.get('admin_plyers_credit',)
                 .then((response) => {
-                    console.log(response.data)
+                    // console.log(response.data)
                     users.value = response.data.users;
                 })
             $('#table').DataTable();
@@ -162,7 +162,7 @@ export default {
 
             await axios.post('admin_edit_credit', data)
                 .then((response) => {
-                    console.log(response.data)
+                    // console.log(response.data)
                     closePopup()
                     getTranferCredit()
                     funds.value = 0
@@ -179,7 +179,7 @@ export default {
 
             await axios.post('admin_minus_credit', data)
                 .then((response) => {
-                    console.log(response.data)
+                    // console.log(response.data)
                     closePopup2()
                     getTranferCredit()
                     funds.value = 0
@@ -188,7 +188,7 @@ export default {
             $('#table').DataTable();
         }
 
-        
+
 
         const showPopup = (id) => {
             popup.value = true;
@@ -206,7 +206,7 @@ export default {
         const closePopup2 = () => {
             popup2.value = false;
         }
-       
+
         return {
             users,
             popup,
@@ -226,7 +226,7 @@ export default {
 }
 
 </script>
-<style>
+<style scoped>
 
 .overlay {
     position: fixed;

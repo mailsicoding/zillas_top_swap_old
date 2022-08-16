@@ -90,7 +90,7 @@ export default {
                     offerId: offer.offer.id
                 }).then(response => {
                     localStorage.setItem('matched-offer-user', JSON.stringify(response.data))
-                    // console.log(response.data)
+                    // // console.log(response.data)
                     username.value = response.data.username
                     is_user_login.value = response.data.isLogin
                     matched_user.value = response.data

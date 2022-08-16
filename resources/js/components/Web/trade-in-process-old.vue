@@ -206,7 +206,7 @@
                 price: '',
             })
             let hasScrolledToBottom = ref('')
-            // console.log('hasScrolledToBottom', hasScrolledToBottom)
+            // // console.log('hasScrolledToBottom', hasScrolledToBottom)
             const user = reactive(store.getters["auth/currentUser"])
             let messaageInterval
             onMounted(() => {
@@ -219,13 +219,13 @@
                     router.push('/verify/email')
                 } else {
                     const offer = JSON.parse(localStorage.getItem('matched-offer'));
-                    console.log(offer)
+                    // console.log(offer)
                     if (offer) {
                          axios.post('get-match-offer-user', {
                             offerId: offer.offer.id
                         }).then(response => {
                             localStorage.setItem('matched-offer-user', JSON.stringify(response.data))
-                            console.log(response.data);
+                            // console.log(response.data);
                             state.id = response.data.id
                             state.match_user_id = offer.offer.match_user_id
                             state.offer_id = offer.offer.id
@@ -236,7 +236,7 @@
                                 '_' + state.match_user_id)
                             onValue(Fb_ref, (snapshot) => {
                                 const data = snapshot.val();
-                                console.log(data)
+                                // console.log(data)
                                 messages.value = data
                             });
                         })
@@ -313,7 +313,7 @@
             const scrollBottom = () => {
                 if (messages.value) {
                     let el = hasScrolledToBottom.value;
-                    console.log('ele', el);
+                    // console.log('ele', el);
                     el.scrollTop = el.scrollHeight;
                 }
             }
@@ -327,7 +327,7 @@
                 await axios.post('order-history', data, {
                     offerId: offer.offer.id
                 }).then((response) => {
-                    console.log(response.data)
+                    // console.log(response.data)
                     // this.offerId=response.data.id
                     // if (response.data.status == true) {
                     //     // state.price = '';

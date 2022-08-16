@@ -411,9 +411,9 @@ export default {
                     router.push('/dashboard')
                 }
 
-                // console.log(buyerr)
-                // console.log(sellerr)
-                // console.log(requestedOffer)
+                // // console.log(buyerr)
+                // // console.log(sellerr)
+                // // console.log(requestedOffer)
 
             }
 
@@ -451,7 +451,7 @@ export default {
         const getHistory = async () => {
             await axios.get('get-history', )
                 .then((response) => {
-                    console.log(response.data.history)
+                    // console.log(response.data.history)
                     orderBy.value = response.data.history;
                 })
         }
@@ -497,6 +497,9 @@ export default {
                         });
 
                         remove(storageRef(db, 'chat_matches'))
+                        getFunds()
+                        getOffers();
+                        getHistory()
                     }
                 })
 

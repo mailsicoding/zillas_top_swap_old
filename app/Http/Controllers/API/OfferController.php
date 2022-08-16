@@ -273,10 +273,15 @@ class OfferController extends Controller
     public function get_match_offers(Request $request)
     {
         $offer = Offers::find($request->offerId);
-        $offer->match_user_id = Auth::user()->id;
-        $offer->save();
-        $user = User::find($offer->user_id)->only(['id','username','isLogin']);
-        return $user;
+        if($offer)
+        {
+            $offer->match_user_id = Auth::user()->id;
+            $offer->save();
+            $user = User::find($offer->user_id)->only(['id','username','isLogin']);
+            return $user;
+        }
+        return (object) [];
+
     }
 
     public function get_match_status(Request $request)
@@ -342,8 +347,9 @@ class OfferController extends Controller
             $operator = User::where('id',$o->operator_id)->where('isLogin',1)->first();
             if(!empty($operator))
             {
+                $operator = User::find($o->operator_id)->only(['id','username','isLogin']);
                 $o->delete();
-                Operator::create(['operator_id' => $operator->id, 'status' => 1]);
+                Operator::create(['operator_id' => $o->operator_id, 'status' => 1]);
                 break;
             }
         }
@@ -373,11 +379,19 @@ class OfferController extends Controller
     public function change_offer_status(Request $request)
     {
         $offer = Offers::whereId($request->id)->first();
-        $offer->update([ 'status' => 'open']);
+        if($offer)
+        {
+            $offer->update([ 'status' => 'open']);
+            return response()->json([
+                'status' => true,
+                'message' => 'Status Updated Successfully.',
+            ]);
+        }
         return response()->json([
-            'status' => true,
-            'message' => 'Status Updated Successfully.',
+            'status' => false,
+            'message' => 'Offer not found.',
         ]);
+
     }
 
     public function get_buyer(Request $request)

@@ -253,7 +253,7 @@ export default {
         const db = getDatabase();
         let interval;
 
-        // console.log('hasScrolledToBottom', hasScrolledToBottom)
+        // // console.log('hasScrolledToBottom', hasScrolledToBottom)
         onMounted(() => {
             if (user.is_phone_verified === 0) {
                 router.push('/verify/phone')
@@ -521,7 +521,7 @@ export default {
         const scrollBottom = () => {
             if (messages.value) {
                 let el = hasScrolledToBottom.value;
-                console.log('ele', el);
+                // console.log('ele', el);
                 el.scrollTop = el.scrollHeight;
             }
         }

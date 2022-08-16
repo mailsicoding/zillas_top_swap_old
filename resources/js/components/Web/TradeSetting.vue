@@ -286,10 +286,10 @@
 
             const create_trade_setting = async () => {
                 v$.value.$validate()
-                console.log(v$.value.$errors)
+                // console.log(v$.value.$errors)
                 if (!v$.value.$error) {
                     let result = await axios.post(path.value, state)
-                    console.log(result)
+                    // console.log(result)
                     if (result.data.success == true) {
                         router.push({
                             name: 'dashboard'
@@ -303,7 +303,7 @@
                     }
 
                 } else {
-                    console.log('Form failed validation')
+                    // console.log('Form failed validation')
                 }
 
             }

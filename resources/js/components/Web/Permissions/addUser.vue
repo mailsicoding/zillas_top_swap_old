@@ -115,7 +115,7 @@ export default {
             role: '1',
             userId: 0
         })
-        console.log(state.userId)
+        // console.log(state.userId)
         const router = useRouter()
         const route = useRoute()
         const user = reactive(store.getters["auth/currentUser"])
@@ -185,7 +185,7 @@ export default {
                 }
 
             } else {
-                console.log('Form failed validation')
+                // console.log('Form failed validation')
             }
 
         }
@@ -206,7 +206,7 @@ export default {
                         state.role = response.data.user.role[0].id
                         state.userId = data.userId
                     })
-                    console.log(state)
+                    // console.log(state)
             }
         }
 

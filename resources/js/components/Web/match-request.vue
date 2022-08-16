@@ -54,7 +54,7 @@
         </div>
         <div class="col-md-12 main-b">
           <div class="row">
-            <div class="email-feild d-flex flex-wrap">
+            <div class="email-feild d-flex flex-wrap w-100">
               <!-- <label for="price"> Amount</label> -->
               <input type="number" name="price" id="price" v-model="state.price" placeholder="Amount" required>
               <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 10px;" v-if="v$.price.$error">
@@ -221,7 +221,7 @@ export default {
 
         const matchRequestOffer = async() => {
             v$.value.$validate()
-           console.log("waseem",state);
+           // console.log("waseem",state);
            if (!v$.value.$error) {
               let result = await axios.post(path.value, state)
                 if (result.data.success == true) {
@@ -231,7 +231,7 @@ export default {
                         icon: 'success',
                         position: 'top-end',
                     });
-                    console.log(result.data.offer)
+                    // console.log(result.data.offer)
                     localStorage.setItem('matched-offer',JSON.stringify(result.data.offer))
                     localStorage.setItem('matched-with','user')
                     localStorage.setItem('requested-offer',JSON.stringify(state))
