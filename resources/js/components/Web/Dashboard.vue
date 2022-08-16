@@ -411,9 +411,9 @@ export default {
                     router.push('/dashboard')
                 }
 
-                // console.log(buyerr)
-                // console.log(sellerr)
-                // console.log(requestedOffer)
+                // // console.log(buyerr)
+                // // console.log(sellerr)
+                // // console.log(requestedOffer)
 
             }
 
@@ -451,7 +451,7 @@ export default {
         const getHistory = async () => {
             await axios.get('get-history', )
                 .then((response) => {
-                    console.log(response.data.history)
+                    // console.log(response.data.history)
                     orderBy.value = response.data.history;
                 })
         }
@@ -497,6 +497,9 @@ export default {
                         });
 
                         remove(storageRef(db, 'chat_matches'))
+                        getFunds()
+                        getOffers();
+                        getHistory()
                     }
                 })
 
@@ -555,7 +558,7 @@ export default {
 
                     Toast.fire({
                         text: response.data.message,
-                        timer: 3000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -676,7 +679,7 @@ export default {
                             subtract.value = 1
                         Toast.fire({
                             text: '$' + data.price + ' added to buyer account.',
-                            timer: 2000,
+                            timer: 5000,
                             icon: 'success',
                             position: 'top-end',
                         });
@@ -724,7 +727,7 @@ export default {
                     // localStorage.removeItem('isFundsAdded')
                     Toast.fire({
                         text: 'Trade completed successfully.',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });

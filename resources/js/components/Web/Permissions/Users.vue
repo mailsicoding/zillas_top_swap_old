@@ -41,14 +41,18 @@
                                                     <div v-if="user.roles.length !== 0">{{ user.roles[0].name }}</div>
                                                 </td>
                                                 <td>
-                                                    <router-link :to="'/edit_user/' + user.id">
-                                                        <ion-icon class="pencil" name="pencil-outline"></ion-icon>
+                                                    <router-link :to="'/edit_user/' + user.id" title="Edit">
+                                                    <span title="Edit" style="font-size: x-large;">
+                                                        <ion-icon class="create" name="pencil-outline"></ion-icon>
+                                                    </span>
                                                     </router-link>
                                                     <!-- <a href="" class="view">
                                                         <ion-icon name="eye-outline"></ion-icon>
                                                     </a> -->
                                                     <a href="#" @click="delete_user(user.id)">
-                                                        <ion-icon class="delete" name="trash-outline"></ion-icon>
+                                                        <span title="Delete" style="font-size: large;">
+                                                            <ion-icon class="delete" name="trash-outline"></ion-icon>
+                                                        </span>
                                                     </a>
                                                 </td>
 
@@ -67,7 +71,9 @@
             </div>
 
         </div>
-
+<div class="loader-wrapper" style="display: flex;">
+    <span class="loader"><span class="loader-inner"></span></span>
+</div>
     </main>
 </template>
 <script>
@@ -87,32 +93,36 @@ import {
 } from 'vue-router';
 export default {
     name: 'Users',
-    setup() {
-        const users = ref([])
-        const user = reactive(store.getters["auth/currentUser"])
-
-        const router = useRouter()
-        const route = useRoute()
-
-        onMounted(() => {
-            if (user.is_phone_verified === 0) {
+    data(){
+        return {
+            users : ref([]),
+            user : reactive(store.getters["auth/currentUser"])
+        }
+    },
+    beforeCreate(){
+        Startloader(true);
+    },
+    created() {
+            if (this.user.is_phone_verified === 0) {
                 router.push('/verify/phone')
             }
-            else if (user.is_email_verified === 0) {
+            else if (this.user.is_email_verified === 0) {
                 router.push('/verify/email')
             }
-            getUsers()
-        })
-
-        const getUsers = async () => {
+            else{
+                this.getUsers()
+            }
+    },
+    methods:{
+        async getUsers() {
             await axios.get('all_users',)
                 .then((response) => {
-                    users.value = response.data.users;
+                    this.users = response.data.users;
                 })
             $('#table').DataTable();
-        }
+        },
 
-        const delete_user = async (id) => {
+        async delete_user(id) {
             const data = {
                 user_id: id
             }
@@ -121,17 +131,12 @@ export default {
                     getUsers()
                     Toast.fire({
                         text: response.data.message,
-                        timer: 3000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
                 })
         }
-        return {
-            users,
-            delete_user
-        }
-
     }
 }
 

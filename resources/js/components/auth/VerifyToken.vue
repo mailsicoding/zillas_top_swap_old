@@ -61,7 +61,7 @@ export default {
                         localStorage.setItem('reset_token', response.data.reset_token)
                         Toast.fire({
                             text: response.data.message,
-                            timer: 2000,
+                            timer: 5000,
                             icon:'success',
                             position: 'top-end',
                         });
@@ -91,7 +91,7 @@ export default {
                             state.request_token = response.data.request_token;
                             Toast.fire({
                                 text: response.data.message,
-                                timer: 2000,
+                                timer: 5000,
                                 icon:'success',
                                 position: 'top-end',
                             });
@@ -105,7 +105,7 @@ export default {
                 router.push('/forget');
                 Toast.fire({
                     text: 'Verification Failed.Please Try Again',
-                    timer: 3000,
+                    timer: 5000,
                     icon:'success',
                     position: 'top-end',
                 });

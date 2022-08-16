@@ -82,7 +82,7 @@
                                     <div class="chat-form-footer">
                                         <input type="text" v-model="message">
                                         <div class="chat-lower-btn">
-                                            <a href="#" @click.prevent="addMessage"><img src="assets/images/send.png"
+                                            <a href="#" @click.prevent="addMessage"><img src="send.png"
                                                     alt="" id="send"></a>
                                         </div>
                                     </div>
@@ -134,7 +134,6 @@ export default {
         const message = ref('')
         const route = useRoute()
         const user = reactive(store.getters["auth/currentUser"])
-        console.log(user)
 
         let hasScrolledToBottom = ref('')
         const db = getDatabase();
@@ -166,14 +165,13 @@ export default {
             onValue(storageRef(db, 'contact_us/' + '_' + 1 + '_' + user.id), (snapshot) => {
 
                 messages.value = snapshot.val()
-                console.log(messages.value)
+                // console.log(messages.value)
             });
         }
 
         const scrollBottom = () => {
             if (messages.value) {
                 let el = hasScrolledToBottom.value;
-                console.log('ele', el);
                 el.scrollTop = el.scrollHeight;
             }
         }
