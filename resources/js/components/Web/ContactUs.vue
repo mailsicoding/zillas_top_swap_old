@@ -126,7 +126,7 @@ export default {
                     getContacts()
                     Toast.fire({
                         text: response.data.message,
-                        timer: 3000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });

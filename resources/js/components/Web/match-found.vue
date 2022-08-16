@@ -109,7 +109,7 @@ export default {
                     localStorage.removeItem('requested-offer')
                     Toast.fire({
                         text: 'Operator is busy. Please Try again later',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -123,7 +123,7 @@ export default {
                     const requestedOffer = JSON.parse(localStorage.setItem('requested-offer'))
                     Toast.fire({
                         text: 'Matched user is logged out. Continue Trade with Admin',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -163,7 +163,7 @@ export default {
                     const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'))
                     Toast.fire({
                         text: 'Continue Trade with Player',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });

@@ -227,7 +227,7 @@ export default {
                 if (result.data.success == true) {
                     Toast.fire({
                         text: result.data.message,
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -240,12 +240,12 @@ export default {
                 else{
                     localStorage.setItem('matched-with','operator')
                     localStorage.setItem('requested-offer',JSON.stringify(state))
-                  Toast.fire({
-                            text: 'Offer Not Matched',
-                            timer: 2000,
-                            icon: 'success',
-                            position: 'top-end',
-                        });
+                //   Toast.fire({
+                //             text: 'Offer Not Matched',
+                //             timer: 5000,
+                //             icon: 'success',
+                //             position: 'top-end',
+                //         });
                   router.push('/no-match-found')
                 }
             }

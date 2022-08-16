@@ -39,13 +39,17 @@
                                                 <td>
                                                     <div class=" row">
                                                         <div class=" col-xl-6 col-md-6 ">
-                                                            <a class="button" style="font-size:12px"
-                                                                @click.prevent="showPopup(user.id) ">Add Funds</a>
+                                                            <span
+                                                                @click.prevent="showPopup(user.id) "><span title="Add Funds" style="font-size: x-large;color:green">
+                                                        <ion-icon class="create" name="add-outline"></ion-icon>
+                                                    </span></span>
                                                         </div>
 
                                                         <div class="col-xl-6 col-md-6">
-                                                            <a class="button" style="font-size:12px"
-                                                                @click.prevent="showPopup2(user.id) ">Minus Funds</a>
+                                                            <span
+                                                                @click.prevent="showPopup2(user.id) "><span title="Subtract Funds" style="font-size: x-large;">
+                                                        <ion-icon class="delete" name="remove-outline"></ion-icon>
+                                                    </span></span>
                                                         </div>
 
                                                     </div>
@@ -66,10 +70,10 @@
                             <div class="popup">
                                 <h2>Add Funds transfer</h2>
                                 <a class="close" href="#" @click.prevent="closePopup()">&times;</a>
-                                <div class="content-pop">
-                                    <input type="text" name="funds" v-model="funds">
-
-                                </div>
+                                <!-- <div class="content-pop"> -->
+                                    <!-- <input type="text" name="funds" v-model="funds"> -->
+                                    <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""></div>
+                                <!-- </div> -->
                                 <div class="pop-tos">
                                     <div class="tos1"><a href="#" @click.prevent="closePopup()">Cancel</a>
                                     </div>
@@ -81,12 +85,12 @@
                         </div>
                         <div id="popup1" v-if="popup2 == true" class="overlay">
                             <div class="popup">
-                                <h2>Minus Funds transfer</h2>
+                                <h2>Subtract Funds transfer</h2>
                                 <a class="close" href="#" @click.prevent="closePopup2()">&times;</a>
-                                <div class="content-pop">
-                                    <input type="text" name="funds" v-model="funds">
+                                <!-- <div class="content-pop"> -->
+                                    <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""></div>
 
-                                </div>
+                                <!-- </div> -->
                                 <div class="pop-tos">
                                     <div class="tos1"><a href="#" @click.prevent="closePopup2()">Cancel</a>
                                     </div>
@@ -103,7 +107,9 @@
             </div>
 
         </div>
-
+<div class="loader-wrapper" style="display: flex;">
+    <span class="loader"><span class="loader-inner"></span></span>
+</div>
     </main>
 </template>
 <script>

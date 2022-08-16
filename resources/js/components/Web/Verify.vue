@@ -321,7 +321,7 @@ import { useRouter } from 'vue-router'
                 await axios.post('send-phone-verification-code').then((response) => {
                     Toast.fire({
                             text: response.data.message,
-                            timer: 3000,
+                            timer: 5000,
                             icon: 'success',
                             position: 'top-end',
                         });
@@ -340,7 +340,7 @@ import { useRouter } from 'vue-router'
                     {
                         Toast.fire({
                                 text: response.data.message,
-                                timer: 3000,
+                                timer: 5000,
                                 icon: 'success',
                                 position: 'top-end',
                             });
@@ -351,7 +351,7 @@ import { useRouter } from 'vue-router'
                     {
                         Toast.fire({
                                 text: response.data.message,
-                                timer: 3000,
+                                timer: 5000,
                                 icon: 'error',
                                 position: 'top-end',
                             });
@@ -364,7 +364,7 @@ import { useRouter } from 'vue-router'
                 await axios.post('send-email-verification-code').then((response) => {
                     Toast.fire({
                             text: response.data.message,
-                            timer: 3000,
+                            timer: 5000,
                             icon: 'success',
                             position: 'top-end',
                         });
@@ -383,7 +383,7 @@ import { useRouter } from 'vue-router'
                     {
                         Toast.fire({
                                 text: response.data.message,
-                                timer: 3000,
+                                timer: 5000,
                                 icon: 'success',
                                 position: 'top-end',
                             });
@@ -394,7 +394,7 @@ import { useRouter } from 'vue-router'
                     {
                         Toast.fire({
                                 text: response.data.message,
-                                timer: 3000,
+                                timer: 5000,
                                 icon: 'error',
                                 position: 'top-end',
                             });

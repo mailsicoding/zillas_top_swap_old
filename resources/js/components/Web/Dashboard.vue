@@ -558,7 +558,7 @@ export default {
 
                     Toast.fire({
                         text: response.data.message,
-                        timer: 3000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -679,7 +679,7 @@ export default {
                             subtract.value = 1
                         Toast.fire({
                             text: '$' + data.price + ' added to buyer account.',
-                            timer: 2000,
+                            timer: 5000,
                             icon: 'success',
                             position: 'top-end',
                         });
@@ -727,7 +727,7 @@ export default {
                     // localStorage.removeItem('isFundsAdded')
                     Toast.fire({
                         text: 'Trade completed successfully.',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });

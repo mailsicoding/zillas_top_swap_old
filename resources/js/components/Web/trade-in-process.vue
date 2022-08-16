@@ -411,7 +411,7 @@ export default {
                     localStorage.removeItem('operator');
                     Toast.fire({
                         text: 'Trade has been cancelled.',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -562,7 +562,7 @@ export default {
 
                     Toast.fire({
                         text: 'Trade completed successfully.',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -627,7 +627,7 @@ export default {
 
                     Toast.fire({
                         text: 'Trade completed successfully.',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });

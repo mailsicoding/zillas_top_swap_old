@@ -63,7 +63,7 @@ export default {
                             });
                             Toast.fire({
                                 text: response.data.message,
-                                timer: 2000,
+                                timer: 5000,
                                 icon:'success',
                                 position: 'top-end',
                             });

@@ -55,8 +55,10 @@ class AccountSettingController extends Controller
             $this->sendEmail($user);
 
         }
+        $role = $user->roles()->first()->name;
 
-        $user = User::find($user->id)->only(['username','email','phone','is_email_verified','is_phone_verified',]);
+        $user = User::find($user->id)->only(['id','image','username','email','phone','is_email_verified','is_phone_verified',]);
+        $user['role'] = $role;
 
         return response()->json([
             'success' => true,

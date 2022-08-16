@@ -71,9 +71,7 @@
             </div>
 
         </div>
-<div class="loader-wrapper" style="display: flex;">
-    <span class="loader"><span class="loader-inner"></span></span>
-</div>
+
     </main>
 </template>
 <script>
@@ -93,36 +91,38 @@ import {
 } from 'vue-router';
 export default {
     name: 'Users',
-    data(){
-        return {
-            users : ref([]),
-            user : reactive(store.getters["auth/currentUser"])
-        }
-    },
-    beforeCreate(){
-        Startloader(true);
-    },
-    created() {
-            if (this.user.is_phone_verified === 0) {
+    setup() {
+        const users = ref([])
+        const user = reactive(store.getters["auth/currentUser"])
+
+        const router = useRouter()
+        const route = useRoute()
+
+        onBeforeMount(()=>{
+            if (user.is_phone_verified === 0) {
                 router.push('/verify/phone')
             }
-            else if (this.user.is_email_verified === 0) {
+            else if (user.is_email_verified === 0) {
                 router.push('/verify/email')
             }
             else{
-                this.getUsers()
+                getUsers()
             }
-    },
-    methods:{
-        async getUsers() {
+        })
+
+        onMounted(() => {
+
+        })
+
+        const getUsers = async () => {
             await axios.get('all_users',)
                 .then((response) => {
-                    this.users = response.data.users;
+                    users.value = response.data.users;
                 })
             $('#table').DataTable();
-        },
+        }
 
-        async delete_user(id) {
+        const delete_user = async (id) => {
             const data = {
                 user_id: id
             }
@@ -137,6 +137,11 @@ export default {
                     });
                 })
         }
+        return {
+            users,
+            delete_user
+        }
+
     }
 }
 

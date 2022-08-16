@@ -35,7 +35,9 @@
                                                 <span class="badge badge-success" v-for="permission in role.permissions" :key="permission.id">{{permission.name}}</span>
                                                 </td>
                                                 <td><router-link :to="'/edit_role/'+ role.id">
-                                                        <ion-icon class="pencil" name="pencil-outline"></ion-icon>
+                                                        <span title="Edit" style="font-size: x-large;">
+                                                        <ion-icon class="create" name="pencil-outline"></ion-icon>
+                                                    </span>
                                                     </router-link>
                                                 </td>
                                             </tr>
@@ -53,7 +55,9 @@
             </div>
 
         </div>
-
+<div class="loader-wrapper" style="display: flex;">
+    <span class="loader"><span class="loader-inner"></span></span>
+</div>
     </main>
 </template>
 <script>

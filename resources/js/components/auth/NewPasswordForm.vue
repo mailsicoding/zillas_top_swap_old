@@ -78,7 +78,7 @@ export default {
                         Toast.fire({
                             icon: 'success',
                             text: 'Verification Failed.Please Try Again',
-                            timer: 3000,
+                            timer: 5000,
                             position: 'top-end',
                         });
                     }
@@ -100,7 +100,7 @@ export default {
                             Toast.fire({
                                 icon: 'success',
                                 text: response.data.message,
-                                timer: 3000,
+                                timer: 5000,
                                 position: 'top-end',
                             });
                             router.push({
