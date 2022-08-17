@@ -65,6 +65,11 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+ion-icon {
+    pointer-events: none;
+    cursor:pointer;
+}
 </style>
 </head>
 
@@ -77,8 +82,9 @@
 <script src="{{asset('js/scripts.js')}}" ></script>
 <script>
     $(window).on("load",function(){
-     $(".loader-wrapper").fadeOut("slow");
+     $(".loader-wrapper").fadeOut(5000);
 });
+window.assetsPath = "{{asset('/')}}"
 </script>
 <script src="{{asset('js/bootstrap-multiselect.js')}}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>

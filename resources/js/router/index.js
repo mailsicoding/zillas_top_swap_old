@@ -25,6 +25,7 @@ import addUser from '../components/Web/Permissions/AddUser.vue'
 import EditRole from '../components/Web/Permissions/EditRole.vue'
 import ContactUs from '../components/Web/ContactUs.vue'
 import AddContactUs from '../components/Web/AddContactUs.vue'
+import AdminAddContactUs from '../components/Web/AdminAddContactUs.vue'
 import ChatWithAdmin from '../components/Web/ChatWithAdmin.vue'
 import AdminTranferCredits from '../components/Web/Permissions/AdminTranferCredits.vue'
 // import AdminEditCredits from '../components/Web/Permissions/AdminEditCredits.vue'
@@ -171,6 +172,11 @@ const routes = [
                 path: '/add_contact_us',
                 name: 'add_contact_us',
                 component: AddContactUs
+            },
+            {
+                path: '/admin/contact/:id',
+                name: 'adminContact',
+                component: AdminAddContactUs
             },
             {
                 path: '/admin_user_chat',

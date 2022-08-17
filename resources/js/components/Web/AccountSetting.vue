@@ -124,14 +124,14 @@ export default {
                         store.commit("auth/setCurrentUser",user);
                         Toast.fire({
                                 text: response.data.message,
-                                timer: 3000,
+                                timer: 5000,
                                 icon: 'success',
                                 position: 'top-end',
                             });
-                        if(user.is_phone_verified === 0)
-                            router.push('/verify/phone');
-                        else if(user.is_email_verified === 0)
-                            router.push('/verify/email');
+                        setTimeout(()=>{
+                            window.location.href = '/dashboard'
+                        },3000)
+
                     }
                     else{
                         $externalResults.value = response.data.message

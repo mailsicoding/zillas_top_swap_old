@@ -240,14 +240,14 @@ export default {
             v$.value.$validate()
             if (!v$.value.$error) {
               let result = await axios.post(path.value, state)
-                console.log(result)
+                // console.log(result)
                 if (result.data.success == true) {
                   router.push({
                     name: 'dashboard'
                   })
                     Toast.fire({
                         text: result.data.message,
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -256,7 +256,7 @@ export default {
                         }
 
             } else {
-                console.log('Form failed validation')
+                // console.log('Form failed validation')
             }
 
         }

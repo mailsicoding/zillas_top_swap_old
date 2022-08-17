@@ -82,7 +82,6 @@ export default {
                 const Fb_ref = storageRef(db, 'admin_chat/'+1+'_'+props.user)
 
                 if (props.message != '') {
-                    console.log("message",props.message)
                     const fb_push = push(Fb_ref)
                     set(fb_push, {
                         type: 'chat',

@@ -115,7 +115,7 @@
                     await axios.get('get_permissions')
                         .then((response) => {
                             u_perm.value = response.data.data
-                            console.log(u_perm.value);
+                            // console.log(u_perm.value);
                         })
             }
             const assign_permission_role = async () => {

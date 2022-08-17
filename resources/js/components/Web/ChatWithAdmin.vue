@@ -110,7 +110,7 @@
                 chat_user:''
             })
             let hasScrolledToBottom = ref('')
-            // console.log('hasScrolledToBottom', hasScrolledToBottom)
+            // // console.log('hasScrolledToBottom', hasScrolledToBottom)
             const user = reactive(store.getters["auth/currentUser"])
             let messaageInterval
             onMounted(() => {
@@ -177,7 +177,6 @@
             const scrollBottom = () => {
                 if (messages.value) {
                     let el = hasScrolledToBottom.value;
-                    console.log('ele', el);
                     el.scrollTop = el.scrollHeight;
                 }
             }

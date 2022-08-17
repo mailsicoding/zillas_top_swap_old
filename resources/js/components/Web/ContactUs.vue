@@ -23,7 +23,6 @@
                                     <table class="table-rwd" id="table">
                                         <thead>
                                             <tr>
-                                                <th>#</th>
                                                 <th>Name</th>
                                                 <th>Email</th>
                                                 <th>Message</th>
@@ -32,20 +31,19 @@
                                         </thead>
                                         <tbody>
                                             <tr v-for="(contact, index) in contacts" :key="index">
-                                                <td>{{ index + 1 }}</td>
-                                                <td>{{ contact.name }}</td>
-                                                <td>{{ contact.email }}</td>
-                                                <td>{{ contact.message }}</td>
-                                                <td>
+                                                <td v-for="(contact2, index2) in contact" :key="index2">{{ contact2.chat_name }}</td>
+                                                <td v-for="(contact2, index2) in contact" :key="index2">{{ contact2.chat_email }}</td>
+                                                <td v-for="(contact2, index2) in contact" :key="index2">{{ contact2.message }}</td>
+                                                <td v-for="(contact2, index2) in contact" :key="index2">
                                                     <!-- <router-link :to="'/edit_contact/' + contact.id">
                                                         <ion-icon class="pencil" name="pencil-outline"></ion-icon>
                                                     </router-link> -->
                                                     <!-- <a href="" class="view">
                                                         <ion-icon name="eye-outline"></ion-icon>
                                                     </a> -->
-                                                    <a href="#" @click="delete_contact(contact.id)">
-                                                        <ion-icon class="delete" name="trash-outline"></ion-icon>
-                                                    </a>
+                                                    <router-link :to="'/admin/contact/' + index" class="btn btn-success" >
+                                                        Chat
+                                                    </router-link>
                                                 </td>
 
                                             </tr>
@@ -72,12 +70,22 @@ import axios from 'axios'
 import {
     onMounted,
     ref,
+    onUpdated,
     reactive,
     onUnmounted,
 } from 'vue'
 import {
     useRoute, useRouter
 } from 'vue-router'
+import {
+    getDatabase,
+    ref as storageRef,
+    set,
+    push,
+    onValue,
+    get,
+    remove
+} from "firebase/database";
 
 export default {
     name: 'contacts',
@@ -86,6 +94,7 @@ export default {
         const router = useRouter()
         const route = useRoute()
         const currentuser = reactive(store.getters["auth/currentUser"])
+        const db = getDatabase();
 
 
         onMounted(() => {
@@ -94,18 +103,22 @@ export default {
             } else if (currentuser.is_email_verified === 0) {
                 router.push('/verify/email')
             } else {
-            getContacts()
+            OnlineChat()
             }
         })
-        // onUnmounted(() => {
-        //     // getContacts()
-        // })
-        const getContacts = async () => {
-            await axios.get('/api/contact')
-                .then((response) => {
-                    contacts.value = response.data.contact;
-                })
+
+        onUpdated(() => {
+            OnlineChat()
+        })
+
+
+
+        const OnlineChat = () => {
+            onValue(storageRef(db, 'contact_list'), (snapshot) => {
+                contacts.value = snapshot.val()
+            });
         }
+
 
         const delete_contact = async (id) => {
             axios.delete('/api/contact/'+ id)
@@ -113,7 +126,7 @@ export default {
                     getContacts()
                     Toast.fire({
                         text: response.data.message,
-                        timer: 3000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });

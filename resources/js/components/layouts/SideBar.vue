@@ -3,8 +3,15 @@
     <nav class="sb-sidenav accordion sidebar--gradient" id="sidenavAccordion">
         <div class="sb-sidenav-menu">
             <div class="nav">
-                <div class="text-center mr-top-2">
-                    <img class="dashboard-icon-border" :src="'assets/images/dashboard-profile.png'" alt="" />
+                <div class="text-center mr-top-2" onmouseover="document.getElementById('profile-image').style.display = 'block'"
+                 onmouseleave="document.getElementById('profile-image').style.display = 'none'">
+                    <div id="profile-image">
+        <span style="line-height: 87px;"><span title="Change Picture" style="font-size: x-large;" onclick="document.getElementById('choose-image').click()">
+                                                        <ion-icon class="create" name="camera-outline"></ion-icon>
+                                                    </span></span>
+                                                    <input type="file" @change="changePhoto" style="display:none" accept="image/*" id="choose-image">
+    </div>
+                    <img class="dashboard-icon-border" :src="user.image" alt="" style="width:87px;height:87px" />
                     <p class="heading-wrapper--one text-capitalize">{{user.username}}</p>
                     <!-- <p class="label__wrapper--one">Steven tailr</p> -->
                 </div>
@@ -96,9 +103,10 @@ export default {
     setup() {
         const result = ref(false)
         const permissions = ref([])
-        const user = reactive(store.getters["auth/currentUser"])
+        const user = ref({})
 
         onMounted(() => {
+            user.value = store.getters["auth/currentUser"];
             getPermissions();
         })
 
@@ -119,10 +127,64 @@ export default {
                 })
         }
 
+        const changePhoto = async (e) => {
+
+            let file = e.target.files[0];
+            let data = new FormData();
+            data.append('profile_image', file, file.name);
+            await axios.post('api/user/change-photo',data,{
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }})
+                .then((response) => {
+                    if(response.data.success == true)
+                    {
+                        Toast.fire({
+                                text: response.data.message,
+                                timer: 5000,
+                                icon: 'success',
+                                position: 'top-end',
+                            });
+                        localStorage.removeItem("currentUser");
+                        const strUser = JSON.stringify(response.data.user);
+                        localStorage.setItem("currentUser",strUser);
+                        store.commit("auth/setCurrentUser",response.data.user);
+                        user.value = response.data.user
+                        setTimeout(()=>{
+                            window.location.href = '/dashboard'
+                        },3000)
+                    }
+                    else{
+                        Toast.fire({
+                                text: response.data.message,
+                                timer: 5000,
+                                icon: 'error',
+                                position: 'top-end',
+                            });
+                    }
+                })
+        }
+
         return {
             can,
-            user
+            user,
+            changePhoto
         }
     }
 }
 </script>
+<style scoped>
+#profile-image{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    left: 0;
+    right: 0;
+    display:none;
+    width: 87px;
+    height: 87px;
+    margin: auto;
+    background: rgb(114 119 122 / 52%);
+    border-radius: 50%;
+}
+</style>

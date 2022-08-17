@@ -1,16 +1,17 @@
 <?php
 
+
 use App\Http\Controllers\AdminTranferCredit;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\ContactUsController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\OfferController;
 use App\Http\Controllers\API\AccountSettingController;
 use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\FundsController;
-use App\Http\Controllers\Api\OrderByController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\OrderByController;
+use App\Http\Controllers\API\ContactUsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,15 +76,17 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('match-offers', [OfferController::class, 'match_offers']);
         Route::get('get-match-status', [OfferController::class, 'get_match_status']);
         Route::get('get-history', [OrderByController::class, 'get_history']);
+        Route::get('hide-cancel-history', [OrderByController::class, 'order_cancel_history']);
         Route::get('get-cancel-data', [OrderByController::class, 'hide_cancel']);
         Route::post('trade-cancel', [OfferController::class, 'trade_cancel']);
         Route::post('get-match-offer-user', [OfferController::class, 'get_match_offers']);
+        Route::get('get_admin_username', [OfferController::class, 'get_admin_username']);
+        Route::get('find_operator', [OfferController::class, 'find_operator']);
+        Route::post('change_operator_status', [OfferController::class, 'change_operator_status']);
+        Route::post('change_offer_status', [OfferController::class, 'change_offer_status']);
 
         Route::post('create-trade-settings', [AccountSettingController::class, 'create_trade_settings']);
         Route::get('get-funds', [FundsController::class, 'get_funds']);
-        // Contact us mail module
-        Route::apiResource('contact', ContactUsController::class)->only('store');
-        // Route::post('add_contact_us', [ContactUsController::class, 'add_contact_us']);
     });
 
     Route::group(['middleware' => 'can:Funds'], function () {
@@ -92,6 +95,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 
     Route::get('/user/permissions', [PermissionController::class, 'getPermissions']);
+    Route::post('/user/change-photo', [PermissionController::class, 'change_photo']);
 
     Route::post('send-phone-verification-code', [AuthController::class, 'send_phone_verification_code']);
     Route::post('verify-phone-verification-code', [AuthController::class, 'verify_phone_verification_code']);
@@ -106,20 +110,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('create-trade-settings', [AccountSettingController::class, 'create_trade_settings']);
     Route::post('update-setting', [AccountSettingController::class, 'update_setting']);
 
-    // Match Offers Routes start
-
-    // Funds
-
-    // ContactUs
-
-
-    // Route::post('edit_contact_us', [ContactUsController::class, 'add_contact_us']);
-
-
-
-
     Route::post('logout', [AuthController::class, 'logout']);
 });
 
-// Route::apiResource('contact', ContactUsController::class);
-// Route::get('all_contacts', [ContactUsController::class, 'index']);

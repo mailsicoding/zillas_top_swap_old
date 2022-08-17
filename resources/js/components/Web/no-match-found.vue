@@ -134,7 +134,7 @@ export default {
                 else{
                     Toast.fire({
                             text: 'Operator is busy. Please Try again later',
-                            timer: 2000,
+                            timer: 5000,
                             icon: 'success',
                             position: 'top-end',
                         });

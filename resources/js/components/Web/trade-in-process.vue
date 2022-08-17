@@ -11,7 +11,6 @@
         <div class="row">
             <div class="col-md-12 main-b">
                 <div class="row">
-
                     <div class="col-xl-12 col-md-12 process-col ">
 
                         <div class="graph__wrapper-width">
@@ -49,7 +48,7 @@
                                         <div class="no-match-p">
                                             <p>Please make the transfer before the timer runs out</p>
                                         </div>
-                                        <div class="no-match-p">
+                                        <div class="no-match-p" v-if="user.role != 'Operator'">
                                             <p> <button class="btn btn-success">{{ countDown }}</button></p>
                                         </div>
                                     </div>
@@ -254,7 +253,7 @@ export default {
         const db = getDatabase();
         let interval;
 
-        // console.log('hasScrolledToBottom', hasScrolledToBottom)
+        // // console.log('hasScrolledToBottom', hasScrolledToBottom)
         onMounted(() => {
             if (user.is_phone_verified === 0) {
                 router.push('/verify/phone')
@@ -387,53 +386,36 @@ export default {
                 }
 
             }
+
         })
 
         onUnmounted(()=> {
-            if(user.role != 'Operator')
-            {
-                return;
-            }
+            clearInterval(interval)
         })
 
         onUpdated(() => {
             OnlineChat()
+            payments()
             onValue(storageRef(db, 'order_cancel/' + state.offer_id), (snapshot) => {
                 if(snapshot.exists()){
                 remove(storageRef(db, 'order_cancel/' + state.offer_id))
                 delete_chat()
-                if(user.role == 'Player')
-                {
                     localStorage.removeItem('buyer');
                     localStorage.removeItem('seller');
                     localStorage.removeItem('requested-offer');
                     localStorage.removeItem('matched-with');
+                    localStorage.removeItem('trade-complete');
                     localStorage.removeItem('matched-offer');
                     localStorage.removeItem('matched-offer-user');
                     localStorage.removeItem('isFundsAdded')
                     localStorage.removeItem('operator');
                     Toast.fire({
-                        text: 'Seller has cancelled the trade.',
-                        timer: 2000,
+                        text: 'Trade has been cancelled.',
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
                     router.push('/dashboard')
-                }
-                if(user.role == 'Operator')
-                {
-                    localStorage.removeItem('buyer');
-                    localStorage.removeItem('seller');
-                    localStorage.removeItem('matched-offer');
-                    localStorage.removeItem('isFundsAdded')
-                    Toast.fire({
-                        text: 'Seller has cancelled the trade.',
-                        timer: 2000,
-                        icon: 'success',
-                        position: 'top-end',
-                    });
-                    router.push('/dashboard')
-                }
                 }
         });
             scrollBottom()
@@ -470,6 +452,23 @@ export default {
                 });
         }
 
+        const payments = () => {
+            if(state.seller_id == user.id)
+            {
+                onValue(storageRef(db, 'payments/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id), (snapshot) => {
+                    snapshot.forEach((childSnapshot) => {
+                        const childKey = childSnapshot.key;
+                        const childData = childSnapshot.val();
+                        if(childData.seller_id == user.id )
+                        {
+                            startTimer()
+                            remove(storageRef(db, 'payments/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
+                        }
+                    })
+                });
+            }
+        }
+
         const countDownTimer = () => {
                     interval = setInterval(function () {
                         var d = new Date();
@@ -479,7 +478,8 @@ export default {
                         var result = parseInt(timeleft / 60) + ':' + timeleft % 60; //formart seconds into 00:00
 
                         if (result == '0:1') {
-                            clearTimer()
+                            cancelTrade()
+                            clearInterval(interval)
                         }
                         countDown.value = result;
 
@@ -495,6 +495,12 @@ export default {
         const clearTimer = () => {
             minutes.value = 0
             clearInterval(interval)
+
+        }
+
+        const startTimer = () => {
+            minutes.value = 5
+            countDownTimer()
         }
 
         const showPopup = () => {
@@ -515,7 +521,7 @@ export default {
         const scrollBottom = () => {
             if (messages.value) {
                 let el = hasScrolledToBottom.value;
-                console.log('ele', el);
+                // console.log('ele', el);
                 el.scrollTop = el.scrollHeight;
             }
         }
@@ -524,6 +530,15 @@ export default {
             addMessage()
             popup.value = false
             clearTimer()
+            const fb_push = push(storageRef(db, 'payments/' + state.offer_id + '_' + state.operator_id + '_' + state.seller_id + '_' + state.buyer_id))
+            set(fb_push, {
+                    offer_id: state.offer_id,
+                    operator_id: state.operator_id,
+                    seller_id: state.seller_id,
+                    buyer_id: state.buyer_id,
+                    id: user.id,
+                    message: 'payment sent'
+                });
         }
         const confirmRecieved = async () => {
             message.value = 'I can confirm that I have recieved USD '+ state.price +' via '+ state.pmethod + ' from ' + state.buyer
@@ -547,7 +562,7 @@ export default {
 
                     Toast.fire({
                         text: 'Trade completed successfully.',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });
@@ -556,6 +571,43 @@ export default {
 
                     }
         })
+
+
+        const cancelTrade = async () => {
+            await axios.post('change_operator_status',{
+                                id: state.operator_id
+                            })
+
+            await axios.post('trade-cancel', {
+                offerId : state.offer_id,
+                user_id : state.buyer_id,
+                })
+                .then((response) => {
+                    if (response.data.status == true) {
+                        const db = getDatabase();
+                        const Fb_ref2 = storageRef(db, 'order_cancel/' + state.offer_id)
+
+                        const fb_push = push(Fb_ref2)
+                        set(fb_push, {
+                            trade: 'cancel',
+                        });
+
+                        remove(storageRef(db, 'chat_matches'))
+                    }
+                })
+                localStorage.removeItem('buyer');
+                localStorage.removeItem('seller');
+                localStorage.removeItem('requested-offer');
+                localStorage.removeItem('matched-with');
+                localStorage.removeItem('trade-complete');
+                localStorage.removeItem('matched-offer');
+                localStorage.removeItem('matched-offer-user');
+                localStorage.removeItem('isFundsAdded')
+                localStorage.removeItem('operator');
+                localStorage.removeItem('payment-sent');
+                localStorage.removeItem('payment-recieved');
+
+        }
 
         onValue(storageRef(db,'order_complete/buyer/' + user.id),(snapshot) => {
 
@@ -575,7 +627,7 @@ export default {
 
                     Toast.fire({
                         text: 'Trade completed successfully.',
-                        timer: 2000,
+                        timer: 5000,
                         icon: 'success',
                         position: 'top-end',
                     });

@@ -81,7 +81,7 @@
                                 <div class="chat-form-footer">
                                     <input type="text" v-model="message">
                                     <div class="chat-lower-btn">
-                                        <a href="#" @click.prevent="addMessage"><img src="/assets/images/send.png" alt="" id="send"></a>
+                                        <a href="#" @click.prevent="addMessage"><img src="send.png" alt="" id="send"></a>
                                     </div>
                                 </div>
                             </div>
@@ -131,7 +131,9 @@ export default {
         const messages = ref([])
         const message = ref('')
         const route = useRoute()
+        const chatUser = ref({})
         const user = reactive(store.getters["auth/currentUser"])
+        const userId = route.params.id
 
         let hasScrolledToBottom = ref('')
         const db = getDatabase();
@@ -147,36 +149,44 @@ export default {
             }
             if (message.value != '') {
 
-                const fb_push = push(storageRef(db, 'contact_us/' + '_' + 1 + '_' + user.id))
+                const fb_push = push(storageRef(db, 'contact_us/' + '_' + 1 + '_' + userId))
 
                 set(fb_push, {
                     id: user.id,
                     username: user.username,
                     email:user.email,
-                    message: data.message
+                    message: data.message,
                 });
-                remove(storageRef(db, 'contact_list/' + user.id))
-                const fb_push2 = push(storageRef(db, 'contact_list/' + user.id))
+                remove(storageRef(db, 'contact_list/' + userId))
+                const fb_push2 = push(storageRef(db, 'contact_list/' + userId))
 
                 set(fb_push2, {
                     id: user.id,
                     username: user.username,
                     email:user.email,
                     message: data.message,
-                    chat_name: user.username,
-                    chat_email: user.email
+                    chat_name: chatUser.value.username,
+                    chat_email: chatUser.value.email
                 });
                 message.value = ''
             }
 
         }
 
+        const getUser = async () => {
+            axios.post('edit-user',{userId:userId}).then(res =>{
+                if(res.data.success)
+                chatUser.value = res.data.user
+            })
+        }
+
         onMounted(()=>{
+            getUser()
             OnlineChat()
         })
 
         const OnlineChat = () => {
-            onValue(storageRef(db, 'contact_us/' + '_' + 1 + '_' + user.id), (snapshot) => {
+            onValue(storageRef(db, 'contact_us/' + '_' + 1 + '_' + userId), (snapshot) => {
 
                 messages.value = snapshot.val()
             });
@@ -185,6 +195,7 @@ export default {
         const scrollBottom = () => {
             if (messages.value) {
                 let el = hasScrolledToBottom.value;
+                // console.log('ele', el);
                 el.scrollTop = el.scrollHeight;
             }
         }
