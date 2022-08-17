@@ -5,7 +5,7 @@
         <div id="layoutSidenav">
           <div id="layoutSidenav_nav">
             <SideBar />
-            
+
            </div>
             <div id="layoutSidenav_content">
           <router-view></router-view>

@@ -118,7 +118,7 @@ class AuthController extends Controller
         // $role->givePermissionTo(['Dashboard','Account Setting']);
 
 
-        $u = User::find($user->id)->only(['id', 'username', 'email', 'phone', 'is_email_verified', 'is_phone_verified']);
+        $u = User::find($user->id)->only(['id', 'image','username', 'email', 'phone', 'is_email_verified', 'is_phone_verified']);
         $u['token'] = $token;
         $u['role'] = $user->roles()->first()->name;
 

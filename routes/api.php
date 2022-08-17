@@ -95,6 +95,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 
     Route::get('/user/permissions', [PermissionController::class, 'getPermissions']);
+    Route::post('/user/change-photo', [PermissionController::class, 'change_photo']);
 
     Route::post('send-phone-verification-code', [AuthController::class, 'send_phone_verification_code']);
     Route::post('verify-phone-verification-code', [AuthController::class, 'verify_phone_verification_code']);
