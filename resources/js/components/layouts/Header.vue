@@ -3,7 +3,7 @@
           <router-link class="navbar-brand text-center" to="/dashboard"
             ><img :src="'/assets/images/logo.png'" :style='"height:39px"' alt=""
           /></router-link>
-          <button  class="btn btn-link btn-sm order-1 order-lg-0 btn__toggle__two"  id="sidebarToggle"  href="#!"  >
+          <button  class="btn btn-link btn-sm order-1 order-lg-0 btn__toggle__two"  v-on:click="closeClick"   id="sidebarToggle"  href="#!"  >
             <i class="fas fa-bars"></i>
           </button>
           <!-- Navbar Search-->
@@ -52,7 +52,10 @@ export default {
       },
       account_setting(){
         this.$router.push({name:'acount-setting.index'});
-      }
+      },
+        closeClick: function() {
+     this.$refs.sidebar.hide();
+    }
     },
     mounted(){
         const user = JSON.parse(localStorage.getItem("currentUser"));
@@ -63,3 +66,6 @@ export default {
     }
 }
 </script>
+
+
+

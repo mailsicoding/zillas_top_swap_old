@@ -9,7 +9,8 @@
             <div class="row">
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="text" name="name" v-model="state.username" placeholder="username" required>
+                        <input type="text" name="name" v-model="state.username" placeholder="username" required  
+                        @keyup.enter="signup()" >
                     </div>
                     <div v-if="v$.username.$error">
                         <b style="color:red;">
@@ -20,7 +21,7 @@
 
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="email" name="email" v-model="state.email" placeholder="Email" required >
+                        <input type="email" name="email" v-model="state.email" placeholder="Email" required  @keyup.enter="signup()">
                     </div>
                     <div v-if="v$.email.$error">
                         <b style="color:red;">
@@ -35,7 +36,7 @@
                     <option>+1</option>
                     <option>+92</option>
               </select>
-                        <input type="number" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required="">
+                        <input type="number" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required=""  @keyup.enter="signup()">
 
                     </div>
                     <div v-if="v$.phone.$error">
@@ -47,7 +48,7 @@
 
                 <div class="col-md-6 col-sm-12 col-lg-6">
                     <div class="user_input">
-                        <input type="password" name="password" v-model="state.password" placeholder="Password" required  autocomplete="false">
+                        <input type="password" name="password" v-model="state.password" placeholder="Password" required  autocomplete="false"  @keyup.enter="signup()">
                     </div>
                     <div v-if="v$.password.$error">
                         <b style="color:red;">

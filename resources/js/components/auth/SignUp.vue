@@ -6,7 +6,7 @@
     </div>
     <div class="login-form">
         <div class="email-feild">
-            <input type="text" name="name" v-model="state.username" placeholder="username" required>
+            <input type="text" name="name" v-model="state.username" placeholder="username" required   @keyup.enter="signup()">
             <div class="icon"><img :src="'images/user.png'" alt=""></div>
         </div>
         <div v-if="v$.username.$error" style="text-align:center">
@@ -15,7 +15,8 @@
             </b>
         </div>
         <div class="email-feild">
-            <input type="email" name="email" v-model="state.email" placeholder="Email" required>
+            <input type="email" name="email" v-model="state.email" placeholder="Email" required  
+            @keyup.enter="signup()">
             <div class="icon"><img :src="'/assets/images/email.png'" alt=""></div>
 
         </div>
@@ -29,7 +30,7 @@
                     <option value="+1">+1</option>
                     <option value="+92">+92</option>
               </select>
-            <input type="number" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required="">
+            <input type="number" v-model="state.phone" placeholder="xxxxxxxxxx" class="f-num" required=""  @keyup.enter="signup()">
 
         </div>
         <div v-if="v$.phone.$error" style="text-align:center">
@@ -38,7 +39,7 @@
             </b>
         </div>
         <div class="email-feild">
-            <input type="password" name="password" v-model="state.password" placeholder="Password" required autocomplete="false">
+            <input type="password" name="password" v-model="state.password" placeholder="Password" required autocomplete="false"  @keyup.enter="signup()">
             <div class="icon"><img :src="'/assets/images/password.png'" alt=""></div>
 
         </div>

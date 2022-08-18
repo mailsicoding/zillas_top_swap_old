@@ -8,7 +8,7 @@
 
     <div class="login-form">
         <div class="email-feild">
-            <input type="text" v-model="state.code" placeholder="Code" required />
+            <input type="text" v-model="state.code" placeholder="Code" required  @keyup.enter="verifyCode()" />
             <div class="icon"><i class="far fa-envelope"></i></div>
         </div>
         <div v-if="v$.code.$error" style="text-align:center">
