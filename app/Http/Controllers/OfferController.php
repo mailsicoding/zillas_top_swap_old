@@ -53,7 +53,8 @@ class OfferController extends Controller
             ]);
         }
 
-        if ($user->funds < $request->price) {
+        if($user->funds < $request->price)
+        {
             return response()->json([
                 'status' => false,
                 'message' => ($request->is('api/*')) ? 'Offer price must be less than your available credits.' : [
@@ -154,7 +155,8 @@ class OfferController extends Controller
             ]);
         }
 
-        if ($user->funds < $request->price) {
+        if($user->funds < $request->price)
+        {
             return response()->json([
                 'status' => false,
                 'message' => ($request->is('api/*')) ? 'Offer price must be less than your available credits.' : [
@@ -254,7 +256,7 @@ class OfferController extends Controller
             ];
         } else {
             $o = $matched_offer[0];
-            $o->update(['status' => 'matched', 'match_user_id' => Auth::user()->id]);
+            $o->update(['status' => 'matched', 'match_user_id'=>Auth::user()->id]);
             $data = [
                 'success' => true,
                 'offer' => [
@@ -271,13 +273,15 @@ class OfferController extends Controller
     public function get_match_offers(Request $request)
     {
         $offer = Offers::find($request->offerId);
-        if ($offer) {
+        if($offer)
+        {
             $offer->match_user_id = Auth::user()->id;
             $offer->save();
-            $user = User::find($offer->user_id)->only(['id', 'username', 'isLogin']);
+            $user = User::find($offer->user_id)->only(['id','username','isLogin']);
             return $user;
         }
         return (object) [];
+
     }
 
     public function get_match_status(Request $request)
@@ -310,13 +314,14 @@ class OfferController extends Controller
                 'match_user_id' => $offer->user_id,
                 'price'  =>  $offer->price,
                 'method'  =>  '-',
-                'status'  => ($request->has('status')) ? $request->status : 'cancel',
+                'status'  =>  ($request->has('status')) ? $request->status : 'cancel',
             ]);
 
             return response()->json([
                 'status' => true
             ]);
-        } else {
+        }
+        else {
 
             $history = orderBy::create([
                 'user_id' => $request->user_id,
@@ -333,32 +338,16 @@ class OfferController extends Controller
         }
     }
 
-    public function select_operator(Request $request)
-    {
-
-        $opert = Operator::whereStatus(0)->get();
-        $data = (object)[];
-        foreach ($opert as $single) {
-            $data = User::where('id', $single->operator_id)->where('isLogin', 1)->get();
-        }
-        $operator = User::where('isLogin', 1 && $single->status, 0)->get();
-
-
-        return response()->json([
-            'status' => true,
-            'message' => 'All Active Operatores',
-            'ActiveOperatores' => $operator,
-        ]);
-    }
-
     public function find_operator(Request $request)
     {
         $operators = Operator::whereStatus(0)->get();
         $operator = (object) [];
-        foreach ($operators as $o) {
-            $operator = User::where('id', $o->operator_id)->where('isLogin', 1)->first();
-            if (!empty($operator)) {
-                $operator = User::find($o->operator_id)->only(['id', 'username', 'isLogin']);
+        foreach($operators as $o)
+        {
+            $operator = User::where('id',$o->operator_id)->where('isLogin',1)->first();
+            if(!empty($operator))
+            {
+                $operator = User::find($o->operator_id)->only(['id','username','isLogin']);
                 $o->delete();
                 Operator::create(['operator_id' => $o->operator_id, 'status' => 1]);
                 break;
@@ -369,9 +358,10 @@ class OfferController extends Controller
 
     public function change_operator_status(Request $request)
     {
-        if ($request->id) {
+        if($request->id)
+        {
             $operator = Operator::whereOperatorId($request->id)->first();
-            $operator->update(['status' => 0]);
+            $operator->update([ 'status' => 0]);
             return response()->json([
                 'status' => true,
                 'message' => 'Status Updated Successfully.',
@@ -379,7 +369,7 @@ class OfferController extends Controller
         }
         $user = Auth::user();
         $operator = Operator::whereOperatorId($user->id)->first();
-        $operator->update(['status' => 0]);
+        $operator->update([ 'status' => 0]);
         return response()->json([
             'status' => true,
             'message' => 'Status Updated Successfully.',
@@ -389,8 +379,9 @@ class OfferController extends Controller
     public function change_offer_status(Request $request)
     {
         $offer = Offers::whereId($request->id)->first();
-        if ($offer) {
-            $offer->update(['status' => 'open']);
+        if($offer)
+        {
+            $offer->update([ 'status' => 'open']);
             return response()->json([
                 'status' => true,
                 'message' => 'Status Updated Successfully.',
@@ -400,58 +391,64 @@ class OfferController extends Controller
             'status' => false,
             'message' => 'Offer not found.',
         ]);
+
     }
 
     public function get_buyer(Request $request)
     {
-        $user = User::where('id', $request->buyer_id)->first();
-        if (!empty($user)) {
+            $user = User::where('id',$request->buyer_id)->first();
+            if(!empty($user))
+            {
+                return response()->json([
+                    'status' => true,
+                    'buyer' => $user->only(['id','username'])
+                ]);
+            }
             return response()->json([
-                'status' => true,
-                'buyer' => $user->only(['id', 'username'])
+                'status' => false,
+                'buyer' => (object) [],
             ]);
-        }
-        return response()->json([
-            'status' => false,
-            'buyer' => (object) [],
-        ]);
     }
 
     public function get_seller(Request $request)
     {
-        $user = User::where('id', $request->seller_id)->first();
-        if (!empty($user)) {
+            $user = User::where('id',$request->seller_id)->first();
+            if(!empty($user))
+            {
+                return response()->json([
+                    'status' => true,
+                    'seller' => $user->only(['id','username'])
+                ]);
+            }
             return response()->json([
-                'status' => true,
-                'seller' => $user->only(['id', 'username'])
+                'status' => false,
+                'seller' => (object) [],
             ]);
-        }
-        return response()->json([
-            'status' => false,
-            'seller' => (object) [],
-        ]);
     }
     public function get_operator(Request $request)
     {
-        $user = User::where('id', $request->operator_id)->first();
-        if (!empty($user)) {
+            $user = User::where('id',$request->operator_id)->first();
+            if(!empty($user))
+            {
+                return response()->json([
+                    'status' => true,
+                    'operator' => $user->only(['id','username'])
+                ]);
+            }
             return response()->json([
-                'status' => true,
-                'operator' => $user->only(['id', 'username'])
+                'status' => false,
+                'operator' => (object) [],
             ]);
-        }
-        return response()->json([
-            'status' => false,
-            'operator' => (object) [],
-        ]);
     }
 
     public function get_admin_username(Request $request)
     {
-        $user = User::find(1);
-        if (!empty($user)) {
-            return $user->username;
-        }
-        return '';
+            $user = User::find(1);
+            if(!empty($user))
+            {
+                return $user->username;
+            }
+            return '';
     }
+
 }

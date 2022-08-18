@@ -1,65 +1,77 @@
 <template>
-<main>
-    <div class="container">
-        <div class="account-title match-title">
-            <h4>No Match Found</h4>
-        </div>
-        <div class="row">
-            <div class="col-md-12 main-b">
-                <div class="row active-card">
-                    <div class="col-xl-3 col-md-4 col-sm-6">
-                        <div class="card card__one--wrapper text-white mb-4">
-                            <div class="card-body">
-                                <div class="flex__wrapper-two">
-                                    <div>
-                                        <p class="card-label-one">Merchant Account</p>
-                                        <h3 class="card-heading-one">{{currentuser.username}}</h3>
-                                    </div>
-                                    <div>
-                                        <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-4 col-sm-6">
-                        <div class="card card__two--wrapper text-white mb-4">
-                            <div class="card-body">
-                                <div class="flex__wrapper-two">
-                                    <div>
-                                        <p class="card-label-one">Amount Requested</p>
-                                        <h3 class="card-heading-one">${{amount}}</h3>
-                                    </div>
-                                    <div>
-                                        <i class="fa fa-credit-card" aria-hidden="true"></i>
+    <main>
+        <div class="container">
+            <div class="account-title match-title">
+                <h4>No Match Found</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-12 main-b">
+                    <div class="row active-card">
+                        <div class="col-xl-3 col-md-4 col-sm-6">
+                            <div class="card card__one--wrapper text-white mb-4">
+                                <div class="card-body">
+                                    <div class="flex__wrapper-two">
+                                        <div>
+                                            <p class="card-label-one">Merchant Account</p>
+                                            <h3 class="card-heading-one">{{currentuser.username}}</h3>
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-credit-card" aria-hidden="true"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="col-xl-3 col-md-4 col-sm-6">
+                            <div class="card card__two--wrapper text-white mb-4">
+                                <div class="card-body">
+                                    <div class="flex__wrapper-two">
+                                        <div>
+                                            <p class="card-label-one">Amount Requested</p>
+                                            <h3 class="card-heading-one">${{amount}}</h3>
+                                        </div>
+                                        <div>
+                                            <i class="fa fa-credit-card" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                </div>
-                <div class="active-details">
-                    <div class="no-match-seacrh">
-                        <img src="assets/images/search.png" alt="">
                     </div>
-                    <div class="active-description">
-                        <div class="active-info">
-                            <p><b>Sorry We couldn't find an exact match.</b></p>
+                    <div class="active-details">
+<h4>Contact Operators</h4>
+                        <div class="table-container">
+                            <table class="table-rwd">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(opertor,index) in selectoperatore" :key="index">
+                                        <td>{{index+1}}</td>
+                                        <td> {{opertor.username}}</td>
+                                        <td>
+                                            <div class="no-match-p">
+                                                <button class="btn btn-success" @click.prevent="matchOperator()">Chat</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
-                        <div class="no-match-p"><br>
-                            <button class="btn btn-success" @click.prevent="matchOperator()">Buy From {{username}}</button><br>
-                            <button class="btn btn-info mt-3" @click.prevent="matchAgain()">Match Again</button>
-                        </div>
+                        <button class="btn btn-info mt-3" @click.prevent="matchAgain()">Match Again</button>
                     </div>
                 </div>
+
             </div>
 
         </div>
 
-    </div>
-
-</main>
+    </main>
 </template>
 
 <script>
@@ -73,6 +85,7 @@ export default {
     setup() {
         const currentuser = reactive(store.getters["auth/currentUser"])
         const amount = ref(0.0)
+        const selectoperatore= ref([])
         const username = ref('')
         const router = useRouter()
 
@@ -93,6 +106,17 @@ export default {
             }
             }
         })
+
+        onMounted(() => {
+            selectOperator()
+        })
+
+        const selectOperator = async () => {
+            await axios.get('select_operator').then(response => {
+                console.log(response.data.ActiveOperatores)
+                selectoperatore.value = response.data.ActiveOperatores
+            })
+        }
 
         const matchOperator = async() => {
             await axios.get('find_operator').then(response => {
@@ -159,7 +183,9 @@ export default {
             amount,
             matchOperator,
             matchAgain,
-            username
+            username,
+            selectOperator,
+            selectoperatore
         }
 
     }
