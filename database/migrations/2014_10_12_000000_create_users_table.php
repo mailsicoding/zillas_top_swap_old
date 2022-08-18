@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->double('funds')->default(0.0);
             $table->string('email_code')->nullable();
+            $table->string('image')->default('http://localhost:8000/assets/images/dashboard-profile.png');
             $table->string('phone_code')->nullable();
             $table->string('request_token')->nullable();
             $table->string('reset_token')->nullable();
