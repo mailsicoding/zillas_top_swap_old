@@ -82,6 +82,8 @@
                                         {{ v$.funds.$errors[0].$message }}
                                     </b>
                                 </div> -->
+                                    <!-- <input type="text" name="funds" v-model="funds"> -->
+                                    <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""   @keyup.enter="addTranferCredit()"></div>
                                 <!-- </div> -->
                                 <div class="pop-tos">
                                     <div class="tos1"><a href="#" @click.prevent="closePopup()">Cancel</a>
@@ -97,8 +99,7 @@
                                 <h2>Subtract Funds transfer</h2>
                                 <a class="close" href="#" @click.prevent="closePopup2()">&times;</a>
                                 <!-- <div class="content-pop"> -->
-                                <div class="email-feild account-feild w-100"><input type="text" name="funds"
-                                        v-model="funds" required=""></div>
+                                    <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""  @keyup.enter="subTranferCredit()"></div>
 
                                 <!-- </div> -->
                                 <div class="pop-tos">

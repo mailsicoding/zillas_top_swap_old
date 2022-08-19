@@ -7,7 +7,7 @@
     <div class="login-form">
 
         <div class="email-feild">
-            <input type="text" name="email" id="email" v-model="state.email" placeholder="Email" required>
+            <input type="text" name="email" id="email" v-model="state.email" placeholder="Email" required  @keyup.enter="login()">
             <div class="icon"><img :src="'images/user.png'" alt=""></div>
         </div>
         <div v-if="v$.email.$error" style="text-align:center">
@@ -17,7 +17,7 @@
         </div>
         <div class="email-feild">
             <input type="password" name="password" id="password" v-model="state.password" placeholder="Password"
-                required>
+                required    @keyup.enter="login()" >
             <div class="icon"><img :src="'images/password.png'" alt=""></div>
         </div>
         <div v-if="v$.password.$error" style="text-align:center">

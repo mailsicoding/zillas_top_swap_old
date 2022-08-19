@@ -346,6 +346,7 @@ class OfferController extends Controller
 
     public function find_operator(Request $request)
     {
+
         $operators = Operator::whereStatus(0)->get();
         $operator = (object) [];
         foreach ($operators as $o) {
@@ -358,6 +359,19 @@ class OfferController extends Controller
             }
         }
         return $operator;
+    }
+
+    public function get_operators(Request $request)
+    {
+
+        $op = User::find($request->operator_id);
+        if (!empty($op)) {
+            $operator = User::find($request->operator_id)->only(['id', 'username', 'isLogin']);
+            $oo = $operator;
+            // $operator->delete();
+            // Operator::create(['operator_id' => $oo->operator_id, 'status' => 1]);
+            return $oo;
+        }
     }
 
     public function change_operator_status(Request $request)

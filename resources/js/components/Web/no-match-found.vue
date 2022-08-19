@@ -40,7 +40,7 @@
 
                     </div>
                     <div class="active-details">
-<h4>Contact Operators</h4>
+                        <h4>Contact Operators</h4>
                         <div class="table-container">
                             <table class="table-rwd">
                                 <thead>
@@ -56,7 +56,8 @@
                                         <td> {{opertor.username}}</td>
                                         <td>
                                             <div class="no-match-p">
-                                                <button class="btn btn-success" @click.prevent="matchOperator()">Chat</button>
+                                                <button class="btn btn-success"
+                                                    @click.prevent="getMatchedOperator(opertor.id)">Chat</button>
                                             </div>
                                         </td>
                                     </tr>
@@ -115,6 +116,62 @@ export default {
             await axios.get('select_operator').then(response => {
                 console.log(response.data.ActiveOperatores)
                 selectoperatore.value = response.data.ActiveOperatores
+            })
+        }
+
+
+        const getMatchedOperator = async (id) => {
+            const data = {
+                operator_id:id
+            }
+            await axios.post('get_operators', data).then(response => {
+                console.log(response.data)
+                if (Object.keys(response.data).length) {
+                    localStorage.setItem('operator', JSON.stringify(response.data))
+                    const requestedOffer = JSON.parse(localStorage.getItem('requested-offer'));
+                    const db = getDatabase();
+                    const Fb_ref = storageRef(db, 'chat_matches')
+
+                    const fb_push = push(Fb_ref)
+                    const methods = requestedOffer.methods;
+                    set(fb_push, {
+                        operator: response.data.id,
+                        buyer: currentuser.id,
+                        seller: 0,
+                        offerId: 0,
+                        price: requestedOffer.price,
+                        methods: methods.toString(),
+                        operator_response: 0,
+                        seller_response: 0
+                    });
+
+                    const fb_push2 = push(storageRef(db, 'chat_messages/' + 0 + '_' + response.data.id + '_' + 0 + '_' + currentuser.id))
+
+                    set(fb_push2, {
+                        offer_id: 0,
+                        operator_id: response.data.id,
+                        seller_id: 0,
+                        buyer_id: currentuser.id,
+                        type: 'chat',
+                        id: currentuser.id,
+                        username: currentuser.username,
+                        message: 'I wants to buy game credits of $' + requestedOffer.price
+                    });
+
+                    router.push('/trade-in-process')
+                }
+                else {
+                    Toast.fire({
+                        text: 'Operator is busy. Please Try again later',
+                        timer: 5000,
+                        icon: 'success',
+                        position: 'top-end',
+                    });
+                    matchAgain()
+                }
+
+
+              
             })
         }
 
@@ -185,7 +242,8 @@ export default {
             matchAgain,
             username,
             selectOperator,
-            selectoperatore
+            selectoperatore,
+            getMatchedOperator
         }
 
     }
