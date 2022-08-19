@@ -9,7 +9,7 @@
     <input type="hidden" name="code" v-model="state.code">
     <input type="hidden" name="email" v-model="state.email">
     <div class="email-feild">
-        <input type="password" v-model="state.password" name="password" placeholder="Password" required>
+        <input type="password" v-model="state.password" name="password" placeholder="Password" required  @keyup.enter="updatePassword()">
         <div class="icon"><img :src="'images/password.png'" alt=""></div>
     </div>
     <div v-if="v$.password.$error" style="text-align:center">
@@ -18,7 +18,7 @@
             </b>
     </div>
     <div class="email-feild">
-        <input type="password" name="confirm_password" v-model="state.confirm_password" placeholder="confirm Password" required>
+        <input type="password" name="confirm_password" v-model="state.confirm_password" placeholder="confirm Password" required  @keyup.enter="updatePassword()">
         <div class="icon"><img :src="'images/password.png'" alt=""></div>
     </div>
     <div v-if="v$.confirm_password.$error" style="text-align:center">

@@ -9,7 +9,7 @@
     <div class="login-form">
 
         <div class="email-feild">
-            <input type="email" v-model="state.email" placeholder="Email" required />
+            <input type="email" v-model="state.email" placeholder="Email" required    @keyup.enter="reset()"/>
             <div class="icon"><i class="far fa-envelope"></i></div>
         </div>
         <div v-if="v$.email.$error" style="text-align:center">

@@ -16,7 +16,7 @@
                             <div class="account-form">
                                 <form>
                                     <div class="email-feild account-feild">
-                                        <input type="text" v-model="state.username" placeholder="Username" required="">
+                                        <input type="text" v-model="state.username" placeholder="Username" required=""  @keyup.enter="update()">
                                         <!-- <div class="icon"><img src="img/Layer174.png" alt=""></div> -->
                                     </div>
                                     <div v-if="v$.username.$error" style="text-align:center">
@@ -25,7 +25,7 @@
                                             </b>
                                     </div>
                                     <div class="email-feild account-feild">
-                                        <input type="text" v-model="state.email" placeholder="Email" required="">
+                                        <input type="text" v-model="state.email" placeholder="Email" required=""  @keyup.enter="update()">
                                         <!-- <div class="icon"><img src="img/Layer175.png" alt=""></div> -->
                                     </div>
                                     <div v-if="v$.email.$error" style="text-align:center">
@@ -34,11 +34,11 @@
                                             </b>
                                     </div>
                                     <div class="email-feild account-feild phone-num-inter">
-                                        <select  v-model="state.code" style="width: 120px;padding: 20px;outline: none;border: 1px solid rgb(241, 238, 238);">
+                                        <select  v-model="state.code" style="width: 120px;padding: 20px;outline: none;border: 1px solid rgb(241, 238, 238);" @keyup.enter="update()">
                     <option>+1</option>
                     <option>+92</option>
               </select>
-                                        <input type="text" v-model="state.phone" placeholder="3xxxxxxxxx" class="f-num" required="">
+                                        <input type="text" v-model="state.phone" placeholder="3xxxxxxxxx" class="f-num" required=""  @keyup.enter="update()">
 
                                     </div>
 

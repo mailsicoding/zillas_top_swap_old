@@ -55,7 +55,7 @@
           <div class="row">
             <div class="email-feild d-flex flex-wrap w-100">
               <!-- <label for="price"> Amount</label> -->
-              <input type="number" name="price" id="price" v-model="state.price" placeholder="Amount" required>
+              <input type="number" name="price" id="price" v-model="state.price" placeholder="Amount" required    @keyup.enter="createOffer">
               <span style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 10px;margin-top: 5px;" v-if="v$.price.$error">
                 {{ v$.price.$errors[0].$message }}
               </span>
