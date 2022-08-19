@@ -53,8 +53,7 @@ class OfferController extends Controller
             ]);
         }
 
-        if($user->funds < $request->price)
-        {
+        if ($user->funds < $request->price) {
             return response()->json([
                 'status' => false,
                 'message' => ($request->is('api/*')) ? 'Offer price must be less than your available credits.' : [
@@ -155,8 +154,7 @@ class OfferController extends Controller
             ]);
         }
 
-        if($user->funds < $request->price)
-        {
+        if ($user->funds < $request->price) {
             return response()->json([
                 'status' => false,
                 'message' => ($request->is('api/*')) ? 'Offer price must be less than your available credits.' : [
@@ -213,7 +211,7 @@ class OfferController extends Controller
 
         $user = Auth::user();
         $inputs = $request->all();
-        $seller_offers = Offers::with('users')->where('user_id', '!=', $user->id)->where('status', '=', 'open')->latest()->get();
+        $seller_offers = Offers::with('users')->where('user_id', '!=', $user->id)->where('status', '=', 'open')->get();
         $buy_methods = [];
         foreach ($inputs['methods'] as $method) {
             if ($method === 'apple_pay') {
@@ -241,7 +239,6 @@ class OfferController extends Controller
                 if ($intersectedValues) {
                     $matched_offer[] = $sell_off;
                     $matched_methods[] = $intersectedValues;
-                    break;
                 }
             }
         }
@@ -255,8 +252,67 @@ class OfferController extends Controller
                 'message' => 'Offer not matched. Chat with staff',
             ];
         } else {
+            $o = $matched_offer;
+            // $o->update(['status' => 'matched', 'match_user_id'=>Auth::user()->id]);
+            $data = [
+                'success' => true,
+
+                'offer' => $matched_offer,
+                'matched_methods' => $matched_methods,
+
+                'message' => 'Offer Matched.',
+            ];
+        }
+
+        return response()->json($data);
+    }
+    public function chat_seller(Request $request)
+    {
+
+        $user = Auth::user();
+        $inputs = $request->all();
+        $seller_offers = Offers::with('users')->with('offer_methods')->where('id', $request->offerId)->where('status', '=', 'open')->first();
+        // return response()->json($seller_offers);
+        $buy_methods = [];
+        foreach ($seller_offers->offer_methods as $method) {
+            if ($method->name === 'apple_pay') {
+                $buy_methods[] = method::where('name', 'apple_pay')->first();
+            } else if ($method->name === 'chime') {
+                $buy_methods[] = method::where('name', 'chime')->first();
+            } else if ($method->name === 'venmo') {
+                $buy_methods[] = method::where('name', 'venmo')->first();
+            } else if ($method->name === 'square_cash') {
+                $buy_methods[] = method::where('name', 'square_cash')->first();
+            } else if ($method->name === 'paypal') {
+                $buy_methods[] = method::where('name', 'paypal')->first();
+            } else if ($method->name === 'zelle') {
+                $buy_methods[] = method::where('name', 'zelle')->first();
+            }
+        }
+        $matched_offer = [];
+        $matched_methods = [];
+        $sell_methods = $seller_offers->offer_methods->toArray();
+
+        $buy_methods_key = array_column($buy_methods, 'name');
+        $sell_methods_key = array_column($sell_methods, 'name');
+        $intersectedValues = array_intersect($buy_methods_key, $sell_methods_key);
+        if ($intersectedValues) {
+            $matched_offer[] = $seller_offers;
+            $matched_methods[] = $intersectedValues;
+        }
+
+        if ($matched_offer == [] && $matched_methods == []) {
+            $data = [
+                'success' => false,
+                'offer' => [
+                    'offer' => (object) [],
+                    'matched_methods' => [],
+                ],
+                'message' => 'Offer not matched. Chat with staff',
+            ];
+        } else {
             $o = $matched_offer[0];
-            $o->update(['status' => 'matched', 'match_user_id'=>Auth::user()->id]);
+            $o->update(['status' => 'matched', 'match_user_id' => Auth::user()->id]);
             $data = [
                 'success' => true,
                 'offer' => [
@@ -273,15 +329,13 @@ class OfferController extends Controller
     public function get_match_offers(Request $request)
     {
         $offer = Offers::find($request->offerId);
-        if($offer)
-        {
+        if ($offer) {
             $offer->match_user_id = Auth::user()->id;
             $offer->save();
-            $user = User::find($offer->user_id)->only(['id','username','isLogin']);
+            $user = User::find($offer->user_id)->only(['id', 'username', 'isLogin']);
             return $user;
         }
         return (object) [];
-
     }
 
     public function get_match_status(Request $request)
@@ -314,14 +368,13 @@ class OfferController extends Controller
                 'match_user_id' => $offer->user_id,
                 'price'  =>  $offer->price,
                 'method'  =>  '-',
-                'status'  =>  ($request->has('status')) ? $request->status : 'cancel',
+                'status'  => ($request->has('status')) ? $request->status : 'cancel',
             ]);
 
             return response()->json([
                 'status' => true
             ]);
-        }
-        else {
+        } else {
 
             $history = orderBy::create([
                 'user_id' => $request->user_id,
@@ -342,12 +395,10 @@ class OfferController extends Controller
     {
         $operators = Operator::whereStatus(0)->get();
         $operator = (object) [];
-        foreach($operators as $o)
-        {
-            $operator = User::where('id',$o->operator_id)->where('isLogin',1)->first();
-            if(!empty($operator))
-            {
-                $operator = User::find($o->operator_id)->only(['id','username','isLogin']);
+        foreach ($operators as $o) {
+            $operator = User::where('id', $o->operator_id)->where('isLogin', 1)->first();
+            if (!empty($operator)) {
+                $operator = User::find($o->operator_id)->only(['id', 'username', 'isLogin']);
                 $o->delete();
                 Operator::create(['operator_id' => $o->operator_id, 'status' => 1]);
                 break;
@@ -358,10 +409,9 @@ class OfferController extends Controller
 
     public function change_operator_status(Request $request)
     {
-        if($request->id)
-        {
+        if ($request->id) {
             $operator = Operator::whereOperatorId($request->id)->first();
-            $operator->update([ 'status' => 0]);
+            $operator->update(['status' => 0]);
             return response()->json([
                 'status' => true,
                 'message' => 'Status Updated Successfully.',
@@ -369,7 +419,7 @@ class OfferController extends Controller
         }
         $user = Auth::user();
         $operator = Operator::whereOperatorId($user->id)->first();
-        $operator->update([ 'status' => 0]);
+        $operator->update(['status' => 0]);
         return response()->json([
             'status' => true,
             'message' => 'Status Updated Successfully.',
@@ -379,9 +429,8 @@ class OfferController extends Controller
     public function change_offer_status(Request $request)
     {
         $offer = Offers::whereId($request->id)->first();
-        if($offer)
-        {
-            $offer->update([ 'status' => 'open']);
+        if ($offer) {
+            $offer->update(['status' => 'open']);
             return response()->json([
                 'status' => true,
                 'message' => 'Status Updated Successfully.',
@@ -391,64 +440,58 @@ class OfferController extends Controller
             'status' => false,
             'message' => 'Offer not found.',
         ]);
-
     }
 
     public function get_buyer(Request $request)
     {
-            $user = User::where('id',$request->buyer_id)->first();
-            if(!empty($user))
-            {
-                return response()->json([
-                    'status' => true,
-                    'buyer' => $user->only(['id','username'])
-                ]);
-            }
+        $user = User::where('id', $request->buyer_id)->first();
+        if (!empty($user)) {
             return response()->json([
-                'status' => false,
-                'buyer' => (object) [],
+                'status' => true,
+                'buyer' => $user->only(['id', 'username'])
             ]);
+        }
+        return response()->json([
+            'status' => false,
+            'buyer' => (object) [],
+        ]);
     }
 
     public function get_seller(Request $request)
     {
-            $user = User::where('id',$request->seller_id)->first();
-            if(!empty($user))
-            {
-                return response()->json([
-                    'status' => true,
-                    'seller' => $user->only(['id','username'])
-                ]);
-            }
+        $user = User::where('id', $request->seller_id)->first();
+        if (!empty($user)) {
             return response()->json([
-                'status' => false,
-                'seller' => (object) [],
+                'status' => true,
+                'seller' => $user->only(['id', 'username'])
             ]);
+        }
+        return response()->json([
+            'status' => false,
+            'seller' => (object) [],
+        ]);
     }
     public function get_operator(Request $request)
     {
-            $user = User::where('id',$request->operator_id)->first();
-            if(!empty($user))
-            {
-                return response()->json([
-                    'status' => true,
-                    'operator' => $user->only(['id','username'])
-                ]);
-            }
+        $user = User::where('id', $request->operator_id)->first();
+        if (!empty($user)) {
             return response()->json([
-                'status' => false,
-                'operator' => (object) [],
+                'status' => true,
+                'operator' => $user->only(['id', 'username'])
             ]);
+        }
+        return response()->json([
+            'status' => false,
+            'operator' => (object) [],
+        ]);
     }
 
     public function get_admin_username(Request $request)
     {
-            $user = User::find(1);
-            if(!empty($user))
-            {
-                return $user->username;
-            }
-            return '';
+        $user = User::find(1);
+        if (!empty($user)) {
+            return $user->username;
+        }
+        return '';
     }
-
 }
