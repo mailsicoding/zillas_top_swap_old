@@ -83,6 +83,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('edit-offer', [OfferController::class, 'edit']);
         Route::post('update-offer', [OfferController::class, 'update']);
         Route::post('match-offers', [OfferController::class, 'match_offers']);
+        Route::post('chat-seller', [OfferController::class, 'chat_seller']);
         Route::get('get-match-status', [OfferController::class, 'get_match_status']);
         Route::post('trade-cancel', [OfferController::class, 'trade_cancel']);
         Route::get('get-cancel-data', [OrderByController::class, 'hide_cancel']);
