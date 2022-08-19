@@ -163,65 +163,72 @@
 
                         </div>
                         <div class="col-xl-12 col-md-12 ">
+                            <div v-if="offers.length > 0">
+                                <div class="active-details">
+                                    <div class="active-title">
+                                        <h1>Matched Offers List</h1>
+                                    </div>
 
-                            <div class="active-details">
-                                <div class="active-title">
-                                    <h1>Matched Offers List</h1>
-                                </div>
-
-                                <div class="active-description">
-                                    <div class="acivity-details">
-                                        <div class="activity-info">
-                                            <div class="activity-shop">
-                                                <div class="acivity-price"><strong>Price</strong></div>
-                                            </div>
-                                            <div class="activity-shop">
-                                                <div class="acivity-name"><strong>Seller</strong></div>
-                                            </div>
-                                            <div class="activity-shop">
-                                                <div class="acivity-method"><strong>Payment Method</strong></div>
-                                            </div>
-                                            <div class="activity-shop">
-                                                <div class="acivity-date"><strong>Action</strong></div>
-                                            </div>
-                                        </div>
-                                        <template v-for="offer in offers" :key="offer.id">
+                                    <div class="active-description">
+                                        <div class="acivity-details">
                                             <div class="activity-info">
                                                 <div class="activity-shop">
-                                                    <div class="acivity-price">${{ offer.price }}</div>
+                                                    <div class="acivity-price"><strong>Price</strong></div>
                                                 </div>
                                                 <div class="activity-shop">
-                                                    <div class="acivity-name">{{ offer.users.username }}</div>
+                                                    <div class="acivity-name"><strong>Seller</strong></div>
                                                 </div>
                                                 <div class="activity-shop">
-                                                    <template v-for="method in offer.offer_methods" :key="method.id">
-                                                        <div class="method-active" v-if="method.name == 'apple_pay'">
-                                                            Apple
-                                                            Pay</div>
-                                                        <div class="method-active" v-if="method.name == 'chime'">Chime
-                                                        </div>
-                                                        <div class="method-active" v-if="method.name == 'paypal'">Paypal
-                                                        </div>
-                                                        <div class="method-active" v-if="method.name == 'square_cash'">
-                                                            Square
-                                                            Cash
-                                                        </div>
-                                                        <div class="method-active" v-if="method.name == 'venmo'">Venmo
-                                                        </div>
-                                                        <div class="method-active" v-if="method.name == 'zelle'">Zelle
-                                                        </div>
-                                                    </template>
+                                                    <div class="acivity-method"><strong>Payment Method</strong></div>
                                                 </div>
                                                 <div class="activity-shop">
-                                                    <div class="activity-date"><a href=""
-                                                            @click.prevent="chat(offer.id)">Chat</a></div>
+                                                    <div class="acivity-date"><strong>Action</strong></div>
                                                 </div>
                                             </div>
-                                        </template>
+                                            <template v-for="offer in offers" :key="offer.id">
+                                                <div class="activity-info">
+                                                    <div class="activity-shop">
+                                                        <div class="acivity-price">${{ offer.price }}</div>
+                                                    </div>
+                                                    <div class="activity-shop">
+                                                        <div class="acivity-name">{{ offer.users.username }}</div>
+                                                    </div>
+                                                    <div class="activity-shop">
+                                                        <template v-for="method in offer.offer_methods"
+                                                            :key="method.id">
+                                                            <div class="method-active"
+                                                                v-if="method.name == 'apple_pay'">
+                                                                Apple
+                                                                Pay</div>
+                                                            <div class="method-active" v-if="method.name == 'chime'">
+                                                                Chime
+                                                            </div>
+                                                            <div class="method-active" v-if="method.name == 'paypal'">
+                                                                Paypal
+                                                            </div>
+                                                            <div class="method-active"
+                                                                v-if="method.name == 'square_cash'">
+                                                                Square
+                                                                Cash
+                                                            </div>
+                                                            <div class="method-active" v-if="method.name == 'venmo'">
+                                                                Venmo
+                                                            </div>
+                                                            <div class="method-active" v-if="method.name == 'zelle'">
+                                                                Zelle
+                                                            </div>
+                                                        </template>
+                                                    </div>
+                                                    <div class="activity-shop">
+                                                        <div class="activity-date"><a href=""
+                                                                @click.prevent="chat(offer.id)">Chat</a></div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -289,7 +296,7 @@ export default {
             }
         })
 
-        const matchRequestOffer = async() => {
+        const matchRequestOffer = async () => {
             v$.value.$validate()
             // console.log("waseem",state);
             if (!v$.value.$error) {
@@ -324,20 +331,20 @@ export default {
 
         }
 
-        const chat = async(offerId) => {
+        const chat = async (offerId) => {
 
             const data = {
-                offerId : offerId
+                offerId: offerId
             }
             await axios.post('chat-seller', data)
-            .then((result) => {
-                console.log(result.data.offer)
-                console.log(state)
-                localStorage.setItem('matched-offer',JSON.stringify(result.data.offer))
-                    localStorage.setItem('matched-with','user')
-                    localStorage.setItem('requested-offer',JSON.stringify(state))
+                .then((result) => {
+                    console.log(result.data.offer)
+                    console.log(state)
+                    localStorage.setItem('matched-offer', JSON.stringify(result.data.offer))
+                    localStorage.setItem('matched-with', 'user')
+                    localStorage.setItem('requested-offer', JSON.stringify(state))
                     router.push('/match-found')
-            })
+                })
         }
 
 
