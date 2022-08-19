@@ -79,7 +79,7 @@
                         <div class="card-footer chat-feet" style="background-color: #D5F4E7">
                             <div class="row">
                                 <div class="chat-form-footer">
-                                    <input type="text" v-model="message">
+                                    <input type="text" v-model="message"   @keyup.enter="addMessage" >
                                     <div class="chat-lower-btn">
                                         <a href="#" @click.prevent="addMessage"><img src="send.png" alt="" id="send"></a>
                                     </div>

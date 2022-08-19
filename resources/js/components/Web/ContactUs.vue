@@ -35,12 +35,7 @@
                                                 <td v-for="(contact2, index2) in contact" :key="index2">{{ contact2.chat_email }}</td>
                                                 <td v-for="(contact2, index2) in contact" :key="index2">{{ contact2.message }}</td>
                                                 <td v-for="(contact2, index2) in contact" :key="index2">
-                                                    <!-- <router-link :to="'/edit_contact/' + contact.id">
-                                                        <ion-icon class="pencil" name="pencil-outline"></ion-icon>
-                                                    </router-link> -->
-                                                    <!-- <a href="" class="view">
-                                                        <ion-icon name="eye-outline"></ion-icon>
-                                                    </a> -->
+                                                    
                                                     <router-link :to="'/admin/contact/' + index" class="btn btn-success" >
                                                         Chat
                                                     </router-link>

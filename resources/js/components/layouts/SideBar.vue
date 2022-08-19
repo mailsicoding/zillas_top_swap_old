@@ -1,6 +1,6 @@
 <template>
 
-    <nav class="sb-sidenav accordion sidebar--gradient" id="sidenavAccordion">
+    <nav class="sb-sidenav accordion sidebar--gradient" id="sidenavAccordion"   ref="sidebar">
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <div class="text-center mr-top-2" onmouseover="document.getElementById('profile-image').style.display = 'block'"
