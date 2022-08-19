@@ -39,17 +39,20 @@
                                                 <td>
                                                     <div class=" row">
                                                         <div class=" col-xl-6 col-md-6 ">
-                                                            <span
-                                                                @click.prevent="showPopup(user.id) "><span title="Add Funds" style="font-size: x-large;color:green">
-                                                        <ion-icon class="create" name="add-outline"></ion-icon>
-                                                    </span></span>
+                                                            <span @click.prevent="showPopup(user.id) "><span
+                                                                    title="Add Funds"
+                                                                    style="font-size: x-large;color:green">
+                                                                    <ion-icon class="create" name="add-outline">
+                                                                    </ion-icon>
+                                                                </span></span>
                                                         </div>
 
                                                         <div class="col-xl-6 col-md-6">
-                                                            <span
-                                                                @click.prevent="showPopup2(user.id) "><span title="Subtract Funds" style="font-size: x-large;">
-                                                        <ion-icon class="delete" name="remove-outline"></ion-icon>
-                                                    </span></span>
+                                                            <span @click.prevent="showPopup2(user.id) "><span
+                                                                    title="Subtract Funds" style="font-size: x-large;">
+                                                                    <ion-icon class="delete" name="remove-outline">
+                                                                    </ion-icon>
+                                                                </span></span>
                                                         </div>
 
                                                     </div>
@@ -71,6 +74,14 @@
                                 <h2>Add Funds transfer</h2>
                                 <a class="close" href="#" @click.prevent="closePopup()">&times;</a>
                                 <!-- <div class="content-pop"> -->
+                                <!-- <input type="text" name="funds" v-model="funds"> -->
+                                <div class="email-feild account-feild w-100"><input type="text" name="funds"
+                                        v-model="funds" required=""></div>
+                                <!-- <div v-if="v$.funds.$error" style="text-align:center">
+                                    <b style="color:red;">
+                                        {{ v$.funds.$errors[0].$message }}
+                                    </b>
+                                </div> -->
                                     <!-- <input type="text" name="funds" v-model="funds"> -->
                                     <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""   @keyup.enter="addTranferCredit()"></div>
                                 <!-- </div> -->
@@ -107,15 +118,22 @@
             </div>
 
         </div>
-<div class="loader-wrapper" style="display: flex;">
-    <span class="loader"><span class="loader-inner"></span></span>
-</div>
+        <div class="loader-wrapper" style="display: flex;">
+            <span class="loader"><span class="loader-inner"></span></span>
+        </div>
     </main>
 </template>
 <script>
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
+import useVuelidate from "@vuelidate/core";
 import axios from 'axios';
+import {
+    required,
+    email,
+    minLength,
+    helpers
+} from "@vuelidate/validators";
 import {
     onMounted,
     ref,
@@ -128,7 +146,7 @@ import {
     useRouter, useRoute
 } from 'vue-router';
 export default {
-    name: 'Users',
+    name: 'AdminTranferCredits',
     setup() {
         const users = ref([])
         const funds = ref(0.0)
@@ -138,7 +156,17 @@ export default {
         const popup = ref(false)
         const popup2 = ref(false)
         const router = useRouter()
+        const $externalResults = ref({})
         const route = useRoute()
+
+
+        const rules = {
+            funds: {
+                required: helpers.withMessage('Email must be required', required),
+                funds: helpers.withMessage("Enter valid email address.", funds),
+            },
+        }
+        const v$ = useVuelidate(rules)
 
         onMounted(() => {
             if (user.is_phone_verified === 0) {
@@ -159,24 +187,27 @@ export default {
             $('#table').DataTable();
         }
 
-
         const addTranferCredit = async () => {
-            const data = {
-                userId: uid.value,
-          funds: funds.value
-}
+            // v$.value.$clearExternalResults()
+            v$.value.$validate()
+            if (!v$.value.$error) {
+                const data = {
+                    userId: uid.value,
+                    funds: funds.value
+                }
 
-            await axios.post('admin_edit_credit', data)
-                .then((response) => {
-                    // console.log(response.data)
-                    closePopup()
-                    getTranferCredit()
-                    funds.value = 0
-                    // player.value = response.data.users;
-                })
+                await axios.post('admin_edit_credit', data)
+                    .then((response) => {
+                        
+                            console.log(response.data)
+                            closePopup()
+                            getTranferCredit()
+                            funds.value = 0
+                       
+                        })
             $('#table').DataTable();
         }
-
+}
         const subTranferCredit = async () => {
             const data = {
                 userId: uid.value,
@@ -193,7 +224,6 @@ export default {
                 })
             $('#table').DataTable();
         }
-
 
 
         const showPopup = (id) => {
@@ -223,7 +253,7 @@ export default {
             showPopup,
             showPopup,
             player,
-            addTranferCredit,
+            addTranferCredit, 
             funds,
             subTranferCredit
         }

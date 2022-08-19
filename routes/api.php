@@ -12,6 +12,7 @@ use App\Http\Controllers\API\PermissionController;
 use App\Http\Controllers\API\FundsController;
 use App\Http\Controllers\API\OrderByController;
 use App\Http\Controllers\API\ContactUsController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -82,6 +83,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('get-match-offer-user', [OfferController::class, 'get_match_offers']);
         Route::get('get_admin_username', [OfferController::class, 'get_admin_username']);
         Route::get('find_operator', [OfferController::class, 'find_operator']);
+        Route::post('get_operators', [OfferController::class, 'get_operators']);
+        Route::get('select_operator', [OfferController::class, 'select_operator']);
         Route::post('change_operator_status', [OfferController::class, 'change_operator_status']);
         Route::post('change_offer_status', [OfferController::class, 'change_offer_status']);
 
@@ -112,4 +115,3 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
 });
-
