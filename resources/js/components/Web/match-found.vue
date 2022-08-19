@@ -1,35 +1,35 @@
 <template>
-<main>
-    <div class="container">
+    <main>
+        <div class="container">
 
-        <div class="account-title match-title">
-            <h4>Match Found</h4>
-        </div>
-        <div class="row">
-            <div class="col-md-12 main-b">
+            <div class="account-title match-title">
+                <h4>Match Found</h4>
+            </div>
+            <div class="row">
+                <div class="col-md-12 main-b">
 
-                <div class="active-details">
-                    <div class="management">
-                        <img src="assets/img/stay-home.png" alt="">
-                    </div>
-                    <div class="active-description">
-                        <div class="active-info">
-                            <p><b>Waiting for {{username}}</b></p>
+                    <div class="active-details">
+                        <div class="management">
+                            <img src="assets/img/stay-home.png" alt="">
                         </div>
+                        <div class="active-description">
+                            <div class="active-info">
+                                <p><b>Waiting for {{ username }}</b></p>
+                            </div>
 
-                        <div class="no-match-p">
-                            <p>We're waiting for {{username}} to come online</p>
+                            <div class="no-match-p">
+                                <p>We're waiting for {{ username }} to come online</p>
+                            </div>
                         </div>
+                        <div class="mtch-btn"><a href="#">{{ countDown }}</a></div>
                     </div>
-                    <div class="mtch-btn"><a href="#">{{countDown}}</a></div>
                 </div>
+
             </div>
 
         </div>
 
-    </div>
-
-</main>
+    </main>
 </template>
 
 <script>
@@ -73,7 +73,7 @@ export default {
             } else if (currentuser.is_email_verified === 0) {
                 router.push('/verify/email')
             } else {
-            matchedUser();
+                matchedUser();
             }
         })
 
@@ -113,7 +113,7 @@ export default {
                         icon: 'success',
                         position: 'top-end',
                     });
-                    await axios.post('change_offer_status',{id: offer.offer.id})
+                    await axios.post('change_offer_status', { id: offer.offer.id })
                     router.push('/match-request')
                 } else if (is_user_login.value == 0) {
                     localStorage.removeItem('matched-offer-user')
@@ -145,16 +145,16 @@ export default {
 
                     const fb_push2 = push(storageRef(db, 'chat_messages/' + 0 + '_' + response.data.id + '_' + 0 + '_' + currentuser.id))
 
-                        set(fb_push2, {
-                            offer_id: 0,
-                            operator_id: response.data.id,
-                            seller_id: 0,
-                            buyer_id: currentuser.id,
-                            type: 'chat',
-                            id: currentuser.id,
-                            username: currentuser.username,
-                            message: 'I wants to buy game credits of $' + requestedOffer.price
-                        });
+                    set(fb_push2, {
+                        offer_id: 0,
+                        operator_id: response.data.id,
+                        seller_id: 0,
+                        buyer_id: currentuser.id,
+                        type: 'chat',
+                        id: currentuser.id,
+                        username: currentuser.username,
+                        message: 'I wants to buy game credits of $' + requestedOffer.price
+                    });
 
                     router.push('/trade-in-process')
                 } else {
@@ -185,16 +185,16 @@ export default {
 
                     const fb_push2 = push(storageRef(db, 'chat_messages/' + offer.offer.id + '_' + operator.value.id + '_' + matched_user.value.id + '_' + currentuser.id))
 
-                        set(fb_push2, {
-                            offer_id: offer.offer.id,
-                            operator_id: operator.value.id,
-                            seller_id: matched_user.value.id,
-                            buyer_id: currentuser.id,
-                            type: 'chat',
-                            id: currentuser.id,
-                            username: currentuser.username,
-                            message: 'I am interested in your offer.'
-                        });
+                    set(fb_push2, {
+                        offer_id: offer.offer.id,
+                        operator_id: operator.value.id,
+                        seller_id: matched_user.value.id,
+                        buyer_id: currentuser.id,
+                        type: 'chat',
+                        id: currentuser.id,
+                        username: currentuser.username,
+                        message: 'I am interested in your offer.'
+                    });
 
                     router.push('/trade-in-process')
                 }

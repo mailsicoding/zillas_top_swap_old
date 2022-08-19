@@ -211,7 +211,7 @@ class OfferController extends Controller
 
         $user = Auth::user();
         $inputs = $request->all();
-        $seller_offers = Offers::with('users')->where('user_id', '!=', $user->id)->where('status', '=', 'open')->latest()->get();
+        $seller_offers = Offers::with('users')->where('user_id', '!=', $user->id)->where('status', '=', 'open')->get();
         $buy_methods = [];
         foreach ($inputs['methods'] as $method) {
             if ($method === 'apple_pay') {
@@ -239,10 +239,68 @@ class OfferController extends Controller
                 if ($intersectedValues) {
                     $matched_offer[] = $sell_off;
                     $matched_methods[] = $intersectedValues;
-                    break;
                 }
             }
         }
+        if ($matched_offer == [] && $matched_methods == []) {
+            $data = [
+                'success' => false,
+                'offer' => [
+                    'offer' => (object) [],
+                    'matched_methods' => [],
+                ],
+                'message' => 'Offer not matched. Chat with staff',
+            ];
+        } else {
+            $o = $matched_offer;
+            // $o->update(['status' => 'matched', 'match_user_id'=>Auth::user()->id]);
+            $data = [
+                'success' => true,
+
+                'offer' => $matched_offer,
+                'matched_methods' => $matched_methods,
+
+                'message' => 'Offer Matched.',
+            ];
+        }
+
+        return response()->json($data);
+    }
+    public function chat_seller(Request $request)
+    {
+
+        $user = Auth::user();
+        $inputs = $request->all();
+        $seller_offers = Offers::with('users')->with('offer_methods')->where('id', $request->offerId)->where('status', '=', 'open')->first();
+        // return response()->json($seller_offers);
+        $buy_methods = [];
+        foreach ($seller_offers->offer_methods as $method) {
+            if ($method->name === 'apple_pay') {
+                $buy_methods[] = method::where('name', 'apple_pay')->first();
+            } else if ($method->name === 'chime') {
+                $buy_methods[] = method::where('name', 'chime')->first();
+            } else if ($method->name === 'venmo') {
+                $buy_methods[] = method::where('name', 'venmo')->first();
+            } else if ($method->name === 'square_cash') {
+                $buy_methods[] = method::where('name', 'square_cash')->first();
+            } else if ($method->name === 'paypal') {
+                $buy_methods[] = method::where('name', 'paypal')->first();
+            } else if ($method->name === 'zelle') {
+                $buy_methods[] = method::where('name', 'zelle')->first();
+            }
+        }
+        $matched_offer = [];
+        $matched_methods = [];
+        $sell_methods = $seller_offers->offer_methods->toArray();
+
+        $buy_methods_key = array_column($buy_methods, 'name');
+        $sell_methods_key = array_column($sell_methods, 'name');
+        $intersectedValues = array_intersect($buy_methods_key, $sell_methods_key);
+        if ($intersectedValues) {
+            $matched_offer[] = $seller_offers;
+            $matched_methods[] = $intersectedValues;
+        }
+
         if ($matched_offer == [] && $matched_methods == []) {
             $data = [
                 'success' => false,
