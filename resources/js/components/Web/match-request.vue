@@ -55,19 +55,6 @@
                 </div>
                 <div class="col-md-12 main-b">
                     <div class="row">
-                        <div class="email-feild d-flex flex-wrap w-100">
-                            <!-- <label for="price"> Amount</label> -->
-                            <input type="number" name="price" id="price" v-model="state.price" placeholder="Amount"
-                                required>
-                            <span
-                                style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 10px;"
-                                v-if="v$.price.$error">
-                                {{ v$.price.$errors[0].$message }}
-                            </span>
-                            <input type="hidden" name="user_id" v-model="state.user_id">
-                            <div class="icon"><img :src="'images/user.png'" alt=""></div>
-
-                        </div>
                         <div v-if="offers.length > 0" class="w-100">
                             <div class="col-xl-12 col-md-12 mb-2">
                                 <div class="graph__wrapper-width">
@@ -142,6 +129,19 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="email-feild d-flex flex-wrap w-100">
+                            <!-- <label for="price"> Amount</label> -->
+                            <input type="number" name="price" id="price" v-model="state.price" placeholder="Amount"
+                                required>
+                            <span
+                                style="width: 100%; display: flex; justify-content: start; color: red; margin-left: 10px;"
+                                v-if="v$.price.$error">
+                                {{ v$.price.$errors[0].$message }}
+                            </span>
+                            <input type="hidden" name="user_id" v-model="state.user_id">
+                            <div class="icon"><img :src="'images/user.png'" alt=""></div>
+
                         </div>
                         <div class="col-xl-12 col-md-12 ">
 
