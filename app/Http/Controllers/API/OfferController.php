@@ -335,19 +335,12 @@ class OfferController extends Controller
 
     public function select_operator(Request $request)
     {
-
-        $opert = Operator::whereStatus(0)->get();
-        $data = (object)[];
-        foreach ($opert as $single) {
-            $data = User::where('id', $single->operator_id)->where('isLogin', 1)->get();
-        }
-        $operator = User::where('isLogin', 1 && $single->status, 0)->get();
-
-
+        $opert = Operator::whereStatus(0)->get()->pluck('operator_id');
+        $operators = User::role('Operator')->whereIn('id', $opert)->where('isLogin', 1)->get();
         return response()->json([
             'status' => true,
             'message' => 'All Active Operatores',
-            'ActiveOperatores' => $operator,
+            'ActiveOperatores' => $operators,
         ]);
     }
 
