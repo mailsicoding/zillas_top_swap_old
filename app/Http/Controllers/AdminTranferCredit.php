@@ -32,8 +32,15 @@ class AdminTranferCredit extends Controller
         if ($v->fails()) {
             return response()->json([
                 'status' => false,
-                'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors()
+                'message' => $v->errors()
 
+            ]);
+        }
+
+        if (0 >= $request->funds) {
+            return response()->json([
+                'success' => false,
+                'message' => "Funds must be grater than 0",
             ]);
         }
 
@@ -45,14 +52,12 @@ class AdminTranferCredit extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Funds Added Successfully',
-                'player'  => $player
             ]);
         }
 
         return response()->json([
             'success' => false,
             'message' => "No funds",
-            // 'edit_users' => $edit_player
         ]);
     }
 
@@ -72,19 +77,35 @@ class AdminTranferCredit extends Controller
             ]);
         }
 
+        if (0 >= $request->funds) {
+            return response()->json([
+                'success' => false,
+                'message' => "Funds must be grater than 0",
+            ]);
+        }
+
+
         $sub_player = User::role('Player')->find($request->userId);
         if ($sub_player) {
+
+            if ($sub_player->funds < $request->funds) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Funds must be grater than " . $sub_player->username . "'s credits",
+                ]);
+            }
+
             $sub_player->update([
                 'funds' => $sub_player->funds - $request->funds
             ]);
 
             return response()->json([
-                'status' => true,
+                'success' => true,
                 'message' => 'Funds Minus Succussfully',
             ]);
         }
         return response()->json([
-            'status' => false,
+            'success' => false,
             'message' => 'Funds Not Found'
         ]);
     }

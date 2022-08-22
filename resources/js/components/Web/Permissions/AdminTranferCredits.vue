@@ -73,17 +73,13 @@
                             <div class="popup">
                                 <h2>Add Funds transfer</h2>
                                 <a class="close" href="#" @click.prevent="closePopup()">&times;</a>
-                                <!-- <div class="content-pop"> -->
-                                <!-- <input type="text" name="funds" v-model="funds"> -->
                                 <div class="email-feild account-feild w-100"><input type="text" name="funds"
-                                        v-model="funds" required=""></div>
-                                <!-- <div v-if="v$.funds.$error" style="text-align:center">
+                                        v-model="state.funds" required="" @keyup.enter="addTranferCredit()"></div>
+                                <div v-if="v$.funds.$error" style="text-align:center">
                                     <b style="color:red;">
                                         {{ v$.funds.$errors[0].$message }}
                                     </b>
-                                </div> -->
-                                    <!-- <input type="text" name="funds" v-model="funds"> -->
-                                    <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""   @keyup.enter="addTranferCredit()"></div>
+                                </div>
                                 <!-- </div> -->
                                 <div class="pop-tos">
                                     <div class="tos1"><a href="#" @click.prevent="closePopup()">Cancel</a>
@@ -99,8 +95,13 @@
                                 <h2>Subtract Funds transfer</h2>
                                 <a class="close" href="#" @click.prevent="closePopup2()">&times;</a>
                                 <!-- <div class="content-pop"> -->
-                                    <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""  @keyup.enter="subTranferCredit()"></div>
-
+                                <div class="email-feild account-feild w-100"><input type="text" name="funds"
+                                        v-model="state.funds" required="" @keyup.enter="subTranferCredit()"></div>
+                                <div v-if="v$.funds.$error" style="text-align:center">
+                                    <b style="color:red;">
+                                        {{ v$.funds.$errors[0].$message }}
+                                    </b>
+                                </div>
                                 <!-- </div> -->
                                 <div class="pop-tos">
                                     <div class="tos1"><a href="#" @click.prevent="closePopup2()">Cancel</a>
@@ -149,7 +150,9 @@ export default {
     name: 'AdminTranferCredits',
     setup() {
         const users = ref([])
-        const funds = ref(0.0)
+        const state = reactive({
+            funds:0
+        })
         const uid = ref(0)
         const player = ref([])
         const user = reactive(store.getters["auth/currentUser"])
@@ -162,11 +165,13 @@ export default {
 
         const rules = {
             funds: {
-                required: helpers.withMessage('Email must be required', required),
-                funds: helpers.withMessage("Enter valid email address.", funds),
+                required: helpers.withMessage('Funds must be required', required),
+                
             },
         }
-        const v$ = useVuelidate(rules)
+        const v$ = useVuelidate(rules, state , {
+            $externalResults
+        })
 
         onMounted(() => {
             if (user.is_phone_verified === 0) {
@@ -188,41 +193,62 @@ export default {
         }
 
         const addTranferCredit = async () => {
-            // v$.value.$clearExternalResults()
+            v$.value.$clearExternalResults()
             v$.value.$validate()
             if (!v$.value.$error) {
                 const data = {
                     userId: uid.value,
-                    funds: funds.value
+                    funds: state.funds
                 }
 
                 await axios.post('admin_edit_credit', data)
                     .then((response) => {
-                        
+                        if (response.data.success == true) {
                             console.log(response.data)
                             closePopup()
                             getTranferCredit()
-                            funds.value = 0
+                            state.funds = 0
+                        } else {
+                            $externalResults.value = {
+                                funds: [response.data.message]
+                            }
+                        }
+                            
                        
                         })
             $('#table').DataTable();
         }
 }
         const subTranferCredit = async () => {
-            const data = {
-                userId: uid.value,
-                funds: funds.value
-            }
 
-            await axios.post('admin_minus_credit', data)
-                .then((response) => {
-                    // console.log(response.data)
-                    closePopup2()
-                    getTranferCredit()
-                    funds.value = 0
-                    // player.value = response.data.users;
-                })
-            $('#table').DataTable();
+            v$.value.$clearExternalResults()
+            v$.value.$validate()
+            if (!v$.value.$error) {
+                const data = {
+                    userId: uid.value,
+                    funds: state.funds
+                }
+
+                await axios.post('admin_minus_credit', data)
+                    .then((response) => {
+                        // console.log(response.data)
+                        if (response.data.success == true) {
+
+                            closePopup2()
+                            getTranferCredit()
+                            state.funds = 0
+                        // player.value = response.data.users;
+                        } else {
+                            $externalResults.value = {
+                                funds: [response.data.message]
+                            }
+                        }
+                        
+
+                    })
+           
+                $('#table').DataTable();
+            }
         }
 
 
@@ -237,10 +263,14 @@ export default {
         }
 
         const closePopup = () => {
+            v$.value.$clearExternalResults()
             popup.value = false;
+            state.funds = 0
         }
         const closePopup2 = () => {
+            v$.value.$clearExternalResults()
             popup2.value = false;
+            state.funds = 0
         }
 
         return {
@@ -254,8 +284,9 @@ export default {
             showPopup,
             player,
             addTranferCredit, 
-            funds,
-            subTranferCredit
+            state,
+            subTranferCredit,
+            v$
         }
 
     }

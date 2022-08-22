@@ -53,6 +53,18 @@ class OfferController extends Controller
             ]);
         }
 
+        if (0 >= $request->price) {
+            return response()->json([
+                'status' => false,
+                'message' => ($request->is('api/*')) ? 'Offer price must be grater than 0.' : [
+                    'price' => [
+                        'Offer price must be grater than 0.'
+                    ]
+                ]
+
+            ]);
+        }
+
         if ($user->funds < $request->price) {
             return response()->json([
                 'status' => false,
@@ -150,6 +162,17 @@ class OfferController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => ($request->is('api/*')) ? $v->errors()->first() : $v->errors()
+
+            ]);
+        }
+        if (0 >= $request->price) {
+            return response()->json([
+                'status' => false,
+                'message' => ($request->is('api/*')) ? 'Offer price must be grater than 0.' : [
+                    'price' => [
+                        'Offer price must be grater than 0.'
+                    ]
+                ]
 
             ]);
         }
