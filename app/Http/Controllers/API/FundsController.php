@@ -47,6 +47,7 @@ class FundsController extends Controller
             $user->update([
                 'funds' => $user->funds - $request->price
             ]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Funds Subtracted Successfully'

@@ -39,17 +39,20 @@
                                                 <td>
                                                     <div class=" row">
                                                         <div class=" col-xl-6 col-md-6 ">
-                                                            <span
-                                                                @click.prevent="showPopup(user.id) "><span title="Add Funds" style="font-size: x-large;color:green">
-                                                        <ion-icon class="create" name="add-outline"></ion-icon>
-                                                    </span></span>
+                                                            <span @click.prevent="showPopup(user.id) "><span
+                                                                    title="Add Funds"
+                                                                    style="font-size: x-large;color:green">
+                                                                    <ion-icon class="create" name="add-outline">
+                                                                    </ion-icon>
+                                                                </span></span>
                                                         </div>
 
                                                         <div class="col-xl-6 col-md-6">
-                                                            <span
-                                                                @click.prevent="showPopup2(user.id) "><span title="Subtract Funds" style="font-size: x-large;">
-                                                        <ion-icon class="delete" name="remove-outline"></ion-icon>
-                                                    </span></span>
+                                                            <span @click.prevent="showPopup2(user.id) "><span
+                                                                    title="Subtract Funds" style="font-size: x-large;">
+                                                                    <ion-icon class="delete" name="remove-outline">
+                                                                    </ion-icon>
+                                                                </span></span>
                                                         </div>
 
                                                     </div>
@@ -70,9 +73,13 @@
                             <div class="popup">
                                 <h2>Add Funds transfer</h2>
                                 <a class="close" href="#" @click.prevent="closePopup()">&times;</a>
-                                <!-- <div class="content-pop"> -->
-                                    <!-- <input type="text" name="funds" v-model="funds"> -->
-                                    <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""   @keyup.enter="addTranferCredit()"></div>
+                                <div class="email-feild account-feild w-100"><input type="text" name="funds"
+                                        v-model="state.funds" required="" @keyup.enter="addTranferCredit()"></div>
+                                <div v-if="v$.funds.$error" style="text-align:center">
+                                    <b style="color:red;">
+                                        {{ v$.funds.$errors[0].$message }}
+                                    </b>
+                                </div>
                                 <!-- </div> -->
                                 <div class="pop-tos">
                                     <div class="tos1"><a href="#" @click.prevent="closePopup()">Cancel</a>
@@ -88,8 +95,13 @@
                                 <h2>Subtract Funds transfer</h2>
                                 <a class="close" href="#" @click.prevent="closePopup2()">&times;</a>
                                 <!-- <div class="content-pop"> -->
-                                    <div class="email-feild account-feild w-100"><input type="text" name="funds" v-model="funds" required=""  @keyup.enter="subTranferCredit()"></div>
-
+                                <div class="email-feild account-feild w-100"><input type="text" name="funds"
+                                        v-model="state.funds" required="" @keyup.enter="subTranferCredit()"></div>
+                                <div v-if="v$.funds.$error" style="text-align:center">
+                                    <b style="color:red;">
+                                        {{ v$.funds.$errors[0].$message }}
+                                    </b>
+                                </div>
                                 <!-- </div> -->
                                 <div class="pop-tos">
                                     <div class="tos1"><a href="#" @click.prevent="closePopup2()">Cancel</a>
@@ -107,15 +119,22 @@
             </div>
 
         </div>
-<div class="loader-wrapper" style="display: flex;">
-    <span class="loader"><span class="loader-inner"></span></span>
-</div>
+        <div class="loader-wrapper" style="display: flex;">
+            <span class="loader"><span class="loader-inner"></span></span>
+        </div>
     </main>
 </template>
 <script>
 import "datatables.net-dt/js/dataTables.dataTables";
 import "datatables.net-dt/css/jquery.dataTables.min.css";
+import useVuelidate from "@vuelidate/core";
 import axios from 'axios';
+import {
+    required,
+    email,
+    minLength,
+    helpers
+} from "@vuelidate/validators";
 import {
     onMounted,
     ref,
@@ -128,17 +147,31 @@ import {
     useRouter, useRoute
 } from 'vue-router';
 export default {
-    name: 'Users',
+    name: 'AdminTranferCredits',
     setup() {
         const users = ref([])
-        const funds = ref(0.0)
+        const state = reactive({
+            funds:0
+        })
         const uid = ref(0)
         const player = ref([])
         const user = reactive(store.getters["auth/currentUser"])
         const popup = ref(false)
         const popup2 = ref(false)
         const router = useRouter()
+        const $externalResults = ref({})
         const route = useRoute()
+
+
+        const rules = {
+            funds: {
+                required: helpers.withMessage('Funds must be required', required),
+                
+            },
+        }
+        const v$ = useVuelidate(rules, state , {
+            $externalResults
+        })
 
         onMounted(() => {
             if (user.is_phone_verified === 0) {
@@ -159,41 +192,64 @@ export default {
             $('#table').DataTable();
         }
 
-
         const addTranferCredit = async () => {
-            const data = {
-                userId: uid.value,
-          funds: funds.value
+            v$.value.$clearExternalResults()
+            v$.value.$validate()
+            if (!v$.value.$error) {
+                const data = {
+                    userId: uid.value,
+                    funds: state.funds
+                }
+
+                await axios.post('admin_edit_credit', data)
+                    .then((response) => {
+                        if (response.data.success == true) {
+                            console.log(response.data)
+                            closePopup()
+                            getTranferCredit()
+                            state.funds = 0
+                        } else {
+                            $externalResults.value = {
+                                funds: [response.data.message]
+                            }
+                        }
+                            
+                       
+                        })
+            $('#table').DataTable();
+        }
 }
-
-            await axios.post('admin_edit_credit', data)
-                .then((response) => {
-                    // console.log(response.data)
-                    closePopup()
-                    getTranferCredit()
-                    funds.value = 0
-                    // player.value = response.data.users;
-                })
-            $('#table').DataTable();
-        }
-
         const subTranferCredit = async () => {
-            const data = {
-                userId: uid.value,
-                funds: funds.value
+
+            v$.value.$clearExternalResults()
+            v$.value.$validate()
+            if (!v$.value.$error) {
+                const data = {
+                    userId: uid.value,
+                    funds: state.funds
+                }
+
+                await axios.post('admin_minus_credit', data)
+                    .then((response) => {
+                        // console.log(response.data)
+                        if (response.data.success == true) {
+
+                            closePopup2()
+                            getTranferCredit()
+                            state.funds = 0
+                        // player.value = response.data.users;
+                        } else {
+                            $externalResults.value = {
+                                funds: [response.data.message]
+                            }
+                        }
+                        
+
+                    })
+           
+                $('#table').DataTable();
             }
-
-            await axios.post('admin_minus_credit', data)
-                .then((response) => {
-                    // console.log(response.data)
-                    closePopup2()
-                    getTranferCredit()
-                    funds.value = 0
-                    // player.value = response.data.users;
-                })
-            $('#table').DataTable();
         }
-
 
 
         const showPopup = (id) => {
@@ -207,10 +263,14 @@ export default {
         }
 
         const closePopup = () => {
+            v$.value.$clearExternalResults()
             popup.value = false;
+            state.funds = 0
         }
         const closePopup2 = () => {
+            v$.value.$clearExternalResults()
             popup2.value = false;
+            state.funds = 0
         }
 
         return {
@@ -223,9 +283,10 @@ export default {
             showPopup,
             showPopup,
             player,
-            addTranferCredit,
-            funds,
-            subTranferCredit
+            addTranferCredit, 
+            state,
+            subTranferCredit,
+            v$
         }
 
     }
