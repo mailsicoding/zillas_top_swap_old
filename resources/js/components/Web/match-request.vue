@@ -68,7 +68,7 @@
                             <div class="icon"><img :src="'images/user.png'" alt=""></div>
 
                         </div>
-                        <div v-if="offers.length > 0" class="w-100">
+                        <!-- <div v-if="offers.length > 0" class="w-100">
                             <div class="col-xl-12 col-md-12 mb-2">
                                 <div class="graph__wrapper-width">
                                     <div class="active-details">
@@ -142,7 +142,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-xl-12 col-md-12 ">
 
                             <div class="graph__wrapper-width">
@@ -266,7 +266,6 @@ import store from '../../stores'
 export default {
     name: 'CreateOffers',
     setup() {
-        const offers = ref([])
         const matched_methods = ref([])
         const path = ref('match-offers')
         const route = useRoute()
@@ -315,13 +314,13 @@ export default {
                         icon: 'success',
                         position: 'top-end',
                     });
-                    offers.value = result.data.offer
-                    matched_methods.value = result.data.matched_methods
+                    // offers.value = result.data.offer
+                    // matched_methods.value = result.data.matched_methods
 
-                    // localStorage.setItem('matched-offer',JSON.stringify(result.data.offer))
-                    // localStorage.setItem('matched-with','user')
-                    // localStorage.setItem('requested-offer',JSON.stringify(state))
-                    // router.push('/match-found')
+                    localStorage.setItem('matched-offer',JSON.stringify(result.data.offer))
+                    localStorage.setItem('matched-with','user')
+                    localStorage.setItem('requested-offer',JSON.stringify(state))
+                    router.push('/match-found')
                 }
                 else {
                     localStorage.setItem('matched-with', 'operator')
@@ -338,21 +337,21 @@ export default {
 
         }
 
-        const chat = async (offerId) => {
+        // const chat = async (offerId) => {
 
-            const data = {
-                offerId: offerId
-            }
-            await axios.post('chat-seller', data)
-                .then((result) => {
-                    console.log(result.data.offer)
-                    console.log(state)
-                    localStorage.setItem('matched-offer', JSON.stringify(result.data.offer))
-                    localStorage.setItem('matched-with', 'user')
-                    localStorage.setItem('requested-offer', JSON.stringify(state))
-                    router.push('/match-found')
-                })
-        }
+        //     const data = {
+        //         offerId: offerId
+        //     }
+        //     await axios.post('chat-seller', data)
+        //         .then((result) => {
+        //             console.log(result.data.offer)
+        //             console.log(state)
+        //             localStorage.setItem('matched-offer', JSON.stringify(result.data.offer))
+        //             localStorage.setItem('matched-with', 'user')
+        //             localStorage.setItem('requested-offer', JSON.stringify(state))
+        //             router.push('/match-found')
+        //         })
+        // }
 
 
         return {
@@ -360,9 +359,7 @@ export default {
             v$,
             currentuser,
             matchRequestOffer,
-            offers,
-            matched_methods,
-            chat
+            matched_methods
         }
     },
 
