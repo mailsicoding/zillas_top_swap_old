@@ -573,8 +573,9 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        // $user = Auth::user()->where('id', $request->id);
         $user = Auth::user();
-
+        // return $user;
         $user->update(['isLogin' => false]);
 
         if ($user) {

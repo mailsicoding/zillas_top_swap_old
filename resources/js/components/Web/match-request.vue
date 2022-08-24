@@ -302,7 +302,7 @@ export default {
             }
         })
 
-        const matchRequestOffer = async () => {
+        const matchRequestOffer = async() => {
             v$.value.$validate()
             // console.log("waseem",state);
             if (!v$.value.$error) {

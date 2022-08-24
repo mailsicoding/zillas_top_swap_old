@@ -96,6 +96,8 @@ export default {
                     matched_user.value = response.data
                 })
                 await axios.get('find_operator').then(response => {
+                    console.log("Find Operator")
+                    console.log(response.data)
                     if (Object.keys(response.data).length) {
                         operator.value = response.data
                         is_operator_login.value = 1
@@ -208,7 +210,7 @@ export default {
             const interval = setInterval(function () {
                 var d = new Date();
                 var seconds = d.getMinutes() * 60 + d.getSeconds(); //convet 00:00 to seconds for easier caculation
-                var fiveMin = 60 * 2; //five minutes is 300 seconds!
+                var fiveMin = 60 * 5; //five minutes is 300 seconds!
                 var timeleft = fiveMin - seconds % fiveMin; // let's say 01:30, then current seconds is 90, 90%300 = 90, then 300-90 = 210. That's the time left!
                 var result = parseInt(timeleft / 60) + ':' + timeleft % 60; //formart seconds into 00:00
 

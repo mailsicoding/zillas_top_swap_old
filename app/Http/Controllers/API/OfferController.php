@@ -457,6 +457,7 @@ class OfferController extends Controller
     public function find_operator(Request $request)
     {
         $operators = Operator::whereStatus(0)->get();
+        // return $operators;
         $operator = (object) [];
         foreach ($operators as $o) {
             $operator = User::where('id', $o->operator_id)->where('isLogin', 1)->first();
